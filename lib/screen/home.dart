@@ -114,6 +114,10 @@ class _HomeState extends State<Home> {
               )
             ],
           ),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 0, horizontal: 4),
+            child: const Text("Accounts are your wallets."),
+          ),
           SizedBox(
             height: 120,
             child: _accountList(),
@@ -187,6 +191,10 @@ class _HomeState extends State<Home> {
           //   padding: EdgeInsets.all(8),
           //   child: CategoryComponent(),
           // )
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 0, horizontal: 4),
+            child: Text("Categories are other entities"),
+          ),
           _categoryList()
         ],
       ),

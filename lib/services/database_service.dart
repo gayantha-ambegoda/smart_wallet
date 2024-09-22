@@ -152,7 +152,7 @@ class DatabaseService {
       int account) async {
     final db = await database;
     final data = await db.rawQuery(
-        '''select $_transTbl.*,acc1.$_title as from_title,acc2.$_title as to_title,acc3.$_title as bud_title from $_transTbl inner join $_accTbl as acc1 on acc1.$_accId = $_transTbl.$_transFromAcc inner join $_accTbl as acc2 on acc2.$_accId = $_transTbl.$_transToAcc inner join $_accTbl as acc3 on acc3.$_accId = $_transTbl.$_budget''');
+        '''select $_transTbl.*,acc1.$_title as from_title,acc2.$_title as to_title,acc3.$_title as bud_title from $_transTbl inner join $_accTbl as acc1 on acc1.$_accId = $_transTbl.$_transFromAcc inner join $_accTbl as acc2 on acc2.$_accId = $_transTbl.$_transToAcc inner join $_accTbl as acc3 on acc3.$_accId = $_transTbl.$_budget where $_transTbl.$_transFromAcc = $account or $_transTbl.$_transToAcc = $account or $_transTbl.$_budget = $account''');
     List<ExtendedTransactionModel> models = data
         .map((e) => ExtendedTransactionModel(
             id: e[_transId] as int,
