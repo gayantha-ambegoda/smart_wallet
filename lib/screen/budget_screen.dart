@@ -46,7 +46,24 @@ class _budgetState extends State<BudgetScreen> {
         future: _databaseService.getAccounts(3),
         builder: (context, snapshot) {
           if (snapshot.data == null || snapshot.data!.length == 0) {
-            return const Text("Not Found!");
+            return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Center(
+                  child: Card.filled(
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                      child: Text(
+                        "No Budgets found!",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            );
           } else {
             return ListView.builder(
                 itemCount: snapshot.data?.length ?? 0,

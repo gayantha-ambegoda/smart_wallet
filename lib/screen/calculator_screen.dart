@@ -27,7 +27,7 @@ class Calculator extends StatelessWidget {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: TextField(
               decoration: const InputDecoration(
                   label: Text("Total Loan"), border: OutlineInputBorder()),
@@ -35,7 +35,7 @@ class Calculator extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: TextField(
               decoration: const InputDecoration(
                   label: Text("Interest"), border: OutlineInputBorder()),
@@ -43,7 +43,7 @@ class Calculator extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: TextField(
               decoration: const InputDecoration(
                   label: Text("No of Months"), border: OutlineInputBorder()),
@@ -51,7 +51,7 @@ class Calculator extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: TextField(
               decoration: const InputDecoration(
                   label: Text("Installment Amount"),
