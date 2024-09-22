@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smartwallet/components/account_component.dart';
+import 'package:smartwallet/components/category_component.dart';
 import 'package:smartwallet/models/account_model.dart';
 import 'package:smartwallet/services/database_service.dart';
 
@@ -53,7 +54,10 @@ class _HomeState extends State<Home> {
             children: [
               const Padding(
                 padding: EdgeInsets.all(4),
-                child: Text("Accounts"),
+                child: Text(
+                  "Accounts",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(4),
@@ -119,7 +123,10 @@ class _HomeState extends State<Home> {
             children: [
               const Padding(
                 padding: EdgeInsets.all(4),
-                child: Text("Categories"),
+                child: Text(
+                  "Categories",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(4),
@@ -180,11 +187,7 @@ class _HomeState extends State<Home> {
           //   padding: EdgeInsets.all(8),
           //   child: CategoryComponent(),
           // )
-          Expanded(
-              child: Padding(
-            padding: EdgeInsets.all(4),
-            child: _categoryList(),
-          ))
+          _categoryList()
         ],
       ),
     );
@@ -195,7 +198,24 @@ class _HomeState extends State<Home> {
         future: _databaseService.getAccounts(1),
         builder: (context, snapshot) {
           if (snapshot.data == null || snapshot.data!.length == 0) {
-            return const Text("No Accounts Yet!");
+            return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Center(
+                  child: Card.filled(
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                      child: Text(
+                        "No Accounts found!",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            );
           } else {
             return ListView.builder(
                 scrollDirection: Axis.horizontal,
@@ -216,18 +236,39 @@ class _HomeState extends State<Home> {
         future: _databaseService.getAccounts(2),
         builder: (context, snapshot) {
           if (snapshot.data == null || snapshot.data!.length == 0) {
-            return const Text("No Accounts Yet!");
+            return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Center(
+                  child: Card.filled(
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                      child: Text(
+                        "No Categories found!",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            );
           } else {
-            return ListView.builder(
-                scrollDirection: Axis.vertical,
-                itemCount: snapshot.data?.length ?? 0,
-                itemBuilder: (context, index) {
-                  AccountModel _account = snapshot.data![index];
-                  return AccountComponent(
-                      accId: _account.id,
-                      accTitle: _account.title,
-                      accDescription: _account.description);
-                });
+            return Expanded(
+                child: Padding(
+              padding: EdgeInsets.all(4),
+              child: ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  itemCount: snapshot.data?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    AccountModel _account = snapshot.data![index];
+                    return CategoryComponent(
+                        accId: _account.id,
+                        accTitle: _account.title,
+                        accDescription: _account.description);
+                  }),
+            ));
           }
         });
   }

@@ -17,12 +17,19 @@ class AccountComponent extends StatelessWidget {
       width: 225,
       child: GestureDetector(
         onTap: () => GoRouter.of(context).go('/account/$accId'),
-        child: Card(
+        child: Card.filled(
           child: Padding(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               child: Column(
                 children: [
-                  Text(accTitle),
+                  Text(
+                    accTitle,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color:
+                            Theme.of(context).colorScheme.onPrimaryContainer),
+                  ),
                   Text(accDescription),
                   //Text("Rs 120000.00")
                 ],
