@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
 
   GoRouter router = GoRouter(routes: [
-    GoRoute(path: '/', builder: (context, state) => Home()),
+    GoRoute(path: '/', builder: (context, state) => const Home()),
     GoRoute(path: '/calc', builder: (context, state) => Calculator()),
     GoRoute(
       path: '/account/:accountId',
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
     ),
     GoRoute(
       path: '/budgets',
-      builder: (context, state) => BudgetScreen(),
+      builder: (context, state) => const BudgetScreen(),
     )
   ]);
 

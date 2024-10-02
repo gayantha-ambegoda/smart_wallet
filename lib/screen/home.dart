@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smartwallet/components/account_component.dart';
 import 'package:smartwallet/components/category_component.dart';
@@ -43,7 +44,7 @@ class _HomeState extends State<Home> {
               onPressed: () {
                 GoRouter.of(context).go('/budgets');
               },
-              icon: Icon(Icons.bar_chart_rounded))
+              icon: const Icon(Icons.bar_chart_rounded))
         ],
       ),
       body: Column(
@@ -65,48 +66,55 @@ class _HomeState extends State<Home> {
                     onPressed: () {
                       showDialog(
                           context: context,
-                          builder: (_) => AlertDialog(
-                                title: const Text('Add Account'),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(4),
-                                      child: TextField(
-                                        decoration: const InputDecoration(
-                                            border: OutlineInputBorder(),
-                                            hintText: "Title"),
-                                        controller: accTitleController,
+                          builder: (_) => Animate(
+                                effects: const [
+                                  FadeEffect(
+                                      duration: Duration(milliseconds: 500))
+                                ],
+                                child: AlertDialog(
+                                  title: const Text('Add Account'),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(4),
+                                        child: TextField(
+                                          decoration: const InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              hintText: "Title"),
+                                          controller: accTitleController,
+                                        ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(4),
-                                      child: TextField(
-                                        maxLines: 3,
-                                        minLines: 2,
-                                        decoration: const InputDecoration(
-                                            hintMaxLines: 3,
-                                            border: OutlineInputBorder(),
-                                            hintText: "Description"),
-                                        controller: accDescController,
+                                      Padding(
+                                        padding: const EdgeInsets.all(4),
+                                        child: TextField(
+                                          maxLines: 3,
+                                          minLines: 2,
+                                          decoration: const InputDecoration(
+                                              hintMaxLines: 3,
+                                              border: OutlineInputBorder(),
+                                              hintText: "Description"),
+                                          controller: accDescController,
+                                        ),
                                       ),
-                                    ),
-                                    MaterialButton(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      onPressed: () {
-                                        _databaseService.addAccount(
-                                            accTitleController.text,
-                                            accDescController.text,
-                                            1);
-                                        Navigator.pop(context);
-                                        setState(() {
-                                          ///
-                                        });
-                                      },
-                                      child: const Text("Add Account"),
-                                    )
-                                  ],
+                                      MaterialButton(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        onPressed: () {
+                                          _databaseService.addAccount(
+                                              accTitleController.text,
+                                              accDescController.text,
+                                              1);
+                                          Navigator.pop(context);
+                                          setState(() {
+                                            ///
+                                          });
+                                        },
+                                        child: const Text("Add Account"),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ));
                     },
@@ -116,7 +124,7 @@ class _HomeState extends State<Home> {
           ),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 0, horizontal: 4),
-            child: const Text("Accounts are your wallets."),
+            child: Text("Accounts are your wallets."),
           ),
           SizedBox(
             height: 120,
@@ -138,48 +146,55 @@ class _HomeState extends State<Home> {
                     onPressed: () {
                       showDialog(
                           context: context,
-                          builder: (_) => AlertDialog(
-                                title: const Text('Add Category'),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(4),
-                                      child: TextField(
-                                        decoration: const InputDecoration(
-                                            border: OutlineInputBorder(),
-                                            hintText: "Title"),
-                                        controller: catTitleController,
+                          builder: (_) => Animate(
+                                effects: const [
+                                  FadeEffect(
+                                      duration: Duration(milliseconds: 500))
+                                ],
+                                child: AlertDialog(
+                                  title: const Text('Add Category'),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(4),
+                                        child: TextField(
+                                          decoration: const InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              hintText: "Title"),
+                                          controller: catTitleController,
+                                        ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(4),
-                                      child: TextField(
-                                        maxLines: 3,
-                                        minLines: 2,
-                                        decoration: const InputDecoration(
-                                            hintMaxLines: 3,
-                                            border: OutlineInputBorder(),
-                                            hintText: "Description"),
-                                        controller: catDescController,
+                                      Padding(
+                                        padding: const EdgeInsets.all(4),
+                                        child: TextField(
+                                          maxLines: 3,
+                                          minLines: 2,
+                                          decoration: const InputDecoration(
+                                              hintMaxLines: 3,
+                                              border: OutlineInputBorder(),
+                                              hintText: "Description"),
+                                          controller: catDescController,
+                                        ),
                                       ),
-                                    ),
-                                    MaterialButton(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      onPressed: () {
-                                        _databaseService.addAccount(
-                                            catTitleController.text,
-                                            catDescController.text,
-                                            2);
-                                        Navigator.pop(context);
-                                        setState(() {
-                                          ///
-                                        });
-                                      },
-                                      child: const Text("Add Category"),
-                                    )
-                                  ],
+                                      MaterialButton(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        onPressed: () {
+                                          _databaseService.addAccount(
+                                              catTitleController.text,
+                                              catDescController.text,
+                                              2);
+                                          Navigator.pop(context);
+                                          setState(() {
+                                            ///
+                                          });
+                                        },
+                                        child: const Text("Add Category"),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ));
                     },
@@ -205,7 +220,7 @@ class _HomeState extends State<Home> {
     return FutureBuilder(
         future: _databaseService.getAccounts(1),
         builder: (context, snapshot) {
-          if (snapshot.data == null || snapshot.data!.length == 0) {
+          if (snapshot.data == null || snapshot.data!.isEmpty) {
             return const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -229,11 +244,11 @@ class _HomeState extends State<Home> {
                 scrollDirection: Axis.horizontal,
                 itemCount: snapshot.data?.length ?? 0,
                 itemBuilder: (context, index) {
-                  AccountModel _account = snapshot.data![index];
+                  AccountModel currentAccount = snapshot.data![index];
                   return AccountComponent(
-                      accTitle: _account.title,
-                      accId: _account.id,
-                      accDescription: _account.description);
+                      accTitle: currentAccount.title,
+                      accId: currentAccount.id,
+                      accDescription: currentAccount.description);
                 });
           }
         });
@@ -243,7 +258,7 @@ class _HomeState extends State<Home> {
     return FutureBuilder(
         future: _databaseService.getAccounts(2),
         builder: (context, snapshot) {
-          if (snapshot.data == null || snapshot.data!.length == 0) {
+          if (snapshot.data == null || snapshot.data!.isEmpty) {
             return const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -265,16 +280,16 @@ class _HomeState extends State<Home> {
           } else {
             return Expanded(
                 child: Padding(
-              padding: EdgeInsets.all(4),
+              padding: const EdgeInsets.all(4),
               child: ListView.builder(
                   scrollDirection: Axis.vertical,
                   itemCount: snapshot.data?.length ?? 0,
                   itemBuilder: (context, index) {
-                    AccountModel _account = snapshot.data![index];
+                    AccountModel currentAccount = snapshot.data![index];
                     return CategoryComponent(
-                        accId: _account.id,
-                        accTitle: _account.title,
-                        accDescription: _account.description);
+                        accId: currentAccount.id,
+                        accTitle: currentAccount.title,
+                        accDescription: currentAccount.description);
                   }),
             ));
           }

@@ -33,7 +33,7 @@ class AccountScreen extends StatelessWidget {
                   future: _databaseService
                       .getAllExtendedTransactions(int.parse(accountId)),
                   builder: (context, snapshot) {
-                    if (snapshot.data == null || snapshot.data!.length == 0) {
+                    if (snapshot.data == null || snapshot.data!.isEmpty) {
                       return const Text("There are no any tansactions!");
                     } else {
                       return ListView.builder(

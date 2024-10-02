@@ -45,7 +45,7 @@ class _budgetState extends State<BudgetScreen> {
     return FutureBuilder(
         future: _databaseService.getAccounts(3),
         builder: (context, snapshot) {
-          if (snapshot.data == null || snapshot.data!.length == 0) {
+          if (snapshot.data == null || snapshot.data!.isEmpty) {
             return const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -68,11 +68,11 @@ class _budgetState extends State<BudgetScreen> {
             return ListView.builder(
                 itemCount: snapshot.data?.length ?? 0,
                 itemBuilder: (context, index) {
-                  AccountModel _account = snapshot.data![index];
+                  AccountModel currentAccount = snapshot.data![index];
                   return AccountComponent(
-                      accTitle: _account.title,
-                      accDescription: _account.description,
-                      accId: _account.id);
+                      accTitle: currentAccount.title,
+                      accDescription: currentAccount.description,
+                      accId: currentAccount.id);
                 });
           }
         });

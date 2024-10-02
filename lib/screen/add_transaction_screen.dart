@@ -46,6 +46,7 @@ class AddTransactionScreen extends StatelessWidget {
                   builder: (context, sapshot) {
                     return sapshot.hasData
                         ? DropdownMenu(
+                            width: MediaQuery.of(context).size.width,
                             label: const Text("From Account"),
                             onSelected: (value) {
                               if (value != null) {
@@ -71,6 +72,7 @@ class AddTransactionScreen extends StatelessWidget {
                   builder: (context, sapshot) {
                     return sapshot.hasData
                         ? DropdownMenu(
+                            width: MediaQuery.of(context).size.width,
                             label: const Text("To Account"),
                             onSelected: (account) {
                               if (account != null) {
@@ -96,6 +98,7 @@ class AddTransactionScreen extends StatelessWidget {
                   builder: (context, sapshot) {
                     return sapshot.hasData
                         ? DropdownMenu(
+                            width: MediaQuery.of(context).size.width,
                             label: const Text("Budget"),
                             onSelected: (value) {
                               if (value != null) {
