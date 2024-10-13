@@ -1,3 +1,6 @@
+import 'dart:collection';
+
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smartwallet/models/account_model.dart';
@@ -29,27 +32,35 @@ class AccountScreen extends StatelessWidget {
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
               ),
-              body: FutureBuilder(
-                  future: _databaseService
-                      .getAllExtendedTransactions(int.parse(accountId)),
-                  builder: (context, snapshot) {
-                    if (snapshot.data == null || snapshot.data!.isEmpty) {
-                      return const Text("There are no any tansactions!");
-                    } else {
-                      return ListView.builder(
-                        itemCount: snapshot.data?.length ?? 0,
-                        itemBuilder: (context, index) {
-                          ExtendedTransactionModel transModel =
-                              snapshot.data![index];
-                          return accountModel?.type != 3
-                              ? _transactionComponent(
-                                  context, transModel, int.parse(accountId))
-                              : _transactionBudgetComponent(
-                                  context, transModel, int.parse(accountId));
-                        },
-                      );
-                    }
-                  }));
+              body: Column(
+                children: [
+                  FutureBuilder(
+                      future: _databaseService
+                          .getAllExtendedTransactions(int.parse(accountId)),
+                      builder: (context, snapshot) {
+                        if (snapshot.data == null || snapshot.data!.isEmpty) {
+                          return const Text("There are no any tansactions!");
+                        } else {
+                          return Column(
+                            children: [
+                              ListView.builder(
+                                itemCount: snapshot.data?.length ?? 0,
+                                itemBuilder: (context, index) {
+                                  ExtendedTransactionModel transModel =
+                                      snapshot.data![index];
+                                  return accountModel?.type != 3
+                                      ? _transactionComponent(context,
+                                          transModel, int.parse(accountId))
+                                      : _transactionBudgetComponent(context,
+                                          transModel, int.parse(accountId));
+                                },
+                              )
+                            ],
+                          );
+                        }
+                      })
+                ],
+              ));
         });
   }
 

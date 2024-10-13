@@ -67,10 +67,10 @@ class DatabaseService {
         )
       ''');
       db.execute('''
-        CREATE VIEW IF NOT EXISTS $_incomeView as SELECT $_transToAcc as account,sum($_transAmount) as amount from $_transTbl group by $_transToAcc
+        CREATE VIEW IF NOT EXISTS $_incomeView as SELECT $_transToAcc as account,$_transDate as date,sum($_transAmount) as amount from $_transTbl group by $_transToAcc,$_transDate
       ''');
       db.execute('''
-        CREATE VIEW IF NOT EXISTS $_expenseView as SELECT $_transFromAcc as account,sum($_transAmount) as amount from $_transTbl group by $_transFromAcc
+        CREATE VIEW IF NOT EXISTS $_expenseView as SELECT $_transFromAcc as account,$_transDate as date,sum($_transAmount) as amount from $_transTbl group by $_transFromAcc,$_transDate
       ''');
     });
     return database;
@@ -92,6 +92,19 @@ class DatabaseService {
             type: e[_accType] as int,
             title: e[_title] as String,
             description: e[_description] as String))
+        .toList();
+    return models;
+  }
+
+  Future<List<AccounInExp>> getIncomes(int id) async {
+    final db = await database;
+    final data =
+        await db.query(_incomeView, where: "account = ? ", whereArgs: [id]);
+    List<AccounInExp> models = data
+        .map((e) => AccounInExp(
+            id: e['account'] as int,
+            date: e['date'] as String,
+            amount: e['amount'] as double))
         .toList();
     return models;
   }
