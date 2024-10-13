@@ -7,9 +7,6 @@ class AddTransactionScreen extends StatelessWidget {
 
   TextEditingController transTitleController = TextEditingController();
   TextEditingController transAmtController = TextEditingController();
-  // TextEditingController fromAccController = TextEditingController();
-  // TextEditingController toAccController = TextEditingController();
-  // TextEditingController budgetAccController = TextEditingController();
 
   int toAccountData = 0;
   int fromAccountData = 0;

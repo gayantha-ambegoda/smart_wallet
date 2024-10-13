@@ -29,6 +29,9 @@ class DatabaseService {
   final String _budget = "trn_budget";
   final String _transAmount = "trn_amount";
   final String _transStatus = "trn_status";
+  final String _incomeView = "income_view";
+  final String _expenseView = "expense_view";
+  final String _availableView = "available_view";
 
   DatabaseService._constructor();
 
@@ -40,9 +43,9 @@ class DatabaseService {
 
   Future<Database> getDatabase() async {
     final databaseDirPath = await getDatabasesPath();
-    final databasePath = join(databaseDirPath, "master_db2.db");
+    final databasePath = join(databaseDirPath, "master_db3.db");
     final database =
-        await openDatabase(databasePath, version: 2, onCreate: (db, version) {
+        await openDatabase(databasePath, version: 3, onCreate: (db, version) {
       db.execute('''
         CREATE TABLE $_accTbl (
         $_accId INTEGER PRIMARY KEY,
@@ -62,6 +65,12 @@ class DatabaseService {
         $_transAmount REAL,
         $_transStatus INTEGER NOT NULL
         )
+      ''');
+      db.execute('''
+        CREATE VIEW IF NOT EXISTS $_incomeView as SELECT $_transToAcc as account,sum($_transAmount) as amount from $_transTbl group by $_transToAcc
+      ''');
+      db.execute('''
+        CREATE VIEW IF NOT EXISTS $_expenseView as SELECT $_transFromAcc as account,sum($_transAmount) as amount from $_transTbl group by $_transFromAcc
       ''');
     });
     return database;
