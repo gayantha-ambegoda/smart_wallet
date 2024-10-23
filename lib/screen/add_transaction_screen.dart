@@ -5,8 +5,8 @@ import 'package:smartwallet/services/database_service.dart';
 class AddTransactionScreen extends StatelessWidget {
   AddTransactionScreen({super.key});
 
-  TextEditingController transTitleController = TextEditingController();
-  TextEditingController transAmtController = TextEditingController();
+  final TextEditingController transTitleController = TextEditingController();
+  final TextEditingController transAmtController = TextEditingController();
 
   int toAccountData = 0;
   int fromAccountData = 0;
@@ -16,6 +16,9 @@ class AddTransactionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const snackbar =
+        SnackBar(content: Text('Some Required Fields are missing!'));
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add Transaction"),
@@ -131,16 +134,25 @@ class AddTransactionScreen extends StatelessWidget {
                 child: FilledButton(
                     onPressed: () {
                       var date = DateTime.now();
-                      double amount = double.parse(transAmtController.text);
-                      _databaseService.addTransaction(
-                          transTitleController.text,
-                          '${date.year}/${date.month}/${date.day}',
-                          fromAccountData,
-                          toAccountData,
-                          budgetAccountData,
-                          amount);
-                      transTitleController.clear();
-                      transAmtController.clear();
+                      if (transAmtController.text == "" ||
+                          transTitleController.text == "") {
+                        ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                      } else {
+                        double amount = double.parse(transAmtController.text);
+
+                        _databaseService.addTransaction(
+                            transTitleController.text,
+                            '${date.year}/${date.month}/${date.day}',
+                            fromAccountData,
+                            toAccountData,
+                            budgetAccountData,
+                            amount);
+                        transTitleController.clear();
+                        transAmtController.clear();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("Successfully Inserted!")));
+                      }
                     },
                     child: const Text("Save")),
               ),

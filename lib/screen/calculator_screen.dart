@@ -6,10 +6,10 @@ import 'package:go_router/go_router.dart';
 class Calculator extends StatelessWidget {
   Calculator({super.key});
 
-  TextEditingController _totalLoanController = TextEditingController();
-  TextEditingController _interestController = TextEditingController();
-  TextEditingController _monthsController = TextEditingController();
-  TextEditingController _installmentAmount = TextEditingController();
+  final TextEditingController _totalLoanController = TextEditingController();
+  final TextEditingController _interestController = TextEditingController();
+  final TextEditingController _monthsController = TextEditingController();
+  final TextEditingController _installmentAmount = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -65,13 +65,13 @@ class Calculator extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                 child: FilledButton(
-                    onPressed: () => CalculateInstallment(),
+                    onPressed: () => CalculateInstallment(context),
                     child: const Text("Installment")),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                 child: OutlinedButton(
-                    onPressed: () => CalculateTotalLoan(),
+                    onPressed: () => CalculateTotalLoan(context),
                     child: const Text("Total")),
               )
             ],
@@ -81,41 +81,47 @@ class Calculator extends StatelessWidget {
     );
   }
 
-  void CalculateTotalLoan() {
-    var interest = double.parse(_interestController.text);
-    var months = double.parse(_monthsController.text);
-    var installment = double.parse(_installmentAmount.text);
+  void CalculateTotalLoan(BuildContext context) {
+    if (_interestController.text.isEmpty ||
+        _monthsController.text.isEmpty ||
+        _installmentAmount.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Interest / Months / Installment Amount missing!")));
+    } else {
+      var interest = double.parse(_interestController.text);
+      var months = double.parse(_monthsController.text);
+      var installment = double.parse(_installmentAmount.text);
 
-    assert(interest is double);
-    assert(months is double);
-    assert(installment is double);
-
-    double monthlyInterestRate = interest / 12;
-    monthlyInterestRate = monthlyInterestRate / 100;
-    var totalLoan = installment * (pow(1 + monthlyInterestRate, months) - 1);
-    totalLoan = totalLoan /
-        (monthlyInterestRate * pow(1 + monthlyInterestRate, months));
-    _totalLoanController.text = "$totalLoan";
+      double monthlyInterestRate = interest / 12;
+      monthlyInterestRate = monthlyInterestRate / 100;
+      var totalLoan = installment * (pow(1 + monthlyInterestRate, months) - 1);
+      totalLoan = totalLoan /
+          (monthlyInterestRate * pow(1 + monthlyInterestRate, months));
+      _totalLoanController.text = "$totalLoan";
+    }
   }
 
-  void CalculateInstallment() {
-    var interest = double.parse(_interestController.text);
-    var months = double.parse(_monthsController.text);
-    var totalLoan = double.parse(_totalLoanController.text);
+  void CalculateInstallment(BuildContext context) {
+    if (_interestController.text.isEmpty ||
+        _monthsController.text.isEmpty ||
+        _totalLoanController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Interest / Months / Total is missing!")));
+    } else {
+      var interest = double.parse(_interestController.text);
+      var months = double.parse(_monthsController.text);
+      var totalLoan = double.parse(_totalLoanController.text);
 
-    assert(interest is double);
-    assert(months is double);
-    assert(totalLoan is double);
+      double monthlyInterestRate = interest / 12;
+      monthlyInterestRate = monthlyInterestRate / 100;
 
-    double monthlyInterestRate = interest / 12;
-    monthlyInterestRate = monthlyInterestRate / 100;
+      var installmentAmt = totalLoan *
+          monthlyInterestRate *
+          pow((1 + monthlyInterestRate), months);
+      installmentAmt =
+          installmentAmt / (pow(1 + monthlyInterestRate, months) - 1);
 
-    var installmentAmt = totalLoan *
-        monthlyInterestRate *
-        pow((1 + monthlyInterestRate), months);
-    installmentAmt =
-        installmentAmt / (pow(1 + monthlyInterestRate, months) - 1);
-
-    _installmentAmount.text = "$installmentAmt";
+      _installmentAmount.text = "$installmentAmt";
+    }
   }
 }
