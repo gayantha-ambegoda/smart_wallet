@@ -6,8 +6,13 @@ import '../providers/budget_provider.dart';
 
 class AddTransactionPage extends StatefulWidget {
   final int? preselectedBudgetId;
+  final Transaction? transactionToEdit;
 
-  const AddTransactionPage({super.key, this.preselectedBudgetId});
+  const AddTransactionPage({
+    super.key,
+    this.preselectedBudgetId,
+    this.transactionToEdit,
+  });
 
   @override
   State<AddTransactionPage> createState() => _AddTransactionPageState();
@@ -27,6 +32,17 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
     super.initState();
     // Set the preselected budget ID if provided
     _selectedBudgetId = widget.preselectedBudgetId;
+
+    // If editing an existing transaction, pre-fill the form
+    if (widget.transactionToEdit != null) {
+      final transaction = widget.transactionToEdit!;
+      _titleController.text = transaction.title;
+      _amountController.text = transaction.amount.toString();
+      _tagsController.text = transaction.tags.join(', ');
+      _selectedType = transaction.type;
+      _isTemplate = transaction.isTemplate;
+      _selectedBudgetId = transaction.budgetId;
+    }
   }
 
   @override
@@ -39,9 +55,11 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isEditing = widget.transactionToEdit != null;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Transaction'),
+        title: Text(isEditing ? 'Update Transaction' : 'Add Transaction'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Padding(
@@ -148,7 +166,9 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(16),
                 ),
-                child: const Text('Save Transaction'),
+                child: Text(
+                  isEditing ? 'Update Transaction' : 'Save Transaction',
+                ),
               ),
             ],
           ),
@@ -169,17 +189,31 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       final onlyBudget = widget.preselectedBudgetId != null;
 
       final transaction = Transaction(
+        id: widget.transactionToEdit?.id, // Keep the same ID if editing
         title: _titleController.text,
         amount: double.parse(_amountController.text),
-        date: DateTime.now().millisecondsSinceEpoch,
+        date:
+            widget.transactionToEdit?.date ??
+            DateTime.now()
+                .millisecondsSinceEpoch, // Keep original date if editing
         tags: tags,
         type: _selectedType,
         isTemplate: _isTemplate,
-        onlyBudget: onlyBudget,
+        onlyBudget:
+            widget.transactionToEdit?.onlyBudget ??
+            onlyBudget, // Keep original onlyBudget if editing
         budgetId: _selectedBudgetId,
       );
 
-      await context.read<TransactionProvider>().addTransaction(transaction);
+      if (widget.transactionToEdit != null) {
+        // Update existing transaction
+        await context.read<TransactionProvider>().updateTransactionData(
+          transaction,
+        );
+      } else {
+        // Add new transaction
+        await context.read<TransactionProvider>().addTransaction(transaction);
+      }
 
       if (mounted) {
         Navigator.pop(context);

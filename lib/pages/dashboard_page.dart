@@ -5,6 +5,7 @@ import '../providers/budget_provider.dart';
 import '../database/entity/transaction.dart';
 import '../database/entity/currency.dart';
 import '../services/settings_service.dart';
+import '../widgets/transaction_details_dialog.dart';
 import 'add_transaction_page.dart';
 import 'budget_list_page.dart';
 import 'settings_page.dart';
@@ -130,26 +131,28 @@ class _DashboardPageState extends State<DashboardPage> {
       appBar: AppBar(
         title: _showTemplates
             ? const Text('Templates')
-            : FutureBuilder<double>(
-                future: context
-                    .read<TransactionProvider>()
-                    .getAvailableBalance(),
-                builder: (context, snapshot) {
-                  final availableBalance = snapshot.data ?? 0.0;
+            : Consumer<TransactionProvider>(
+                builder: (context, transactionProvider, child) {
+                  return FutureBuilder<double>(
+                    future: transactionProvider.getAvailableBalance(),
+                    builder: (context, snapshot) {
+                      final availableBalance = snapshot.data ?? 0.0;
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('Dashboard'),
-                      Text(
-                        '$_currencySymbol${availableBalance.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('Dashboard'),
+                          Text(
+                            '$_currencySymbol${availableBalance.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   );
                 },
               ),
@@ -256,7 +259,9 @@ class _DashboardPageState extends State<DashboardPage> {
                   final allTransactions = transactionProvider.transactions;
                   var transactions = _showTemplates
                       ? allTransactions.where((t) => t.isTemplate).toList()
-                      : allTransactions.where((t) => !t.isTemplate).toList();
+                      : allTransactions
+                            .where((t) => !t.isTemplate && !t.onlyBudget)
+                            .toList();
 
                   // Apply date range filter if dates are selected
                   if (!_showTemplates &&
@@ -338,6 +343,12 @@ class _DashboardPageState extends State<DashboardPage> {
                             horizontal: 16,
                             vertical: 8,
                           ),
+                          onTap: _showTemplates
+                              ? null
+                              : () => TransactionDetailsDialog.show(
+                                  context,
+                                  transaction,
+                                ),
                           onLongPress: _showTemplates
                               ? () =>
                                     _createTransactionFromTemplate(transaction)
@@ -465,11 +476,15 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AddTransactionPage()),
           );
+          // Refresh transactions after returning from add page
+          if (mounted) {
+            context.read<TransactionProvider>().loadTransactions();
+          }
         },
         child: const Icon(Icons.add),
       ),

@@ -5,6 +5,7 @@ import '../database/entity/transaction.dart';
 import '../database/entity/currency.dart';
 import '../providers/transaction_provider.dart';
 import '../services/settings_service.dart';
+import '../widgets/transaction_details_dialog.dart';
 import 'add_transaction_page.dart';
 
 class BudgetDetailPage extends StatefulWidget {
@@ -38,10 +39,12 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
   }
 
   Future<void> _loadTransactions() async {
+    if (!mounted) return;
     setState(() => _isLoading = true);
     final transactions = await context
         .read<TransactionProvider>()
         .getTransactionsByBudgetId(widget.budget.id!);
+    if (!mounted) return;
     setState(() {
       _transactions = transactions;
       _isLoading = false;
@@ -172,6 +175,11 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                             vertical: 4,
                           ),
                           child: ListTile(
+                            onTap: () => TransactionDetailsDialog.show(
+                              context,
+                              transaction,
+                              onTransactionChanged: _loadTransactions,
+                            ),
                             leading: CircleAvatar(
                               backgroundColor: isIncome
                                   ? Colors.green.shade100

@@ -48,6 +48,7 @@ class CurrencyList {
     Currency(code: 'TRY', name: 'Turkish Lira', symbol: '₺'),
     Currency(code: 'AED', name: 'UAE Dirham', symbol: 'د.إ'),
     Currency(code: 'SAR', name: 'Saudi Riyal', symbol: '﷼'),
+    Currency(code: 'LKR', name: 'Sri Lankan Rupee', symbol: 'Rs'),
     Currency(code: 'THB', name: 'Thai Baht', symbol: '฿'),
     Currency(code: 'MYR', name: 'Malaysian Ringgit', symbol: 'RM'),
     Currency(code: 'IDR', name: 'Indonesian Rupiah', symbol: 'Rp'),
