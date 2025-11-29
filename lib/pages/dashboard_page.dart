@@ -193,17 +193,18 @@ class _DashboardPageState extends State<DashboardPage> {
               child: Consumer<TransactionProvider>(
                 builder: (context, transactionProvider, child) {
                   return FutureBuilder<Map<String, double>>(
-                    future: Future.wait([
-                      transactionProvider.getAvailableBalance(),
-                      transactionProvider.getTotalIncome(),
-                      transactionProvider.getTotalExpense(),
-                    ]).then(
-                      (values) => {
-                        'balance': values[0],
-                        'income': values[1],
-                        'expense': values[2],
-                      },
-                    ),
+                    future:
+                        Future.wait([
+                          transactionProvider.getAvailableBalance(),
+                          transactionProvider.getTotalIncome(),
+                          transactionProvider.getTotalExpense(),
+                        ]).then(
+                          (values) => {
+                            'balance': values[0],
+                            'income': values[1],
+                            'expense': values[2],
+                          },
+                        ),
                     builder: (context, snapshot) {
                       final balance = snapshot.data?['balance'] ?? 0.0;
                       final income = snapshot.data?['income'] ?? 0.0;
