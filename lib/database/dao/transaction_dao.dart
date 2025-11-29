@@ -22,6 +22,26 @@ abstract class TransactionDao {
   )
   Future<double?> getTotalExpense();
 
+  @Query(
+    'SELECT COUNT(*) FROM `Transaction` WHERE isTemplate = 0 AND onlyBudget = 0',
+  )
+  Future<int?> getActualTransactionCount();
+
+  @Query(
+    'SELECT * FROM `Transaction` WHERE isTemplate = 0 AND onlyBudget = 0 ORDER BY date DESC',
+  )
+  Future<List<Transaction>> getActualTransactions();
+
+  @Query(
+    'SELECT SUM(amount) FROM `Transaction` WHERE isTemplate = 0 AND onlyBudget = 0 AND type = \'income\' AND date >= :fromDate AND date <= :toDate',
+  )
+  Future<double?> getTotalIncomeInRange(int fromDate, int toDate);
+
+  @Query(
+    'SELECT SUM(amount) FROM `Transaction` WHERE isTemplate = 0 AND onlyBudget = 0 AND type = \'expense\' AND date >= :fromDate AND date <= :toDate',
+  )
+  Future<double?> getTotalExpenseInRange(int fromDate, int toDate);
+
   @insert
   Future<void> insertTransaction(Transaction transaction);
 

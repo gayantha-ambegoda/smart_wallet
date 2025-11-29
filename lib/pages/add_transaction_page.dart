@@ -59,8 +59,13 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Update Transaction' : 'Add Transaction'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        elevation: 0,
+        title: Text(
+          isEditing ? 'Update Transaction' : 'Add Transaction',
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.grey[800],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

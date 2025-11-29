@@ -78,8 +78,13 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.budget.title),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        elevation: 0,
+        title: Text(
+          widget.budget.title,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.grey[800],
       ),
       body: Column(
         children: [

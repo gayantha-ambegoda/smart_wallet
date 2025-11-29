@@ -25,6 +25,40 @@ class TransactionProvider extends ChangeNotifier {
     return income - expense;
   }
 
+  Future<double> getTotalIncome() async {
+    return await database.transactionDao.getTotalIncome() ?? 0.0;
+  }
+
+  Future<double> getTotalExpense() async {
+    return await database.transactionDao.getTotalExpense() ?? 0.0;
+  }
+
+  Future<double> getTotalIncomeInRange(
+    DateTime fromDate,
+    DateTime toDate,
+  ) async {
+    final fromMillis = fromDate.millisecondsSinceEpoch;
+    final toMillis = toDate.millisecondsSinceEpoch;
+    return await database.transactionDao.getTotalIncomeInRange(
+          fromMillis,
+          toMillis,
+        ) ??
+        0.0;
+  }
+
+  Future<double> getTotalExpenseInRange(
+    DateTime fromDate,
+    DateTime toDate,
+  ) async {
+    final fromMillis = fromDate.millisecondsSinceEpoch;
+    final toMillis = toDate.millisecondsSinceEpoch;
+    return await database.transactionDao.getTotalExpenseInRange(
+          fromMillis,
+          toMillis,
+        ) ??
+        0.0;
+  }
+
   Future<void> addTransaction(Transaction transaction) async {
     await database.transactionDao.insertTransaction(transaction);
     await loadTransactions();

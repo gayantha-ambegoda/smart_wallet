@@ -245,6 +245,51 @@ class _$TransactionDao extends TransactionDao {
   }
 
   @override
+  Future<int?> getActualTransactionCount() async {
+    return _queryAdapter.query(
+        'SELECT COUNT(*) FROM `Transaction` WHERE isTemplate = 0 AND onlyBudget = 0',
+        mapper: (Map<String, Object?> row) => row.values.first as int);
+  }
+
+  @override
+  Future<List<Transaction>> getActualTransactions() async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM `Transaction` WHERE isTemplate = 0 AND onlyBudget = 0 ORDER BY date DESC',
+        mapper: (Map<String, Object?> row) => Transaction(
+            id: row['id'] as int?,
+            title: row['title'] as String,
+            amount: row['amount'] as double,
+            date: row['date'] as int,
+            tags: _tagsConverter.decode(row['tags'] as String),
+            type: _transactionTypeConverter.decode(row['type'] as String),
+            isTemplate: (row['isTemplate'] as int) != 0,
+            onlyBudget: (row['onlyBudget'] as int) != 0,
+            budgetId: row['budgetId'] as int?));
+  }
+
+  @override
+  Future<double?> getTotalIncomeInRange(
+    int fromDate,
+    int toDate,
+  ) async {
+    return _queryAdapter.query(
+        'SELECT SUM(amount) FROM `Transaction` WHERE isTemplate = 0 AND onlyBudget = 0 AND type = \'income\' AND date >= ?1 AND date <= ?2',
+        mapper: (Map<String, Object?> row) => row.values.first as double,
+        arguments: [fromDate, toDate]);
+  }
+
+  @override
+  Future<double?> getTotalExpenseInRange(
+    int fromDate,
+    int toDate,
+  ) async {
+    return _queryAdapter.query(
+        'SELECT SUM(amount) FROM `Transaction` WHERE isTemplate = 0 AND onlyBudget = 0 AND type = \'expense\' AND date >= ?1 AND date <= ?2',
+        mapper: (Map<String, Object?> row) => row.values.first as double,
+        arguments: [fromDate, toDate]);
+  }
+
+  @override
   Future<void> insertTransaction(Transaction transaction) async {
     await _transactionInsertionAdapter.insert(
         transaction, OnConflictStrategy.abort);

@@ -6,6 +6,9 @@ import '../database/entity/transaction.dart';
 import '../database/entity/currency.dart';
 import '../services/settings_service.dart';
 import '../widgets/transaction_details_dialog.dart';
+import '../widgets/stat_card.dart';
+import '../widgets/modern_transaction_card.dart';
+import '../widgets/date_filter_card.dart';
 import 'add_transaction_page.dart';
 import 'budget_list_page.dart';
 import 'settings_page.dart';
@@ -128,55 +131,44 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
+        elevation: 0,
         title: _showTemplates
-            ? const Text('Templates')
-            : Consumer<TransactionProvider>(
-                builder: (context, transactionProvider, child) {
-                  return FutureBuilder<double>(
-                    future: transactionProvider.getAvailableBalance(),
-                    builder: (context, snapshot) {
-                      final availableBalance = snapshot.data ?? 0.0;
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('Dashboard'),
-                          Text(
-                            '$_currencySymbol${availableBalance.toStringAsFixed(2)}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
+            ? const Text(
+                'Templates',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              )
+            : const Text(
+                'Dashboard',
+                style: TextStyle(fontWeight: FontWeight.w600),
               ),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.grey[800],
         actions: [
           IconButton(
-            icon: const Icon(Icons.account_balance_wallet),
+            icon: const Icon(Icons.account_balance_wallet_outlined),
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const BudgetListPage()),
               );
             },
+            tooltip: 'Budgets',
           ),
           IconButton(
-            icon: Icon(_showTemplates ? Icons.list : Icons.description),
+            icon: Icon(
+              _showTemplates ? Icons.list : Icons.description_outlined,
+            ),
             onPressed: () {
               setState(() {
                 _showTemplates = !_showTemplates;
               });
             },
+            tooltip: _showTemplates ? 'Show Transactions' : 'Show Templates',
           ),
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.settings_outlined),
             onPressed: () async {
               await Navigator.push(
                 context,
@@ -185,297 +177,285 @@ class _DashboardPageState extends State<DashboardPage> {
               // Reload currency when returning from settings
               _loadCurrency();
             },
+            tooltip: 'Settings',
           ),
+          const SizedBox(width: 4),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Date Range Filter (only show when not in template mode)
-            if (!_showTemplates)
-              Card(
-                elevation: 2,
-                margin: const EdgeInsets.only(bottom: 16),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.date_range, size: 20),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Filter by Date Range',
-                            style: Theme.of(context).textTheme.titleSmall,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton.icon(
-                              onPressed: _pickFromDate,
-                              icon: const Icon(Icons.calendar_today, size: 16),
-                              label: Text(
-                                _fromDate == null
-                                    ? 'From Date'
-                                    : '${_fromDate!.month}/${_fromDate!.day}/${_fromDate!.year}',
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: OutlinedButton.icon(
-                              onPressed: _pickToDate,
-                              icon: const Icon(Icons.calendar_today, size: 16),
-                              label: Text(
-                                _toDate == null
-                                    ? 'To Date'
-                                    : '${_toDate!.month}/${_toDate!.day}/${_toDate!.year}',
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                            ),
-                          ),
-                          if (_fromDate != null || _toDate != null)
-                            IconButton(
-                              onPressed: _clearDateFilter,
-                              icon: const Icon(Icons.clear),
-                              tooltip: 'Clear Filter',
-                            ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            Expanded(
+      body: Column(
+        children: [
+          // Statistics Section (only show when not in template mode)
+          if (!_showTemplates)
+            Container(
+              width: double.infinity,
+              color: Colors.white,
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
               child: Consumer<TransactionProvider>(
                 builder: (context, transactionProvider, child) {
-                  final allTransactions = transactionProvider.transactions;
-                  var transactions = _showTemplates
-                      ? allTransactions.where((t) => t.isTemplate).toList()
-                      : allTransactions
-                            .where((t) => !t.isTemplate && !t.onlyBudget)
-                            .toList();
+                  return FutureBuilder<Map<String, double>>(
+                    future: Future.wait([
+                      transactionProvider.getAvailableBalance(),
+                      transactionProvider.getTotalIncome(),
+                      transactionProvider.getTotalExpense(),
+                    ]).then(
+                      (values) => {
+                        'balance': values[0],
+                        'income': values[1],
+                        'expense': values[2],
+                      },
+                    ),
+                    builder: (context, snapshot) {
+                      final balance = snapshot.data?['balance'] ?? 0.0;
+                      final income = snapshot.data?['income'] ?? 0.0;
+                      final expense = snapshot.data?['expense'] ?? 0.0;
 
-                  // Apply date range filter if dates are selected
-                  if (!_showTemplates &&
-                      (_fromDate != null || _toDate != null)) {
-                    transactions = transactions.where((t) {
-                      final transactionDate =
-                          DateTime.fromMillisecondsSinceEpoch(t.date);
-
-                      // Check from date
-                      if (_fromDate != null) {
-                        final fromStart = DateTime(
-                          _fromDate!.year,
-                          _fromDate!.month,
-                          _fromDate!.day,
-                        );
-                        if (transactionDate.isBefore(fromStart)) {
-                          return false;
-                        }
-                      }
-
-                      // Check to date
-                      if (_toDate != null) {
-                        final toEnd = DateTime(
-                          _toDate!.year,
-                          _toDate!.month,
-                          _toDate!.day,
-                          23,
-                          59,
-                          59,
-                        );
-                        if (transactionDate.isAfter(toEnd)) {
-                          return false;
-                        }
-                      }
-
-                      return true;
-                    }).toList();
-                  }
-
-                  // Sort transactions by date in descending order (latest first)
-                  transactions.sort((a, b) => b.date.compareTo(a.date));
-
-                  if (transactions.isEmpty) {
-                    return Center(
-                      child: Text(
-                        _showTemplates
-                            ? 'No templates yet'
-                            : 'No transactions yet',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    );
-                  }
-
-                  return ListView.builder(
-                    itemCount: transactions.length,
-                    itemBuilder: (context, index) {
-                      final transaction = transactions[index];
-                      final isIncome =
-                          transaction.type == TransactionType.income;
-                      final date = DateTime.fromMillisecondsSinceEpoch(
-                        transaction.date,
-                      );
-                      final dateStr = '${date.month}/${date.day}/${date.year}';
-
-                      // Get budget name if budgetId exists
-                      final budgetProvider = context.read<BudgetProvider>();
-                      final budget = transaction.budgetId != null
-                          ? budgetProvider.budgets.firstWhere(
-                              (b) => b.id == transaction.budgetId,
-                              orElse: () => budgetProvider.budgets.first,
-                            )
-                          : null;
-
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 8),
-                        elevation: 2,
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          onTap: _showTemplates
-                              ? null
-                              : () => TransactionDetailsDialog.show(
-                                  context,
-                                  transaction,
-                                ),
-                          onLongPress: _showTemplates
-                              ? () =>
-                                    _createTransactionFromTemplate(transaction)
-                              : null,
-                          leading: CircleAvatar(
-                            backgroundColor: isIncome
-                                ? Colors.green.shade100
-                                : Colors.red.shade100,
-                            child: Icon(
-                              isIncome
-                                  ? Icons.arrow_upward
-                                  : Icons.arrow_downward,
-                              color: isIncome ? Colors.green : Colors.red,
-                            ),
-                          ),
-                          title: Text(
-                            transaction.title,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.calendar_today,
-                                    size: 12,
-                                    color: Colors.grey[600],
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    dateStr,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                  if (budget != null) ...[
-                                    const SizedBox(width: 12),
-                                    Icon(
-                                      Icons.account_balance_wallet,
-                                      size: 12,
-                                      color: Colors.grey[600],
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Flexible(
-                                      child: Text(
-                                        budget.title,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey[600],
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
+                      return Column(
+                        children: [
+                          // Available Balance - Large display
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Theme.of(context).primaryColor,
+                                  Theme.of(
+                                    context,
+                                  ).primaryColor.withOpacity(0.8),
                                 ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ),
-                              if (transaction.tags.isNotEmpty) ...[
-                                const SizedBox(height: 6),
-                                Wrap(
-                                  spacing: 4,
-                                  runSpacing: 4,
-                                  children: transaction.tags.map((tag) {
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 2,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.blue.shade50,
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(
-                                          color: Colors.blue.shade200,
-                                          width: 1,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        tag,
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.blue.shade700,
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Theme.of(
+                                    context,
+                                  ).primaryColor.withOpacity(0.3),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
                                 ),
                               ],
-                            ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Available Balance',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  '$_currencySymbol${balance.toStringAsFixed(2)}',
+                                  style: const TextStyle(
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          trailing: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                          const SizedBox(height: 16),
+                          // Income and Expense cards
+                          Row(
                             children: [
-                              Text(
-                                '${isIncome ? '+' : '-'}$_currencySymbol${transaction.amount.toStringAsFixed(2)}',
-                                style: TextStyle(
-                                  color: isIncome ? Colors.green : Colors.red,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                              Expanded(
+                                child: StatCard(
+                                  icon: Icons.arrow_downward,
+                                  label: 'Total Income',
+                                  value:
+                                      '$_currencySymbol${income.toStringAsFixed(2)}',
+                                  color: Colors.green.shade700,
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                isIncome ? 'Income' : 'Expense',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.grey[600],
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: StatCard(
+                                  icon: Icons.arrow_upward,
+                                  label: 'Total Expense',
+                                  value:
+                                      '$_currencySymbol${expense.toStringAsFixed(2)}',
+                                  color: Colors.red.shade700,
                                 ),
                               ),
                             ],
                           ),
-                        ),
+                        ],
                       );
                     },
                   );
                 },
               ),
             ),
-          ],
-        ),
+          // Transactions List
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Date Range Filter (only show when not in template mode)
+                  if (!_showTemplates)
+                    DateFilterCard(
+                      fromDate: _fromDate,
+                      toDate: _toDate,
+                      onPickFromDate: _pickFromDate,
+                      onPickToDate: _pickToDate,
+                      onClearFilter: _clearDateFilter,
+                    ),
+                  // Section Title
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Text(
+                      _showTemplates ? 'Templates' : 'Recent Transactions',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                  ),
+                  // Transaction List
+                  Expanded(
+                    child: Consumer<TransactionProvider>(
+                      builder: (context, transactionProvider, child) {
+                        final allTransactions =
+                            transactionProvider.transactions;
+                        var transactions = _showTemplates
+                            ? allTransactions
+                                  .where((t) => t.isTemplate)
+                                  .toList()
+                            : allTransactions
+                                  .where((t) => !t.isTemplate && !t.onlyBudget)
+                                  .toList();
+
+                        // Apply date range filter if dates are selected
+                        if (!_showTemplates &&
+                            (_fromDate != null || _toDate != null)) {
+                          transactions = transactions.where((t) {
+                            final transactionDate =
+                                DateTime.fromMillisecondsSinceEpoch(t.date);
+
+                            // Check from date
+                            if (_fromDate != null) {
+                              final fromStart = DateTime(
+                                _fromDate!.year,
+                                _fromDate!.month,
+                                _fromDate!.day,
+                              );
+                              if (transactionDate.isBefore(fromStart)) {
+                                return false;
+                              }
+                            }
+
+                            // Check to date
+                            if (_toDate != null) {
+                              final toEnd = DateTime(
+                                _toDate!.year,
+                                _toDate!.month,
+                                _toDate!.day,
+                                23,
+                                59,
+                                59,
+                              );
+                              if (transactionDate.isAfter(toEnd)) {
+                                return false;
+                              }
+                            }
+
+                            return true;
+                          }).toList();
+                        }
+
+                        // Sort transactions by date in descending order (latest first)
+                        transactions.sort((a, b) => b.date.compareTo(a.date));
+
+                        if (transactions.isEmpty) {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  _showTemplates
+                                      ? Icons.description_outlined
+                                      : Icons.receipt_long_outlined,
+                                  size: 64,
+                                  color: Colors.grey[300],
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  _showTemplates
+                                      ? 'No templates yet'
+                                      : 'No transactions yet',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  _showTemplates
+                                      ? 'Create a template to get started'
+                                      : 'Add a transaction to get started',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[500],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+
+                        return ListView.builder(
+                          itemCount: transactions.length,
+                          itemBuilder: (context, index) {
+                            final transaction = transactions[index];
+
+                            // Get budget name if budgetId exists
+                            final budgetProvider = context
+                                .read<BudgetProvider>();
+                            final budget = transaction.budgetId != null
+                                ? budgetProvider.budgets.firstWhere(
+                                    (b) => b.id == transaction.budgetId,
+                                    orElse: () => budgetProvider.budgets.first,
+                                  )
+                                : null;
+
+                            return ModernTransactionCard(
+                              transaction: transaction,
+                              currencySymbol: _currencySymbol,
+                              budgetName: budget?.title,
+                              onTap: _showTemplates
+                                  ? null
+                                  : () => TransactionDetailsDialog.show(
+                                      context,
+                                      transaction,
+                                    ),
+                              onLongPress: _showTemplates
+                                  ? () => _createTransactionFromTemplate(
+                                      transaction,
+                                    )
+                                  : null,
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           await Navigator.push(
             context,
@@ -486,7 +466,8 @@ class _DashboardPageState extends State<DashboardPage> {
             context.read<TransactionProvider>().loadTransactions();
           }
         },
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add),
+        label: const Text('Add Transaction'),
       ),
     );
   }
