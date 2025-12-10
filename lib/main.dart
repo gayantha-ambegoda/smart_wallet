@@ -40,20 +40,40 @@ void main() async {
               `isPrimary` INTEGER NOT NULL
             )
           ''');
-          
+
           // Add account-related columns to Transaction table
-          await database.execute(
-            'ALTER TABLE `Transaction` ADD COLUMN `accountId` INTEGER',
-          );
-          await database.execute(
-            'ALTER TABLE `Transaction` ADD COLUMN `toAccountId` INTEGER',
-          );
-          await database.execute(
-            'ALTER TABLE `Transaction` ADD COLUMN `exchangeRate` REAL',
-          );
-          await database.execute(
-            'ALTER TABLE `Transaction` ADD COLUMN `onlyBudget` INTEGER DEFAULT 0',
-          );
+          // Use try-catch to handle cases where columns already exist
+          try {
+            await database.execute(
+              'ALTER TABLE `Transaction` ADD COLUMN `accountId` INTEGER',
+            );
+          } catch (e) {
+            print('Column accountId might already exist: $e');
+          }
+
+          try {
+            await database.execute(
+              'ALTER TABLE `Transaction` ADD COLUMN `toAccountId` INTEGER',
+            );
+          } catch (e) {
+            print('Column toAccountId might already exist: $e');
+          }
+
+          try {
+            await database.execute(
+              'ALTER TABLE `Transaction` ADD COLUMN `exchangeRate` REAL',
+            );
+          } catch (e) {
+            print('Column exchangeRate might already exist: $e');
+          }
+
+          try {
+            await database.execute(
+              'ALTER TABLE `Transaction` ADD COLUMN `onlyBudget` INTEGER DEFAULT 0',
+            );
+          } catch (e) {
+            print('Column onlyBudget might already exist: $e');
+          }
         }),
       ]).build();
 

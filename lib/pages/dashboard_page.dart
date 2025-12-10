@@ -43,7 +43,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Future<void> _loadCurrency() async {
     final accountProvider = context.read<AccountProvider>();
     final selectedAccount = accountProvider.selectedAccount;
-    
+
     if (selectedAccount != null) {
       final currency = CurrencyList.getByCode(selectedAccount.currencyCode);
       setState(() {
@@ -59,7 +59,10 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
-  void _showAccountSelector(BuildContext context, AccountProvider accountProvider) {
+  void _showAccountSelector(
+    BuildContext context,
+    AccountProvider accountProvider,
+  ) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -71,22 +74,23 @@ class _DashboardPageState extends State<DashboardPage> {
             children: [
               const Text(
                 'Select Account',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 16),
               ...accountProvider.accounts.map((account) {
                 final currency = CurrencyList.getByCode(account.currencyCode);
-                final isSelected = accountProvider.selectedAccount?.id == account.id;
-                
+                final isSelected =
+                    accountProvider.selectedAccount?.id == account.id;
+
                 return ListTile(
                   leading: CircleAvatar(
                     backgroundColor: account.isPrimary
                         ? Theme.of(context).primaryColor
                         : Colors.grey[400],
-                    child: const Icon(Icons.account_balance, color: Colors.white),
+                    child: const Icon(
+                      Icons.account_balance,
+                      color: Colors.white,
+                    ),
                   ),
                   title: Row(
                     children: [
@@ -126,7 +130,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     });
                   },
                 );
-              }).toList(),
+              }),
             ],
           ),
         );
@@ -283,10 +287,13 @@ class _DashboardPageState extends State<DashboardPage> {
             onPressed: () async {
               await Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AccountListPage()),
+                MaterialPageRoute(
+                  builder: (context) => const AccountListPage(),
+                ),
               );
               // Reload accounts when returning
               if (mounted) {
+                // ignore: use_build_context_synchronously
                 context.read<AccountProvider>().loadAccounts();
               }
             },
@@ -373,6 +380,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             ),
                           );
                           if (mounted) {
+                            // ignore: use_build_context_synchronously
                             context.read<AccountProvider>().loadAccounts();
                           }
                         },
@@ -394,20 +402,34 @@ class _DashboardPageState extends State<DashboardPage> {
               child: Consumer2<TransactionProvider, AccountProvider>(
                 builder: (context, transactionProvider, accountProvider, child) {
                   final selectedAccount = accountProvider.selectedAccount;
-                  
+
                   return FutureBuilder<Map<String, double>>(
                     future: selectedAccount != null
-                        ? accountProvider.getAccountBalance(selectedAccount.id!).then((balance) async {
-                            final income = await transactionProvider.database.transactionDao
-                                .getTotalIncomeByAccount(selectedAccount.id!) ?? 0.0;
-                            final expense = await transactionProvider.database.transactionDao
-                                .getTotalExpenseByAccount(selectedAccount.id!) ?? 0.0;
-                            return {
-                              'balance': balance,
-                              'income': income,
-                              'expense': expense,
-                            };
-                          })
+                        ? accountProvider
+                              .getAccountBalance(selectedAccount.id!)
+                              .then((balance) async {
+                                final income =
+                                    await transactionProvider
+                                        .database
+                                        .transactionDao
+                                        .getTotalIncomeByAccount(
+                                          selectedAccount.id!,
+                                        ) ??
+                                    0.0;
+                                final expense =
+                                    await transactionProvider
+                                        .database
+                                        .transactionDao
+                                        .getTotalExpenseByAccount(
+                                          selectedAccount.id!,
+                                        ) ??
+                                    0.0;
+                                return {
+                                  'balance': balance,
+                                  'income': income,
+                                  'expense': expense,
+                                };
+                              })
                         : Future.wait([
                             transactionProvider.getAvailableBalance(),
                             transactionProvider.getTotalIncome(),
@@ -434,9 +456,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               gradient: LinearGradient(
                                 colors: [
                                   Theme.of(context).primaryColor,
-                                  Theme.of(
-                                    context,
-                                  ).primaryColor.withOpacity(0.8),
+                                  Theme.of(context).primaryColor.withAlpha(25),
                                 ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
@@ -446,7 +466,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 BoxShadow(
                                   color: Theme.of(
                                     context,
-                                  ).primaryColor.withOpacity(0.3),
+                                  ).primaryColor.withAlpha(25),
                                   blurRadius: 12,
                                   offset: const Offset(0, 4),
                                 ),
@@ -459,7 +479,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                   'Available Balance',
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: Colors.white.withOpacity(0.9),
+                                    color: Colors.white.withAlpha(25),
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -538,139 +558,153 @@ class _DashboardPageState extends State<DashboardPage> {
                   // Transaction List
                   Expanded(
                     child: Consumer2<TransactionProvider, AccountProvider>(
-                      builder: (context, transactionProvider, accountProvider, child) {
-                        final allTransactions =
-                            transactionProvider.transactions;
-                        final selectedAccount = accountProvider.selectedAccount;
-                        
-                        var transactions = _showTemplates
-                            ? allTransactions
-                                  .where((t) => t.isTemplate)
-                                  .toList()
-                            : allTransactions
-                                  .where((t) => !t.isTemplate && !t.onlyBudget)
-                                  .toList();
+                      builder:
+                          (
+                            context,
+                            transactionProvider,
+                            accountProvider,
+                            child,
+                          ) {
+                            final allTransactions =
+                                transactionProvider.transactions;
+                            final selectedAccount =
+                                accountProvider.selectedAccount;
 
-                        // Filter by selected account if one is selected
-                        if (!_showTemplates && selectedAccount != null) {
-                          transactions = transactions
-                              .where((t) => t.accountId == selectedAccount.id)
-                              .toList();
-                        }
+                            var transactions = _showTemplates
+                                ? allTransactions
+                                      .where((t) => t.isTemplate)
+                                      .toList()
+                                : allTransactions
+                                      .where(
+                                        (t) => !t.isTemplate && !t.onlyBudget,
+                                      )
+                                      .toList();
 
-                        // Apply date range filter if dates are selected
-                        if (!_showTemplates &&
-                            (_fromDate != null || _toDate != null)) {
-                          transactions = transactions.where((t) {
-                            final transactionDate =
-                                DateTime.fromMillisecondsSinceEpoch(t.date);
-
-                            // Check from date
-                            if (_fromDate != null) {
-                              final fromStart = DateTime(
-                                _fromDate!.year,
-                                _fromDate!.month,
-                                _fromDate!.day,
-                              );
-                              if (transactionDate.isBefore(fromStart)) {
-                                return false;
-                              }
-                            }
-
-                            // Check to date
-                            if (_toDate != null) {
-                              final toEnd = DateTime(
-                                _toDate!.year,
-                                _toDate!.month,
-                                _toDate!.day,
-                                23,
-                                59,
-                                59,
-                              );
-                              if (transactionDate.isAfter(toEnd)) {
-                                return false;
-                              }
-                            }
-
-                            return true;
-                          }).toList();
-                        }
-
-                        // Sort transactions by date in descending order (latest first)
-                        transactions.sort((a, b) => b.date.compareTo(a.date));
-
-                        if (transactions.isEmpty) {
-                          return Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  _showTemplates
-                                      ? Icons.description_outlined
-                                      : Icons.receipt_long_outlined,
-                                  size: 64,
-                                  color: Colors.grey[300],
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  _showTemplates
-                                      ? 'No templates yet'
-                                      : 'No transactions yet',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey[600],
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  _showTemplates
-                                      ? 'Create a template to get started'
-                                      : 'Add a transaction to get started',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[500],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-
-                        return ListView.builder(
-                          itemCount: transactions.length,
-                          itemBuilder: (context, index) {
-                            final transaction = transactions[index];
-
-                            // Get budget name if budgetId exists
-                            final budgetProvider = context
-                                .read<BudgetProvider>();
-                            final budget = transaction.budgetId != null
-                                ? budgetProvider.budgets.firstWhere(
-                                    (b) => b.id == transaction.budgetId,
-                                    orElse: () => budgetProvider.budgets.first,
+                            // Filter by selected account if one is selected
+                            if (!_showTemplates && selectedAccount != null) {
+                              transactions = transactions
+                                  .where(
+                                    (t) => t.accountId == selectedAccount.id,
                                   )
-                                : null;
+                                  .toList();
+                            }
 
-                            return ModernTransactionCard(
-                              transaction: transaction,
-                              currencySymbol: _currencySymbol,
-                              budgetName: budget?.title,
-                              onTap: _showTemplates
-                                  ? null
-                                  : () => TransactionDetailsDialog.show(
-                                      context,
-                                      transaction,
+                            // Apply date range filter if dates are selected
+                            if (!_showTemplates &&
+                                (_fromDate != null || _toDate != null)) {
+                              transactions = transactions.where((t) {
+                                final transactionDate =
+                                    DateTime.fromMillisecondsSinceEpoch(t.date);
+
+                                // Check from date
+                                if (_fromDate != null) {
+                                  final fromStart = DateTime(
+                                    _fromDate!.year,
+                                    _fromDate!.month,
+                                    _fromDate!.day,
+                                  );
+                                  if (transactionDate.isBefore(fromStart)) {
+                                    return false;
+                                  }
+                                }
+
+                                // Check to date
+                                if (_toDate != null) {
+                                  final toEnd = DateTime(
+                                    _toDate!.year,
+                                    _toDate!.month,
+                                    _toDate!.day,
+                                    23,
+                                    59,
+                                    59,
+                                  );
+                                  if (transactionDate.isAfter(toEnd)) {
+                                    return false;
+                                  }
+                                }
+
+                                return true;
+                              }).toList();
+                            }
+
+                            // Sort transactions by date in descending order (latest first)
+                            transactions.sort(
+                              (a, b) => b.date.compareTo(a.date),
+                            );
+
+                            if (transactions.isEmpty) {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      _showTemplates
+                                          ? Icons.description_outlined
+                                          : Icons.receipt_long_outlined,
+                                      size: 64,
+                                      color: Colors.grey[300],
                                     ),
-                              onLongPress: _showTemplates
-                                  ? () => _createTransactionFromTemplate(
-                                      transaction,
-                                    )
-                                  : null,
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      _showTemplates
+                                          ? 'No templates yet'
+                                          : 'No transactions yet',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      _showTemplates
+                                          ? 'Create a template to get started'
+                                          : 'Add a transaction to get started',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey[500],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+
+                            return ListView.builder(
+                              itemCount: transactions.length,
+                              itemBuilder: (context, index) {
+                                final transaction = transactions[index];
+
+                                // Get budget name if budgetId exists
+                                final budgetProvider = context
+                                    .read<BudgetProvider>();
+                                final budget = transaction.budgetId != null
+                                    ? budgetProvider.budgets.firstWhere(
+                                        (b) => b.id == transaction.budgetId,
+                                        orElse: () =>
+                                            budgetProvider.budgets.first,
+                                      )
+                                    : null;
+
+                                return ModernTransactionCard(
+                                  transaction: transaction,
+                                  currencySymbol: _currencySymbol,
+                                  budgetName: budget?.title,
+                                  onTap: _showTemplates
+                                      ? null
+                                      : () => TransactionDetailsDialog.show(
+                                          context,
+                                          transaction,
+                                        ),
+                                  onLongPress: _showTemplates
+                                      ? () => _createTransactionFromTemplate(
+                                          transaction,
+                                        )
+                                      : null,
+                                );
+                              },
                             );
                           },
-                        );
-                      },
                     ),
                   ),
                 ],
@@ -687,6 +721,7 @@ class _DashboardPageState extends State<DashboardPage> {
           );
           // Refresh transactions after returning from add page
           if (mounted) {
+            // ignore: use_build_context_synchronously
             context.read<TransactionProvider>().loadTransactions();
           }
         },

@@ -82,7 +82,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                         const SizedBox(height: 16),
                         DropdownButtonFormField<String>(
-                          value: _selectedCurrencyCode,
+                          initialValue: _selectedCurrencyCode,
                           decoration: const InputDecoration(
                             labelText: 'Select Currency',
                             border: OutlineInputBorder(),

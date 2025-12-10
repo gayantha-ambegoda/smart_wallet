@@ -137,13 +137,15 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 builder: (context, accountProvider, child) {
                   final accounts = accountProvider.accounts;
                   return DropdownButtonFormField<int>(
-                    value: _selectedAccountId,
+                    initialValue: _selectedAccountId,
                     decoration: const InputDecoration(
                       labelText: 'From Account',
                       border: OutlineInputBorder(),
                     ),
                     items: accounts.map((account) {
-                      final currency = CurrencyList.getByCode(account.currencyCode);
+                      final currency = CurrencyList.getByCode(
+                        account.currencyCode,
+                      );
                       return DropdownMenuItem(
                         value: account.id,
                         child: Text('${account.name} (${currency.code})'),
@@ -170,7 +172,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                   builder: (context, accountProvider, child) {
                     final accounts = accountProvider.accounts;
                     return DropdownButtonFormField<int>(
-                      value: _toAccountId,
+                      initialValue: _toAccountId,
                       decoration: const InputDecoration(
                         labelText: 'To Account',
                         border: OutlineInputBorder(),
@@ -178,20 +180,28 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                       items: accounts
                           .where((account) => account.id != _selectedAccountId)
                           .map((account) {
-                        final currency = CurrencyList.getByCode(account.currencyCode);
-                        return DropdownMenuItem(
-                          value: account.id,
-                          child: Text('${account.name} (${currency.code})'),
-                        );
-                      }).toList(),
+                            final currency = CurrencyList.getByCode(
+                              account.currencyCode,
+                            );
+                            return DropdownMenuItem(
+                              value: account.id,
+                              child: Text('${account.name} (${currency.code})'),
+                            );
+                          })
+                          .toList(),
                       onChanged: (value) {
                         setState(() {
                           _toAccountId = value;
                           // Check if currencies are different
                           if (_selectedAccountId != null && value != null) {
-                            final fromAccount = accounts.firstWhere((a) => a.id == _selectedAccountId);
-                            final toAccount = accounts.firstWhere((a) => a.id == value);
-                            if (fromAccount.currencyCode != toAccount.currencyCode) {
+                            final fromAccount = accounts.firstWhere(
+                              (a) => a.id == _selectedAccountId,
+                            );
+                            final toAccount = accounts.firstWhere(
+                              (a) => a.id == value,
+                            );
+                            if (fromAccount.currencyCode !=
+                                toAccount.currencyCode) {
                               // Show exchange rate field
                               _exchangeRateController.text = '1.0';
                             } else {
@@ -214,21 +224,25 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 if (_selectedAccountId != null && _toAccountId != null)
                   Consumer<AccountProvider>(
                     builder: (context, accountProvider, child) {
-                      final fromAccount = accountProvider.accounts
-                          .firstWhere((a) => a.id == _selectedAccountId);
-                      final toAccount = accountProvider.accounts
-                          .firstWhere((a) => a.id == _toAccountId);
-                      
+                      final fromAccount = accountProvider.accounts.firstWhere(
+                        (a) => a.id == _selectedAccountId,
+                      );
+                      final toAccount = accountProvider.accounts.firstWhere(
+                        (a) => a.id == _toAccountId,
+                      );
+
                       if (fromAccount.currencyCode != toAccount.currencyCode) {
                         return TextFormField(
                           controller: _exchangeRateController,
                           decoration: InputDecoration(
                             labelText: 'Exchange Rate',
                             border: const OutlineInputBorder(),
-                            helperText: 
+                            helperText:
                                 '1 ${fromAccount.currencyCode} = X ${toAccount.currencyCode}',
                           ),
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter an exchange rate';
@@ -252,7 +266,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                   builder: (context, budgetProvider, child) {
                     final budgets = budgetProvider.budgets;
                     return DropdownButtonFormField<int>(
-                      value: _selectedBudgetId,
+                      initialValue: _selectedBudgetId,
                       decoration: const InputDecoration(
                         labelText: 'Budget (Optional)',
                         border: OutlineInputBorder(),
@@ -319,7 +333,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       final onlyBudget = widget.preselectedBudgetId != null;
 
       double? exchangeRate;
-      if (_selectedType == TransactionType.transfer && 
+      if (_selectedType == TransactionType.transfer &&
           _exchangeRateController.text.isNotEmpty) {
         exchangeRate = double.tryParse(_exchangeRateController.text);
       }
@@ -340,7 +354,9 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
             onlyBudget, // Keep original onlyBudget if editing
         budgetId: _selectedBudgetId,
         accountId: _selectedAccountId,
-        toAccountId: _selectedType == TransactionType.transfer ? _toAccountId : null,
+        toAccountId: _selectedType == TransactionType.transfer
+            ? _toAccountId
+            : null,
         exchangeRate: exchangeRate,
       );
 

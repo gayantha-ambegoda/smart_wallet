@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../database/app_database.dart';
 import '../database/entity/account.dart';
+import '../database/entity/transaction.dart';
 
 class AccountProvider extends ChangeNotifier {
   final AppDatabase database;
@@ -14,13 +15,13 @@ class AccountProvider extends ChangeNotifier {
 
   Future<void> loadAccounts() async {
     _accounts = await database.accountDao.findAllAccounts();
-    
+
     // Set selected account to primary if available, otherwise first account
     if (_selectedAccount == null && _accounts.isNotEmpty) {
       _selectedAccount = await database.accountDao.findPrimaryAccount();
       _selectedAccount ??= _accounts.first;
     }
-    
+
     notifyListeners();
   }
 
@@ -29,7 +30,7 @@ class AccountProvider extends ChangeNotifier {
     if (account.isPrimary || _accounts.isEmpty) {
       await database.accountDao.clearAllPrimaryFlags();
     }
-    
+
     await database.accountDao.insertAccount(account);
     await loadAccounts();
   }
@@ -39,19 +40,19 @@ class AccountProvider extends ChangeNotifier {
     if (account.isPrimary) {
       await database.accountDao.clearAllPrimaryFlags();
     }
-    
+
     await database.accountDao.updateAccount(account);
     await loadAccounts();
   }
 
   Future<void> removeAccount(Account account) async {
     await database.accountDao.deleteAccount(account);
-    
+
     // If the deleted account was selected, select another one
     if (_selectedAccount?.id == account.id) {
       _selectedAccount = null;
     }
-    
+
     await loadAccounts();
   }
 
@@ -64,8 +65,9 @@ class AccountProvider extends ChangeNotifier {
     final account = await database.accountDao.findAccountById(accountId);
     if (account == null) return 0.0;
 
-    final transactions = await database.transactionDao.findTransactionsByAccountId(accountId);
-    
+    final transactions = await database.transactionDao
+        .findTransactionsByAccountId(accountId);
+
     double balance = account.initialBalance;
     for (var transaction in transactions) {
       if (!transaction.isTemplate && !transaction.onlyBudget) {
@@ -82,13 +84,13 @@ class AccountProvider extends ChangeNotifier {
         }
       }
     }
-    
+
     // Also check if this account is a destination for any transfers
     final allTransactions = await database.transactionDao.findAllTransactions();
     for (var transaction in allTransactions) {
-      if (!transaction.isTemplate && 
-          !transaction.onlyBudget && 
-          transaction.type == TransactionType.transfer && 
+      if (!transaction.isTemplate &&
+          !transaction.onlyBudget &&
+          transaction.type == TransactionType.transfer &&
           transaction.toAccountId == accountId) {
         // Add the converted amount to destination account
         double amountToAdd = transaction.amount;
@@ -98,7 +100,7 @@ class AccountProvider extends ChangeNotifier {
         balance += amountToAdd;
       }
     }
-    
+
     return balance;
   }
 }
