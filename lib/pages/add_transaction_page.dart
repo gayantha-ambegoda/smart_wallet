@@ -155,7 +155,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                       });
                     },
                     validator: (value) {
-                      if (_selectedType != TransactionType.transfer && value == null) {
+                      if (value == null) {
                         return 'Please select an account';
                       }
                       return null;
