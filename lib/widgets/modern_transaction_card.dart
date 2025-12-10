@@ -20,8 +20,24 @@ class ModernTransactionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isIncome = transaction.type == TransactionType.income;
+    final isTransfer = transaction.type == TransactionType.transfer;
     final date = DateTime.fromMillisecondsSinceEpoch(transaction.date);
     final dateStr = '${date.month}/${date.day}/${date.year}';
+
+    Color getColor() {
+      if (isTransfer) return Colors.blue;
+      return isIncome ? Colors.green : Colors.red;
+    }
+
+    IconData getIcon() {
+      if (isTransfer) return Icons.swap_horiz;
+      return isIncome ? Icons.arrow_downward : Icons.arrow_upward;
+    }
+
+    String getTypeLabel() {
+      if (isTransfer) return 'Transfer';
+      return isIncome ? 'Income' : 'Expense';
+    }
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -43,14 +59,12 @@ class ModernTransactionCard extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: isIncome
-                      ? Colors.green.withOpacity(0.1)
-                      : Colors.red.withOpacity(0.1),
+                  color: getColor().withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
-                  isIncome ? Icons.arrow_downward : Icons.arrow_upward,
-                  color: isIncome ? Colors.green.shade700 : Colors.red.shade700,
+                  getIcon(),
+                  color: getColor().shade700,
                   size: 24,
                 ),
               ),
@@ -141,11 +155,9 @@ class ModernTransactionCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '${isIncome ? '+' : '-'}$currencySymbol${transaction.amount.toStringAsFixed(2)}',
+                    '${isIncome ? '+' : isTransfer ? '' : '-'}$currencySymbol${transaction.amount.toStringAsFixed(2)}',
                     style: TextStyle(
-                      color: isIncome
-                          ? Colors.green.shade700
-                          : Colors.red.shade700,
+                      color: getColor().shade700,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
@@ -157,18 +169,14 @@ class ModernTransactionCard extends StatelessWidget {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: isIncome
-                          ? Colors.green.withOpacity(0.1)
-                          : Colors.red.withOpacity(0.1),
+                      color: getColor().withOpacity(0.1),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      isIncome ? 'Income' : 'Expense',
+                      getTypeLabel(),
                       style: TextStyle(
                         fontSize: 11,
-                        color: isIncome
-                            ? Colors.green.shade700
-                            : Colors.red.shade700,
+                        color: getColor().shade700,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
