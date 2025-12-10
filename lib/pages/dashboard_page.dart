@@ -330,6 +330,61 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
       body: Column(
         children: [
+          // Show message when no accounts exist
+          Consumer<AccountProvider>(
+            builder: (context, accountProvider, child) {
+              if (accountProvider.accounts.isEmpty) {
+                return Container(
+                  width: double.infinity,
+                  color: Colors.orange.shade50,
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline, color: Colors.orange.shade700),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'No accounts yet',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.orange.shade700,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Create an account to start tracking your transactions',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.orange.shade700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AccountListPage(),
+                            ),
+                          );
+                          if (mounted) {
+                            context.read<AccountProvider>().loadAccounts();
+                          }
+                        },
+                        child: const Text('Create'),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
           // Statistics Section (only show when not in template mode)
           if (!_showTemplates)
             Container(
