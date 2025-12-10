@@ -69,11 +69,33 @@ class AccountProvider extends ChangeNotifier {
     double balance = account.initialBalance;
     for (var transaction in transactions) {
       if (!transaction.isTemplate && !transaction.onlyBudget) {
-        if (transaction.type.name == 'income') {
+        if (transaction.type == TransactionType.income) {
           balance += transaction.amount;
-        } else {
+        } else if (transaction.type == TransactionType.expense) {
           balance -= transaction.amount;
+        } else if (transaction.type == TransactionType.transfer) {
+          // For transfers, deduct from source account
+          // The destination account balance is updated separately when querying that account
+          if (transaction.accountId == accountId) {
+            balance -= transaction.amount;
+          }
         }
+      }
+    }
+    
+    // Also check if this account is a destination for any transfers
+    final allTransactions = await database.transactionDao.findAllTransactions();
+    for (var transaction in allTransactions) {
+      if (!transaction.isTemplate && 
+          !transaction.onlyBudget && 
+          transaction.type == TransactionType.transfer && 
+          transaction.toAccountId == accountId) {
+        // Add the converted amount to destination account
+        double amountToAdd = transaction.amount;
+        if (transaction.exchangeRate != null) {
+          amountToAdd = transaction.amount * transaction.exchangeRate!;
+        }
+        balance += amountToAdd;
       }
     }
     
