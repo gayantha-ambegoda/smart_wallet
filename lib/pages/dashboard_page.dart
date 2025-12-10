@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/transaction_provider.dart';
 import '../providers/budget_provider.dart';
+import '../providers/account_provider.dart';
 import '../database/entity/transaction.dart';
 import '../database/entity/currency.dart';
 import '../services/settings_service.dart';
@@ -12,6 +13,7 @@ import '../widgets/date_filter_card.dart';
 import 'add_transaction_page.dart';
 import 'budget_list_page.dart';
 import 'settings_page.dart';
+import 'account_list_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -33,16 +35,103 @@ class _DashboardPageState extends State<DashboardPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<TransactionProvider>().loadTransactions();
       context.read<BudgetProvider>().loadBudgets();
+      context.read<AccountProvider>().loadAccounts();
       _loadCurrency();
     });
   }
 
   Future<void> _loadCurrency() async {
-    final currencyCode = await _settingsService.getCurrencyCode();
-    final currency = CurrencyList.getByCode(currencyCode);
-    setState(() {
-      _currencySymbol = currency.symbol;
-    });
+    final accountProvider = context.read<AccountProvider>();
+    final selectedAccount = accountProvider.selectedAccount;
+    
+    if (selectedAccount != null) {
+      final currency = CurrencyList.getByCode(selectedAccount.currencyCode);
+      setState(() {
+        _currencySymbol = currency.symbol;
+      });
+    } else {
+      // Fallback to settings currency
+      final currencyCode = await _settingsService.getCurrencyCode();
+      final currency = CurrencyList.getByCode(currencyCode);
+      setState(() {
+        _currencySymbol = currency.symbol;
+      });
+    }
+  }
+
+  void _showAccountSelector(BuildContext context, AccountProvider accountProvider) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Select Account',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ...accountProvider.accounts.map((account) {
+                final currency = CurrencyList.getByCode(account.currencyCode);
+                final isSelected = accountProvider.selectedAccount?.id == account.id;
+                
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: account.isPrimary
+                        ? Theme.of(context).primaryColor
+                        : Colors.grey[400],
+                    child: const Icon(Icons.account_balance, color: Colors.white),
+                  ),
+                  title: Row(
+                    children: [
+                      Text(account.name),
+                      if (account.isPrimary) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text(
+                            'Primary',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  subtitle: Text('${account.bankName} • ${currency.code}'),
+                  trailing: isSelected
+                      ? Icon(Icons.check, color: Theme.of(context).primaryColor)
+                      : null,
+                  onTap: () {
+                    accountProvider.selectAccount(account);
+                    Navigator.pop(context);
+                    setState(() {
+                      _loadCurrency(); // Update currency symbol for selected account
+                    });
+                  },
+                );
+              }).toList(),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _pickFromDate() async {
@@ -134,18 +223,75 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         elevation: 0,
-        title: _showTemplates
-            ? const Text(
-                'Templates',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              )
-            : const Text(
-                'Dashboard',
-                style: TextStyle(fontWeight: FontWeight.w600),
+        title: Consumer<AccountProvider>(
+          builder: (context, accountProvider, child) {
+            final selectedAccount = accountProvider.selectedAccount;
+            final accounts = accountProvider.accounts;
+
+            if (accounts.isEmpty) {
+              return Text(
+                _showTemplates ? 'Templates' : 'Dashboard',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              );
+            }
+
+            return GestureDetector(
+              onTap: () {
+                _showAccountSelector(context, accountProvider);
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (selectedAccount != null) ...[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          selectedAccount.name,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Text(
+                          selectedAccount.bankName,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(Icons.arrow_drop_down, size: 20),
+                  ] else
+                    Text(
+                      _showTemplates ? 'Templates' : 'Dashboard',
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                ],
               ),
+            );
+          },
+        ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.grey[800],
         actions: [
+          IconButton(
+            icon: const Icon(Icons.account_balance),
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AccountListPage()),
+              );
+              // Reload accounts when returning
+              if (mounted) {
+                context.read<AccountProvider>().loadAccounts();
+              }
+            },
+            tooltip: 'Accounts',
+          ),
           IconButton(
             icon: const Icon(Icons.account_balance_wallet_outlined),
             onPressed: () {
@@ -190,21 +336,34 @@ class _DashboardPageState extends State<DashboardPage> {
               width: double.infinity,
               color: Colors.white,
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-              child: Consumer<TransactionProvider>(
-                builder: (context, transactionProvider, child) {
+              child: Consumer2<TransactionProvider, AccountProvider>(
+                builder: (context, transactionProvider, accountProvider, child) {
+                  final selectedAccount = accountProvider.selectedAccount;
+                  
                   return FutureBuilder<Map<String, double>>(
-                    future:
-                        Future.wait([
-                          transactionProvider.getAvailableBalance(),
-                          transactionProvider.getTotalIncome(),
-                          transactionProvider.getTotalExpense(),
-                        ]).then(
-                          (values) => {
-                            'balance': values[0],
-                            'income': values[1],
-                            'expense': values[2],
-                          },
-                        ),
+                    future: selectedAccount != null
+                        ? accountProvider.getAccountBalance(selectedAccount.id!).then((balance) async {
+                            final income = await transactionProvider.database.transactionDao
+                                .getTotalIncomeByAccount(selectedAccount.id!) ?? 0.0;
+                            final expense = await transactionProvider.database.transactionDao
+                                .getTotalExpenseByAccount(selectedAccount.id!) ?? 0.0;
+                            return {
+                              'balance': balance,
+                              'income': income,
+                              'expense': expense,
+                            };
+                          })
+                        : Future.wait([
+                            transactionProvider.getAvailableBalance(),
+                            transactionProvider.getTotalIncome(),
+                            transactionProvider.getTotalExpense(),
+                          ]).then(
+                            (values) => {
+                              'balance': values[0],
+                              'income': values[1],
+                              'expense': values[2],
+                            },
+                          ),
                     builder: (context, snapshot) {
                       final balance = snapshot.data?['balance'] ?? 0.0;
                       final income = snapshot.data?['income'] ?? 0.0;
@@ -323,10 +482,12 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   // Transaction List
                   Expanded(
-                    child: Consumer<TransactionProvider>(
-                      builder: (context, transactionProvider, child) {
+                    child: Consumer2<TransactionProvider, AccountProvider>(
+                      builder: (context, transactionProvider, accountProvider, child) {
                         final allTransactions =
                             transactionProvider.transactions;
+                        final selectedAccount = accountProvider.selectedAccount;
+                        
                         var transactions = _showTemplates
                             ? allTransactions
                                   .where((t) => t.isTemplate)
@@ -334,6 +495,13 @@ class _DashboardPageState extends State<DashboardPage> {
                             : allTransactions
                                   .where((t) => !t.isTemplate && !t.onlyBudget)
                                   .toList();
+
+                        // Filter by selected account if one is selected
+                        if (!_showTemplates && selectedAccount != null) {
+                          transactions = transactions
+                              .where((t) => t.accountId == selectedAccount.id)
+                              .toList();
+                        }
 
                         // Apply date range filter if dates are selected
                         if (!_showTemplates &&

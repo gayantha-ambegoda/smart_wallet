@@ -4,6 +4,7 @@ import 'package:floor/floor.dart';
 import 'database/app_database.dart';
 import 'providers/transaction_provider.dart';
 import 'providers/budget_provider.dart';
+import 'providers/account_provider.dart';
 import 'pages/dashboard_page.dart';
 
 void main() async {
@@ -27,6 +28,33 @@ void main() async {
             )
           ''');
         }),
+        Migration(2, 3, (database) async {
+          // Create Account table
+          await database.execute('''
+            CREATE TABLE IF NOT EXISTS `Account` (
+              `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+              `name` TEXT NOT NULL,
+              `bankName` TEXT NOT NULL,
+              `currencyCode` TEXT NOT NULL,
+              `initialBalance` REAL NOT NULL,
+              `isPrimary` INTEGER NOT NULL
+            )
+          ''');
+          
+          // Add account-related columns to Transaction table
+          await database.execute(
+            'ALTER TABLE `Transaction` ADD COLUMN `accountId` INTEGER',
+          );
+          await database.execute(
+            'ALTER TABLE `Transaction` ADD COLUMN `toAccountId` INTEGER',
+          );
+          await database.execute(
+            'ALTER TABLE `Transaction` ADD COLUMN `exchangeRate` REAL',
+          );
+          await database.execute(
+            'ALTER TABLE `Transaction` ADD COLUMN `onlyBudget` INTEGER DEFAULT 0',
+          );
+        }),
       ]).build();
 
   runApp(MyApp(database: database));
@@ -46,6 +74,7 @@ class MyApp extends StatelessWidget {
           create: (context) => TransactionProvider(database),
         ),
         ChangeNotifierProvider(create: (context) => BudgetProvider(database)),
+        ChangeNotifierProvider(create: (context) => AccountProvider(database)),
       ],
       child: MaterialApp(
         title: 'Smart Wallet',
