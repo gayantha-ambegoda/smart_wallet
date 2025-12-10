@@ -59,14 +59,10 @@ class ModernTransactionCard extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: getColor().withOpacity(0.1),
+                  color: getColor().withAlpha(25),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  getIcon(),
-                  color: getColor().shade700,
-                  size: 24,
-                ),
+                child: Icon(getIcon(), color: getColor(), size: 24),
               ),
               const SizedBox(width: 16),
               // Content
@@ -155,9 +151,13 @@ class ModernTransactionCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '${isIncome ? '+' : isTransfer ? '' : '-'}$currencySymbol${transaction.amount.toStringAsFixed(2)}',
+                    '${isIncome
+                        ? '+'
+                        : isTransfer
+                        ? ''
+                        : '-'}$currencySymbol${transaction.amount.toStringAsFixed(2)}',
                     style: TextStyle(
-                      color: getColor().shade700,
+                      color: getColor(),
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
@@ -169,14 +169,14 @@ class ModernTransactionCard extends StatelessWidget {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: getColor().withOpacity(0.1),
+                      color: getColor().withAlpha(25),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       getTypeLabel(),
                       style: TextStyle(
                         fontSize: 11,
-                        color: getColor().shade700,
+                        color: getColor(),
                         fontWeight: FontWeight.w500,
                       ),
                     ),

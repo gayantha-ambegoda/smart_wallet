@@ -103,7 +103,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _selectedCurrencyCode,
+                initialValue: _selectedCurrencyCode,
                 decoration: const InputDecoration(
                   labelText: 'Currency',
                   border: OutlineInputBorder(),
@@ -111,7 +111,9 @@ class _AddAccountPageState extends State<AddAccountPage> {
                 items: CurrencyList.currencies.map((currency) {
                   return DropdownMenuItem(
                     value: currency.code,
-                    child: Text('${currency.symbol} ${currency.code} - ${currency.name}'),
+                    child: Text(
+                      '${currency.symbol} ${currency.code} - ${currency.name}',
+                    ),
                   );
                 }).toList(),
                 onChanged: (value) {
@@ -126,10 +128,14 @@ class _AddAccountPageState extends State<AddAccountPage> {
                 decoration: InputDecoration(
                   labelText: 'Initial Balance',
                   border: const OutlineInputBorder(),
-                  prefixText: CurrencyList.getByCode(_selectedCurrencyCode).symbol,
+                  prefixText: CurrencyList.getByCode(
+                    _selectedCurrencyCode,
+                  ).symbol,
                   helperText: 'Current balance in this account',
                 ),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter an initial balance';
@@ -159,9 +165,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(16),
                 ),
-                child: Text(
-                  isEditing ? 'Update Account' : 'Save Account',
-                ),
+                child: Text(isEditing ? 'Update Account' : 'Save Account'),
               ),
             ],
           ),
@@ -209,9 +213,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(true),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               child: const Text('Delete'),
             ),
           ],
@@ -220,7 +222,9 @@ class _AddAccountPageState extends State<AddAccountPage> {
     );
 
     if (confirmed == true && mounted) {
-      await context.read<AccountProvider>().removeAccount(widget.accountToEdit!);
+      await context.read<AccountProvider>().removeAccount(
+        widget.accountToEdit!,
+      );
       if (mounted) {
         Navigator.pop(context);
       }
