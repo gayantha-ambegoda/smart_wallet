@@ -12,6 +12,19 @@ abstract class TransactionDao {
   @Query('SELECT * FROM `Transaction` WHERE budgetId = :budgetId')
   Future<List<Transaction>> findTransactionsByBudgetId(int budgetId);
 
+  @Query('SELECT * FROM `Transaction` WHERE accountId = :accountId')
+  Future<List<Transaction>> findTransactionsByAccountId(int accountId);
+
+  @Query(
+    'SELECT SUM(amount) FROM `Transaction` WHERE isTemplate = 0 AND onlyBudget = 0 AND type = \'income\' AND accountId = :accountId',
+  )
+  Future<double?> getTotalIncomeByAccount(int accountId);
+
+  @Query(
+    'SELECT SUM(amount) FROM `Transaction` WHERE isTemplate = 0 AND onlyBudget = 0 AND type = \'expense\' AND accountId = :accountId',
+  )
+  Future<double?> getTotalExpenseByAccount(int accountId);
+
   @Query(
     'SELECT SUM(amount) FROM `Transaction` WHERE isTemplate = 0 AND onlyBudget = 0 AND type = \'income\'',
   )

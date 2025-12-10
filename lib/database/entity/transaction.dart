@@ -1,7 +1,8 @@
 import 'package:floor/floor.dart';
 import 'budget.dart';
+import 'account.dart';
 
-enum TransactionType { income, expense }
+enum TransactionType { income, expense, transfer }
 
 class TagsConverter extends TypeConverter<List<String>, String> {
   @override
@@ -44,6 +45,16 @@ class Transaction {
   @ForeignKey(childColumns: ['budgetId'], parentColumns: ['id'], entity: Budget)
   final int? budgetId;
 
+  @ForeignKey(childColumns: ['accountId'], parentColumns: ['id'], entity: Account)
+  final int? accountId;
+
+  // For transfers: the destination account
+  @ForeignKey(childColumns: ['toAccountId'], parentColumns: ['id'], entity: Account)
+  final int? toAccountId;
+
+  // Exchange rate used for transfer (if different currencies)
+  final double? exchangeRate;
+
   Transaction({
     this.id,
     required this.title,
@@ -54,5 +65,8 @@ class Transaction {
     required this.isTemplate,
     required this.onlyBudget,
     this.budgetId,
+    this.accountId,
+    this.toAccountId,
+    this.exchangeRate,
   });
 }
