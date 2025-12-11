@@ -10,6 +10,7 @@ import '../widgets/transaction_details_dialog.dart';
 import '../widgets/stat_card.dart';
 import '../widgets/modern_transaction_card.dart';
 import '../widgets/date_filter_card.dart';
+import '../widgets/expandable_fab.dart';
 import 'add_transaction_page.dart';
 import 'budget_list_page.dart';
 import 'settings_page.dart';
@@ -706,8 +707,8 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
+      floatingActionButton: ExpandableFab(
+        onTransactionPressed: () async {
           await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AddTransactionPage()),
@@ -718,8 +719,21 @@ class _DashboardPageState extends State<DashboardPage> {
             context.read<TransactionProvider>().loadTransactions();
           }
         },
-        icon: const Icon(Icons.add),
-        label: const Text('Add Transaction'),
+        onTransferPressed: () async {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddTransactionPage(
+                preselectedType: TransactionType.transfer,
+              ),
+            ),
+          );
+          // Refresh transactions after returning from add page
+          if (mounted) {
+            // ignore: use_build_context_synchronously
+            context.read<TransactionProvider>().loadTransactions();
+          }
+        },
       ),
     );
   }

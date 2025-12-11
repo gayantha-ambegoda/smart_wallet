@@ -9,11 +9,13 @@ import '../database/entity/currency.dart';
 class AddTransactionPage extends StatefulWidget {
   final int? preselectedBudgetId;
   final Transaction? transactionToEdit;
+  final TransactionType? preselectedType;
 
   const AddTransactionPage({
     super.key,
     this.preselectedBudgetId,
     this.transactionToEdit,
+    this.preselectedType,
   });
 
   @override
@@ -37,6 +39,11 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
     super.initState();
     // Set the preselected budget ID if provided
     _selectedBudgetId = widget.preselectedBudgetId;
+
+    // Set the preselected transaction type if provided
+    if (widget.preselectedType != null) {
+      _selectedType = widget.preselectedType!;
+    }
 
     // If editing an existing transaction, pre-fill the form
     if (widget.transactionToEdit != null) {
