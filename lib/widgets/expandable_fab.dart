@@ -86,7 +86,7 @@ class _ExpandableFabState extends State<ExpandableFab>
       children: [
         _ActionButton(
           icon: Icons.swap_horiz,
-          labelKey: 'transfer',
+          actionType: FabActionType.transfer,
           onPressed: () {
             _toggle();
             widget.onTransferPressed();
@@ -94,7 +94,7 @@ class _ExpandableFabState extends State<ExpandableFab>
         ),
         _ActionButton(
           icon: Icons.add_circle_outline,
-          labelKey: 'transaction',
+          actionType: FabActionType.transaction,
           onPressed: () {
             _toggle();
             widget.onTransactionPressed();
@@ -148,14 +148,16 @@ class ExpandedAnimationFab extends StatelessWidget {
   }
 }
 
+enum FabActionType { transaction, transfer }
+
 class _ActionButton extends StatelessWidget {
   final IconData icon;
-  final String labelKey;
+  final FabActionType actionType;
   final VoidCallback onPressed;
 
   const _ActionButton({
     required this.icon,
-    required this.labelKey,
+    required this.actionType,
     required this.onPressed,
   });
 
@@ -164,8 +166,11 @@ class _ActionButton extends StatelessWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     
-    // Get the localized label based on the key
-    final String label = labelKey == 'transfer' ? l10n.transfer : l10n.transaction;
+    // Get the localized label based on the action type
+    final String label = switch (actionType) {
+      FabActionType.transfer => l10n.transfer,
+      FabActionType.transaction => l10n.transaction,
+    };
     
     return Material(
       elevation: 4,
