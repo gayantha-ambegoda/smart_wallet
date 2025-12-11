@@ -74,6 +74,39 @@ void main() async {
           } catch (e) {
             print('Column onlyBudget might already exist: $e');
           }
+
+          // Check if there are any transactions without an account
+          final transactionsWithoutAccount = await database.rawQuery(
+            'SELECT COUNT(*) as count FROM `Transaction` WHERE accountId IS NULL',
+          );
+          final count = transactionsWithoutAccount.first['count'] as int;
+
+          if (count > 0) {
+            print('Found $count transactions without account. Creating default account...');
+            
+            // Create a default account for orphaned transactions
+            await database.execute('''
+              INSERT INTO `Account` (name, bankName, currencyCode, initialBalance, isPrimary)
+              VALUES ('Default Account', 'System', 'USD', 0.0, 1)
+            ''');
+
+            // Get the ID of the newly created account
+            final defaultAccountResult = await database.rawQuery(
+              'SELECT id FROM `Account` WHERE name = "Default Account" AND bankName = "System" ORDER BY id DESC LIMIT 1',
+            );
+            
+            if (defaultAccountResult.isNotEmpty) {
+              final defaultAccountId = defaultAccountResult.first['id'] as int;
+              
+              // Update all transactions without an account to use the default account
+              await database.execute(
+                'UPDATE `Transaction` SET accountId = ? WHERE accountId IS NULL',
+                [defaultAccountId],
+              );
+              
+              print('Assigned $count transactions to default account (ID: $defaultAccountId)');
+            }
+          }
         }),
       ]).build();
 
