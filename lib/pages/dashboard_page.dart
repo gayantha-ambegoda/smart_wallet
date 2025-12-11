@@ -448,6 +448,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       final balance = snapshot.data?['balance'] ?? 0.0;
                       final income = snapshot.data?['income'] ?? 0.0;
                       final expense = snapshot.data?['expense'] ?? 0.0;
+                      final l10n = AppLocalizations.of(context)!;
 
                       return Column(
                         children: [
@@ -472,10 +473,10 @@ class _DashboardPageState extends State<DashboardPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Available Balance',
+                                  l10n.availableBalance,
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: Colors.white.withAlpha(25),
+                                    color: Colors.white.withOpacity(0.7),
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -498,7 +499,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               Expanded(
                                 child: StatCard(
                                   icon: Icons.arrow_downward,
-                                  label: 'Total Income',
+                                  label: l10n.totalIncome,
                                   value:
                                       '$_currencySymbol${income.toStringAsFixed(2)}',
                                   color: Colors.green.shade700,
@@ -508,7 +509,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               Expanded(
                                 child: StatCard(
                                   icon: Icons.arrow_upward,
-                                  label: 'Total Expense',
+                                  label: l10n.totalExpense,
                                   value:
                                       '$_currencySymbol${expense.toStringAsFixed(2)}',
                                   color: Colors.red.shade700,

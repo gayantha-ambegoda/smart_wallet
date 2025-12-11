@@ -96,28 +96,39 @@ void main() async {
               print('Could not load currency preference, using USD: $e');
             }
             
-            // Create a default account for orphaned transactions
-            await database.execute('''
-              INSERT INTO `Account` (name, bankName, currencyCode, initialBalance, isPrimary)
-              VALUES ('Default Account', 'System', ?, 0.0, 1)
-            ''', [defaultCurrency]);
-
-            // Get the ID of the newly created account
-            final defaultAccountResult = await database.rawQuery(
-              'SELECT id FROM `Account` WHERE name = "Default Account" AND bankName = "System" ORDER BY id DESC LIMIT 1',
+            // Check if a default account already exists
+            final existingDefaultAccount = await database.rawQuery(
+              'SELECT id FROM `Account` WHERE name = "Default Account" AND bankName = "System" LIMIT 1',
             );
             
-            if (defaultAccountResult.isNotEmpty) {
-              final defaultAccountId = defaultAccountResult.first['id'] as int;
-              
-              // Update all transactions without an account to use the default account
-              await database.execute(
-                'UPDATE `Transaction` SET accountId = ? WHERE accountId IS NULL',
-                [defaultAccountId],
+            int defaultAccountId;
+            
+            if (existingDefaultAccount.isEmpty) {
+              // Create a default account for orphaned transactions
+              await database.execute('''
+                INSERT INTO `Account` (name, bankName, currencyCode, initialBalance, isPrimary)
+                VALUES ('Default Account', 'System', ?, 0.0, 1)
+              ''', [defaultCurrency]);
+
+              // Get the ID of the newly created account
+              final defaultAccountResult = await database.rawQuery(
+                'SELECT id FROM `Account` WHERE name = "Default Account" AND bankName = "System" ORDER BY id DESC LIMIT 1',
               );
               
-              print('Assigned $count transactions to default account (ID: $defaultAccountId) with currency: $defaultCurrency');
+              defaultAccountId = defaultAccountResult.first['id'] as int;
+              print('Created default account (ID: $defaultAccountId) with currency: $defaultCurrency');
+            } else {
+              defaultAccountId = existingDefaultAccount.first['id'] as int;
+              print('Using existing default account (ID: $defaultAccountId)');
             }
+            
+            // Update all transactions without an account to use the default account
+            await database.execute(
+              'UPDATE `Transaction` SET accountId = ? WHERE accountId IS NULL',
+              [defaultAccountId],
+            );
+            
+            print('Assigned $count transactions to default account');
           }
         }),
       ]).build();
