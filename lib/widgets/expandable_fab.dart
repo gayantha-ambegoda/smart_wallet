@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:math' as math;
 
 class ExpandableFab extends StatefulWidget {
@@ -85,7 +86,7 @@ class _ExpandableFabState extends State<ExpandableFab>
       children: [
         _ActionButton(
           icon: Icons.swap_horiz,
-          label: 'Transfer',
+          labelKey: 'transfer',
           onPressed: () {
             _toggle();
             widget.onTransferPressed();
@@ -93,7 +94,7 @@ class _ExpandableFabState extends State<ExpandableFab>
         ),
         _ActionButton(
           icon: Icons.add_circle_outline,
-          label: 'Transaction',
+          labelKey: 'transaction',
           onPressed: () {
             _toggle();
             widget.onTransactionPressed();
@@ -149,18 +150,23 @@ class ExpandedAnimationFab extends StatelessWidget {
 
 class _ActionButton extends StatelessWidget {
   final IconData icon;
-  final String label;
+  final String labelKey;
   final VoidCallback onPressed;
 
   const _ActionButton({
     required this.icon,
-    required this.label,
+    required this.labelKey,
     required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    
+    // Get the localized label based on the key
+    final String label = labelKey == 'transfer' ? l10n.transfer : l10n.transaction;
+    
     return Material(
       elevation: 4,
       borderRadius: BorderRadius.circular(24),

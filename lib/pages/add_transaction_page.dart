@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../database/entity/transaction.dart';
 import '../providers/transaction_provider.dart';
 import '../providers/budget_provider.dart';
@@ -74,12 +75,13 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.transactionToEdit != null;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          isEditing ? 'Update Transaction' : 'Add Transaction',
+          isEditing ? l10n.updateTransaction : l10n.addTransaction,
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         backgroundColor: Colors.white,
@@ -93,13 +95,13 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
             children: [
               TextFormField(
                 controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Title',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.title,
+                  border: const OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a title';
+                    return l10n.pleaseEnterTitle;
                   }
                   return null;
                 },
@@ -107,17 +109,17 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _amountController,
-                decoration: const InputDecoration(
-                  labelText: 'Amount',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.amount,
+                  border: const OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter an amount';
+                    return l10n.pleaseEnterAmount;
                   }
                   if (double.tryParse(value) == null) {
-                    return 'Please enter a valid number';
+                    return l10n.pleaseEnterValidNumber;
                   }
                   return null;
                 },
@@ -125,12 +127,24 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
               const SizedBox(height: 16),
               DropdownButtonFormField<TransactionType>(
                 initialValue: _selectedType,
-                decoration: const InputDecoration(
-                  labelText: 'Type',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.type,
+                  border: const OutlineInputBorder(),
                 ),
                 items: TransactionType.values.map((type) {
-                  return DropdownMenuItem(value: type, child: Text(type.name));
+                  String typeLabel;
+                  switch (type) {
+                    case TransactionType.income:
+                      typeLabel = l10n.income;
+                      break;
+                    case TransactionType.expense:
+                      typeLabel = l10n.expense;
+                      break;
+                    case TransactionType.transfer:
+                      typeLabel = l10n.transfer;
+                      break;
+                  }
+                  return DropdownMenuItem(value: type, child: Text(typeLabel));
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
@@ -145,9 +159,9 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                   final accounts = accountProvider.accounts;
                   return DropdownButtonFormField<int>(
                     initialValue: _selectedAccountId,
-                    decoration: const InputDecoration(
-                      labelText: 'From Account',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.fromAccount,
+                      border: const OutlineInputBorder(),
                     ),
                     items: accounts.map((account) {
                       final currency = CurrencyList.getByCode(
@@ -165,7 +179,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                     },
                     validator: (value) {
                       if (value == null) {
-                        return 'Please select an account';
+                        return l10n.pleaseSelectAccount;
                       }
                       return null;
                     },
@@ -180,9 +194,9 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                     final accounts = accountProvider.accounts;
                     return DropdownButtonFormField<int>(
                       initialValue: _toAccountId,
-                      decoration: const InputDecoration(
-                        labelText: 'To Account',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: l10n.toAccount,
+                        border: const OutlineInputBorder(),
                       ),
                       items: accounts
                           .where((account) => account.id != _selectedAccountId)
@@ -219,7 +233,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                       },
                       validator: (value) {
                         if (value == null) {
-                          return 'Please select a destination account';
+                          return l10n.pleaseSelectDestinationAccount;
                         }
                         return null;
                       },
@@ -242,7 +256,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                         return TextFormField(
                           controller: _exchangeRateController,
                           decoration: InputDecoration(
-                            labelText: 'Exchange Rate',
+                            labelText: l10n.exchangeRate,
                             border: const OutlineInputBorder(),
                             helperText:
                                 '1 ${fromAccount.currencyCode} = X ${toAccount.currencyCode}',
@@ -252,10 +266,10 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter an exchange rate';
+                              return l10n.pleaseEnterExchangeRate;
                             }
                             if (double.tryParse(value) == null) {
-                              return 'Please enter a valid number';
+                              return l10n.pleaseEnterValidNumber;
                             }
                             return null;
                           },
@@ -274,9 +288,9 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                     final budgets = budgetProvider.budgets;
                     return DropdownButtonFormField<int>(
                       initialValue: _selectedBudgetId,
-                      decoration: const InputDecoration(
-                        labelText: 'Budget (Optional)',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: l10n.budgetOptional,
+                        border: const OutlineInputBorder(),
                       ),
                       items: budgets.map((budget) {
                         return DropdownMenuItem(
@@ -296,14 +310,14 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 const SizedBox(height: 16),
               TextFormField(
                 controller: _tagsController,
-                decoration: const InputDecoration(
-                  labelText: 'Tags (comma-separated)',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.tagsCommaSeparated,
+                  border: const OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16),
               SwitchListTile(
-                title: const Text('Is Template'),
+                title: Text(l10n.isTemplate),
                 value: _isTemplate,
                 onChanged: (value) {
                   setState(() {
@@ -318,7 +332,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                   padding: const EdgeInsets.all(16),
                 ),
                 child: Text(
-                  isEditing ? 'Update Transaction' : 'Save Transaction',
+                  isEditing ? l10n.updateTransaction : l10n.saveTransaction,
                 ),
               ),
             ],
