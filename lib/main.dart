@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:floor/floor.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'database/app_database.dart';
 import 'providers/transaction_provider.dart';
 import 'providers/budget_provider.dart';
@@ -86,11 +87,20 @@ void main() async {
           if (count > 0) {
             print('Found $count transactions without account. Creating default account...');
             
+            // Get default currency from settings or use USD as fallback
+            String defaultCurrency = 'USD';
+            try {
+              final prefs = await SharedPreferences.getInstance();
+              defaultCurrency = prefs.getString('currency_code') ?? 'USD';
+            } catch (e) {
+              print('Could not load currency preference, using USD: $e');
+            }
+            
             // Create a default account for orphaned transactions
             await database.execute('''
               INSERT INTO `Account` (name, bankName, currencyCode, initialBalance, isPrimary)
-              VALUES ('Default Account', 'System', 'USD', 0.0, 1)
-            ''');
+              VALUES ('Default Account', 'System', ?, 0.0, 1)
+            ''', [defaultCurrency]);
 
             // Get the ID of the newly created account
             final defaultAccountResult = await database.rawQuery(
@@ -106,7 +116,7 @@ void main() async {
                 [defaultAccountId],
               );
               
-              print('Assigned $count transactions to default account (ID: $defaultAccountId)');
+              print('Assigned $count transactions to default account (ID: $defaultAccountId) with currency: $defaultCurrency');
             }
           }
         }),
