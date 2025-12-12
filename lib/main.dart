@@ -165,6 +165,8 @@ class MyApp extends StatelessWidget {
         ],
         supportedLocales: const [
           Locale('en', 'US'), // English
+          Locale('da'), // Danish
+          Locale('fr'), // French
         ],
         home: const DashboardPage(),
       ),

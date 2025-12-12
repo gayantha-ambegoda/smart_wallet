@@ -7,6 +7,7 @@ class ModernTransactionCard extends StatelessWidget {
   final String? budgetName;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
+  final int? contextAccountId; // The account from which this transaction is being viewed
 
   const ModernTransactionCard({
     super.key,
@@ -15,27 +16,49 @@ class ModernTransactionCard extends StatelessWidget {
     this.budgetName,
     this.onTap,
     this.onLongPress,
+    this.contextAccountId,
   });
 
   @override
   Widget build(BuildContext context) {
     final isIncome = transaction.type == TransactionType.income;
     final isTransfer = transaction.type == TransactionType.transfer;
+    
+    // For transfers, determine if it's incoming or outgoing based on context
+    final isTransferIncoming = isTransfer && 
+        contextAccountId != null && 
+        transaction.toAccountId == contextAccountId;
+    final isTransferOutgoing = isTransfer && 
+        contextAccountId != null && 
+        transaction.accountId == contextAccountId;
+    
     final date = DateTime.fromMillisecondsSinceEpoch(transaction.date);
     final dateStr = '${date.month}/${date.day}/${date.year}';
 
     Color getColor() {
-      if (isTransfer) return Colors.blue;
+      if (isTransfer) {
+        if (isTransferIncoming) return Colors.green;
+        if (isTransferOutgoing) return Colors.red;
+        return Colors.blue;
+      }
       return isIncome ? Colors.green : Colors.red;
     }
 
     IconData getIcon() {
-      if (isTransfer) return Icons.swap_horiz;
+      if (isTransfer) {
+        if (isTransferIncoming) return Icons.arrow_downward;
+        if (isTransferOutgoing) return Icons.arrow_upward;
+        return Icons.swap_horiz;
+      }
       return isIncome ? Icons.arrow_downward : Icons.arrow_upward;
     }
 
     String getTypeLabel() {
-      if (isTransfer) return 'Transfer';
+      if (isTransfer) {
+        if (isTransferIncoming) return 'Transfer In';
+        if (isTransferOutgoing) return 'Transfer Out';
+        return 'Transfer';
+      }
       return isIncome ? 'Income' : 'Expense';
     }
 
@@ -153,9 +176,11 @@ class ModernTransactionCard extends StatelessWidget {
                   Text(
                     '${isIncome
                         ? '+'
-                        : isTransfer
-                        ? ''
-                        : '-'}$currencySymbol${transaction.amount.toStringAsFixed(2)}',
+                        : isTransferIncoming
+                        ? '+'
+                        : isTransferOutgoing
+                        ? '-'
+                        : ''}$currencySymbol${transaction.amount.toStringAsFixed(2)}',
                     style: TextStyle(
                       color: getColor(),
                       fontWeight: FontWeight.bold,

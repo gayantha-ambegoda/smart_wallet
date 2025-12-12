@@ -581,7 +581,9 @@ class _DashboardPageState extends State<DashboardPage> {
                             if (!_showTemplates && selectedAccount != null) {
                               transactions = transactions
                                   .where(
-                                    (t) => t.accountId == selectedAccount.id,
+                                    (t) => t.accountId == selectedAccount.id ||
+                                        (t.type == TransactionType.transfer &&
+                                            t.toAccountId == selectedAccount.id),
                                   )
                                   .toList();
                             }
@@ -687,6 +689,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                   transaction: transaction,
                                   currencySymbol: _currencySymbol,
                                   budgetName: budget?.title,
+                                  contextAccountId: selectedAccount?.id,
                                   onTap: _showTemplates
                                       ? null
                                       : () => TransactionDetailsDialog.show(

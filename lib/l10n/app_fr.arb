@@ -1,0 +1,330 @@
+{
+  "@@locale": "fr",
+  "appTitle": "Smart Wallet",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  
+  "dashboard": "Tableau de bord",
+  "@dashboard": {
+    "description": "Dashboard page title"
+  },
+  
+  "templates": "Modèles",
+  "@templates": {
+    "description": "Templates page title"
+  },
+  
+  "availableBalance": "Solde disponible",
+  "@availableBalance": {
+    "description": "Label for available balance display"
+  },
+  
+  "totalIncome": "Revenu total",
+  "@totalIncome": {
+    "description": "Label for total income"
+  },
+  
+  "totalExpense": "Dépense totale",
+  "@totalExpense": {
+    "description": "Label for total expense"
+  },
+  
+  "recentTransactions": "Transactions récentes",
+  "@recentTransactions": {
+    "description": "Label for recent transactions section"
+  },
+  
+  "noTransactionsYet": "Aucune transaction pour le moment",
+  "@noTransactionsYet": {
+    "description": "Message when no transactions exist"
+  },
+  
+  "addTransactionToGetStarted": "Ajoutez une transaction pour commencer",
+  "@addTransactionToGetStarted": {
+    "description": "Prompt to add first transaction"
+  },
+  
+  "noTemplatesYet": "Aucun modèle pour le moment",
+  "@noTemplatesYet": {
+    "description": "Message when no templates exist"
+  },
+  
+  "createTemplateToGetStarted": "Créez un modèle pour commencer",
+  "@createTemplateToGetStarted": {
+    "description": "Prompt to create first template"
+  },
+  
+  "addTransaction": "Ajouter une transaction",
+  "@addTransaction": {
+    "description": "Button text to add transaction"
+  },
+  
+  "updateTransaction": "Mettre à jour la transaction",
+  "@updateTransaction": {
+    "description": "Button text to update transaction"
+  },
+  
+  "transaction": "Transaction",
+  "@transaction": {
+    "description": "Label for transaction"
+  },
+  
+  "transfer": "Virement",
+  "@transfer": {
+    "description": "Label for transfer"
+  },
+  
+  "title": "Titre",
+  "@title": {
+    "description": "Label for title field"
+  },
+  
+  "amount": "Montant",
+  "@amount": {
+    "description": "Label for amount field"
+  },
+  
+  "type": "Type",
+  "@type": {
+    "description": "Label for type field"
+  },
+  
+  "fromAccount": "Du compte",
+  "@fromAccount": {
+    "description": "Label for from account field"
+  },
+  
+  "toAccount": "Au compte",
+  "@toAccount": {
+    "description": "Label for to account field"
+  },
+  
+  "exchangeRate": "Taux de change",
+  "@exchangeRate": {
+    "description": "Label for exchange rate field"
+  },
+  
+  "budget": "Budget",
+  "@budget": {
+    "description": "Label for budget"
+  },
+  
+  "budgetOptional": "Budget (optionnel)",
+  "@budgetOptional": {
+    "description": "Label for optional budget field"
+  },
+  
+  "tags": "Étiquettes",
+  "@tags": {
+    "description": "Label for tags"
+  },
+  
+  "tagsCommaSeparated": "Étiquettes (séparées par des virgules)",
+  "@tagsCommaSeparated": {
+    "description": "Label for tags field with instruction"
+  },
+  
+  "isTemplate": "Est un modèle",
+  "@isTemplate": {
+    "description": "Label for template checkbox"
+  },
+  
+  "saveTransaction": "Enregistrer la transaction",
+  "@saveTransaction": {
+    "description": "Button text to save transaction"
+  },
+  
+  "income": "Revenu",
+  "@income": {
+    "description": "Income transaction type"
+  },
+  
+  "expense": "Dépense",
+  "@expense": {
+    "description": "Expense transaction type"
+  },
+  
+  "date": "Date",
+  "@date": {
+    "description": "Label for date"
+  },
+  
+  "delete": "Supprimer",
+  "@delete": {
+    "description": "Button text to delete"
+  },
+  
+  "update": "Mettre à jour",
+  "@update": {
+    "description": "Button text to update"
+  },
+  
+  "cancel": "Annuler",
+  "@cancel": {
+    "description": "Button text to cancel"
+  },
+  
+  "yes": "Oui",
+  "@yes": {
+    "description": "Button text for yes"
+  },
+  
+  "confirmDelete": "Confirmer la suppression",
+  "@confirmDelete": {
+    "description": "Confirm delete dialog title"
+  },
+  
+  "deleteConfirmationMessage": "Êtes-vous sûr de vouloir supprimer \"{title}\" ? Cette action ne peut pas être annulée.",
+  "@deleteConfirmationMessage": {
+    "description": "Delete confirmation message",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Grocery Shopping"
+      }
+    }
+  },
+  
+  "transactionDeletedSuccessfully": "Transaction supprimée avec succès",
+  "@transactionDeletedSuccessfully": {
+    "description": "Success message for transaction deletion"
+  },
+  
+  "budgetOnlyTransaction": "Transaction de budget uniquement",
+  "@budgetOnlyTransaction": {
+    "description": "Label for budget-only transaction"
+  },
+  
+  "templateTransaction": "Transaction modèle",
+  "@templateTransaction": {
+    "description": "Label for template transaction"
+  },
+  
+  "doTransaction": "Exécuter la transaction",
+  "@doTransaction": {
+    "description": "Button text to execute transaction"
+  },
+  
+  "confirmTransaction": "Confirmer la transaction",
+  "@confirmTransaction": {
+    "description": "Confirm transaction dialog title"
+  },
+  
+  "doTransactionConfirmationMessage": "Voulez-vous exécuter la transaction \"{title}\" ? Cela la fera compter dans votre solde réel.",
+  "@doTransactionConfirmationMessage": {
+    "description": "Do transaction confirmation message",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Monthly Rent"
+      }
+    }
+  },
+  
+  "transactionExecutedSuccessfully": "Transaction exécutée avec succès",
+  "@transactionExecutedSuccessfully": {
+    "description": "Success message for transaction execution"
+  },
+  
+  "addAsTransaction": "Ajouter comme transaction",
+  "@addAsTransaction": {
+    "description": "Dialog title for creating transaction from template"
+  },
+  
+  "createFromTemplateMessage": "Créer une nouvelle transaction à partir du modèle \"{title}\" ?",
+  "@createFromTemplateMessage": {
+    "description": "Confirmation message for creating transaction from template",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Salary Template"
+      }
+    }
+  },
+  
+  "transactionCreatedFromTemplate": "Transaction créée à partir du modèle",
+  "@transactionCreatedFromTemplate": {
+    "description": "Success message for transaction created from template"
+  },
+  
+  "selectAccount": "Sélectionner un compte",
+  "@selectAccount": {
+    "description": "Dialog title for account selection"
+  },
+  
+  "primary": "Principal",
+  "@primary": {
+    "description": "Label for primary account"
+  },
+  
+  "accounts": "Comptes",
+  "@accounts": {
+    "description": "Label for accounts"
+  },
+  
+  "budgets": "Budgets",
+  "@budgets": {
+    "description": "Label for budgets"
+  },
+  
+  "showTransactions": "Afficher les transactions",
+  "@showTransactions": {
+    "description": "Tooltip for showing transactions"
+  },
+  
+  "showTemplates": "Afficher les modèles",
+  "@showTemplates": {
+    "description": "Tooltip for showing templates"
+  },
+  
+  "settings": "Paramètres",
+  "@settings": {
+    "description": "Label for settings"
+  },
+  
+  "noAccountsYet": "Aucun compte pour le moment",
+  "@noAccountsYet": {
+    "description": "Message when no accounts exist"
+  },
+  
+  "createAccountToGetStarted": "Créez un compte pour commencer à suivre vos transactions",
+  "@createAccountToGetStarted": {
+    "description": "Prompt to create first account"
+  },
+  
+  "create": "Créer",
+  "@create": {
+    "description": "Button text to create"
+  },
+  
+  "pleaseEnterTitle": "Veuillez entrer un titre",
+  "@pleaseEnterTitle": {
+    "description": "Validation error for empty title"
+  },
+  
+  "pleaseEnterAmount": "Veuillez entrer un montant",
+  "@pleaseEnterAmount": {
+    "description": "Validation error for empty amount"
+  },
+  
+  "pleaseEnterValidNumber": "Veuillez entrer un nombre valide",
+  "@pleaseEnterValidNumber": {
+    "description": "Validation error for invalid number"
+  },
+  
+  "pleaseSelectAccount": "Veuillez sélectionner un compte",
+  "@pleaseSelectAccount": {
+    "description": "Validation error for unselected account"
+  },
+  
+  "pleaseSelectDestinationAccount": "Veuillez sélectionner un compte de destination",
+  "@pleaseSelectDestinationAccount": {
+    "description": "Validation error for unselected destination account"
+  },
+  
+  "pleaseEnterExchangeRate": "Veuillez entrer un taux de change",
+  "@pleaseEnterExchangeRate": {
+    "description": "Validation error for empty exchange rate"
+  }
+}
