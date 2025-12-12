@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import 'dart:math' as math;
 
 class ExpandableFab extends StatefulWidget {
@@ -165,13 +165,13 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    
+
     // Get the localized label based on the action type
     final String label = switch (actionType) {
       FabActionType.transfer => l10n.transfer,
       FabActionType.transaction => l10n.transaction,
     };
-    
+
     return Material(
       elevation: 4,
       borderRadius: BorderRadius.circular(24),

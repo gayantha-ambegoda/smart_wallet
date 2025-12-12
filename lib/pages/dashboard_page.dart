@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/transaction_provider.dart';
 import '../providers/budget_provider.dart';
 import '../providers/account_provider.dart';
@@ -77,7 +77,10 @@ class _DashboardPageState extends State<DashboardPage> {
             children: [
               Text(
                 l10n.selectAccount,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               const SizedBox(height: 16),
               ...accountProvider.accounts.map((account) {
