@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import '../database/entity/transaction.dart';
 
 class ModernTransactionCard extends StatelessWidget {
@@ -7,6 +8,8 @@ class ModernTransactionCard extends StatelessWidget {
   final String? budgetName;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
+  final int?
+  contextAccountId; // The account from which this transaction is being viewed
 
   const ModernTransactionCard({
     super.key,
@@ -15,28 +18,55 @@ class ModernTransactionCard extends StatelessWidget {
     this.budgetName,
     this.onTap,
     this.onLongPress,
+    this.contextAccountId,
   });
 
   @override
   Widget build(BuildContext context) {
     final isIncome = transaction.type == TransactionType.income;
     final isTransfer = transaction.type == TransactionType.transfer;
+
+    // For transfers, determine if it's incoming or outgoing based on context
+    // Priority: outgoing > incoming (for same-account transfers)
+    final isTransferOutgoing =
+        isTransfer &&
+        contextAccountId != null &&
+        transaction.accountId == contextAccountId;
+    final isTransferIncoming =
+        isTransfer &&
+        contextAccountId != null &&
+        transaction.toAccountId == contextAccountId &&
+        !isTransferOutgoing; // Exclude if already marked as outgoing
+
     final date = DateTime.fromMillisecondsSinceEpoch(transaction.date);
     final dateStr = '${date.month}/${date.day}/${date.year}';
+    final l10n = AppLocalizations.of(context)!;
 
     Color getColor() {
-      if (isTransfer) return Colors.blue;
+      if (isTransfer) {
+        if (isTransferOutgoing) return Colors.red;
+        if (isTransferIncoming) return Colors.green;
+        return Colors.blue;
+      }
       return isIncome ? Colors.green : Colors.red;
     }
 
     IconData getIcon() {
-      if (isTransfer) return Icons.swap_horiz;
+      if (isTransfer) {
+        if (isTransferOutgoing) return Icons.arrow_upward;
+        if (isTransferIncoming) return Icons.arrow_downward;
+        return Icons.swap_horiz;
+      }
       return isIncome ? Icons.arrow_downward : Icons.arrow_upward;
     }
 
     String getTypeLabel() {
-      if (isTransfer) return 'Transfer';
-      return isIncome ? 'Income' : 'Expense';
+      if (isTransfer) {
+        if (isTransferOutgoing) return l10n.transferOut;
+        if (isTransferIncoming) return l10n.transferIn;
+        return l10n.transfer;
+      }
+      return isIncome ? l10n.income : l10n.expense;
     }
 
     return Card(
@@ -152,6 +182,10 @@ class ModernTransactionCard extends StatelessWidget {
                 children: [
                   Text(
                     '${isIncome
+                        ? '+'
+                        : isTransferOutgoing
+                        ? '-'
+                        : isTransferIncoming
                         ? '+'
                         : isTransfer
                         ? ''

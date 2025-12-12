@@ -8,7 +8,7 @@ import 'providers/transaction_provider.dart';
 import 'providers/budget_provider.dart';
 import 'providers/account_provider.dart';
 import 'pages/dashboard_page.dart';
-import 'l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

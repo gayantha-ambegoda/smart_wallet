@@ -54,6 +54,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transfer => 'Transfer';
 
   @override
+  String get transferIn => 'Transfer In';
+
+  @override
+  String get transferOut => 'Transfer Out';
+
+  @override
   String get title => 'Title';
 
   @override

@@ -1,5 +1,5 @@
 {
-  "@@locale": "en",
+  "@@locale": "da",
   "appTitle": "Smart Wallet",
   "@appTitle": {
     "description": "The title of the application"
@@ -10,87 +10,87 @@
     "description": "Dashboard page title"
   },
   
-  "templates": "Templates",
+  "templates": "Skabeloner",
   "@templates": {
     "description": "Templates page title"
   },
   
-  "availableBalance": "Available Balance",
+  "availableBalance": "Tilgængelig saldo",
   "@availableBalance": {
     "description": "Label for available balance display"
   },
   
-  "totalIncome": "Total Income",
+  "totalIncome": "Samlet indkomst",
   "@totalIncome": {
     "description": "Label for total income"
   },
   
-  "totalExpense": "Total Expense",
+  "totalExpense": "Samlede udgifter",
   "@totalExpense": {
     "description": "Label for total expense"
   },
   
-  "recentTransactions": "Recent Transactions",
+  "recentTransactions": "Seneste transaktioner",
   "@recentTransactions": {
     "description": "Label for recent transactions section"
   },
   
-  "noTransactionsYet": "No transactions yet",
+  "noTransactionsYet": "Ingen transaktioner endnu",
   "@noTransactionsYet": {
     "description": "Message when no transactions exist"
   },
   
-  "addTransactionToGetStarted": "Add a transaction to get started",
+  "addTransactionToGetStarted": "Tilføj en transaktion for at komme i gang",
   "@addTransactionToGetStarted": {
     "description": "Prompt to add first transaction"
   },
   
-  "noTemplatesYet": "No templates yet",
+  "noTemplatesYet": "Ingen skabeloner endnu",
   "@noTemplatesYet": {
     "description": "Message when no templates exist"
   },
   
-  "createTemplateToGetStarted": "Create a template to get started",
+  "createTemplateToGetStarted": "Opret en skabelon for at komme i gang",
   "@createTemplateToGetStarted": {
     "description": "Prompt to create first template"
   },
   
-  "addTransaction": "Add Transaction",
+  "addTransaction": "Tilføj transaktion",
   "@addTransaction": {
     "description": "Button text to add transaction"
   },
   
-  "updateTransaction": "Update Transaction",
+  "updateTransaction": "Opdater transaktion",
   "@updateTransaction": {
     "description": "Button text to update transaction"
   },
   
-  "transaction": "Transaction",
+  "transaction": "Transaktion",
   "@transaction": {
     "description": "Label for transaction"
   },
   
-  "transfer": "Transfer",
+  "transfer": "Overførsel",
   "@transfer": {
     "description": "Label for transfer"
   },
   
-  "transferIn": "Transfer In",
+  "transferIn": "Indgående overførsel",
   "@transferIn": {
     "description": "Label for incoming transfer"
   },
   
-  "transferOut": "Transfer Out",
+  "transferOut": "Udgående overførsel",
   "@transferOut": {
     "description": "Label for outgoing transfer"
   },
   
-  "title": "Title",
+  "title": "Titel",
   "@title": {
     "description": "Label for title field"
   },
   
-  "amount": "Amount",
+  "amount": "Beløb",
   "@amount": {
     "description": "Label for amount field"
   },
@@ -100,17 +100,17 @@
     "description": "Label for type field"
   },
   
-  "fromAccount": "From Account",
+  "fromAccount": "Fra konto",
   "@fromAccount": {
     "description": "Label for from account field"
   },
   
-  "toAccount": "To Account",
+  "toAccount": "Til konto",
   "@toAccount": {
     "description": "Label for to account field"
   },
   
-  "exchangeRate": "Exchange Rate",
+  "exchangeRate": "Vekselkurs",
   "@exchangeRate": {
     "description": "Label for exchange rate field"
   },
@@ -120,7 +120,7 @@
     "description": "Label for budget"
   },
   
-  "budgetOptional": "Budget (Optional)",
+  "budgetOptional": "Budget (valgfrit)",
   "@budgetOptional": {
     "description": "Label for optional budget field"
   },
@@ -130,62 +130,62 @@
     "description": "Label for tags"
   },
   
-  "tagsCommaSeparated": "Tags (comma-separated)",
+  "tagsCommaSeparated": "Tags (kommasepareret)",
   "@tagsCommaSeparated": {
     "description": "Label for tags field with instruction"
   },
   
-  "isTemplate": "Is Template",
+  "isTemplate": "Er skabelon",
   "@isTemplate": {
     "description": "Label for template checkbox"
   },
   
-  "saveTransaction": "Save Transaction",
+  "saveTransaction": "Gem transaktion",
   "@saveTransaction": {
     "description": "Button text to save transaction"
   },
   
-  "income": "Income",
+  "income": "Indkomst",
   "@income": {
     "description": "Income transaction type"
   },
   
-  "expense": "Expense",
+  "expense": "Udgift",
   "@expense": {
     "description": "Expense transaction type"
   },
   
-  "date": "Date",
+  "date": "Dato",
   "@date": {
     "description": "Label for date"
   },
   
-  "delete": "Delete",
+  "delete": "Slet",
   "@delete": {
     "description": "Button text to delete"
   },
   
-  "update": "Update",
+  "update": "Opdater",
   "@update": {
     "description": "Button text to update"
   },
   
-  "cancel": "Cancel",
+  "cancel": "Annuller",
   "@cancel": {
     "description": "Button text to cancel"
   },
   
-  "yes": "Yes",
+  "yes": "Ja",
   "@yes": {
     "description": "Button text for yes"
   },
   
-  "confirmDelete": "Confirm Delete",
+  "confirmDelete": "Bekræft sletning",
   "@confirmDelete": {
     "description": "Confirm delete dialog title"
   },
   
-  "deleteConfirmationMessage": "Are you sure you want to delete \"{title}\"? This action cannot be undone.",
+  "deleteConfirmationMessage": "Er du sikker på, at du vil slette \"{title}\"? Denne handling kan ikke fortrydes.",
   "@deleteConfirmationMessage": {
     "description": "Delete confirmation message",
     "placeholders": {
@@ -196,32 +196,32 @@
     }
   },
   
-  "transactionDeletedSuccessfully": "Transaction deleted successfully",
+  "transactionDeletedSuccessfully": "Transaktionen blev slettet",
   "@transactionDeletedSuccessfully": {
     "description": "Success message for transaction deletion"
   },
   
-  "budgetOnlyTransaction": "Budget-Only Transaction",
+  "budgetOnlyTransaction": "Kun budget-transaktion",
   "@budgetOnlyTransaction": {
     "description": "Label for budget-only transaction"
   },
   
-  "templateTransaction": "Template Transaction",
+  "templateTransaction": "Skabelon-transaktion",
   "@templateTransaction": {
     "description": "Label for template transaction"
   },
   
-  "doTransaction": "Do Transaction",
+  "doTransaction": "Udfør transaktion",
   "@doTransaction": {
     "description": "Button text to execute transaction"
   },
   
-  "confirmTransaction": "Confirm Transaction",
+  "confirmTransaction": "Bekræft transaktion",
   "@confirmTransaction": {
     "description": "Confirm transaction dialog title"
   },
   
-  "doTransactionConfirmationMessage": "Do you want to execute \"{title}\" transaction? This will make it count towards your actual balance.",
+  "doTransactionConfirmationMessage": "Vil du udføre \"{title}\"-transaktionen? Dette vil få den til at tælle med i din faktiske saldo.",
   "@doTransactionConfirmationMessage": {
     "description": "Do transaction confirmation message",
     "placeholders": {
@@ -232,17 +232,17 @@
     }
   },
   
-  "transactionExecutedSuccessfully": "Transaction executed successfully",
+  "transactionExecutedSuccessfully": "Transaktion udført",
   "@transactionExecutedSuccessfully": {
     "description": "Success message for transaction execution"
   },
   
-  "addAsTransaction": "Add as Transaction",
+  "addAsTransaction": "Tilføj som transaktion",
   "@addAsTransaction": {
     "description": "Dialog title for creating transaction from template"
   },
   
-  "createFromTemplateMessage": "Create a new transaction from \"{title}\" template?",
+  "createFromTemplateMessage": "Opret en ny transaktion fra \"{title}\"-skabelonen?",
   "@createFromTemplateMessage": {
     "description": "Confirmation message for creating transaction from template",
     "placeholders": {
@@ -253,87 +253,87 @@
     }
   },
   
-  "transactionCreatedFromTemplate": "Transaction created from template",
+  "transactionCreatedFromTemplate": "Transaktion oprettet fra skabelon",
   "@transactionCreatedFromTemplate": {
     "description": "Success message for transaction created from template"
   },
   
-  "selectAccount": "Select Account",
+  "selectAccount": "Vælg konto",
   "@selectAccount": {
     "description": "Dialog title for account selection"
   },
   
-  "primary": "Primary",
+  "primary": "Primær",
   "@primary": {
     "description": "Label for primary account"
   },
   
-  "accounts": "Accounts",
+  "accounts": "Konti",
   "@accounts": {
     "description": "Label for accounts"
   },
   
-  "budgets": "Budgets",
+  "budgets": "Budgetter",
   "@budgets": {
     "description": "Label for budgets"
   },
   
-  "showTransactions": "Show Transactions",
+  "showTransactions": "Vis transaktioner",
   "@showTransactions": {
     "description": "Tooltip for showing transactions"
   },
   
-  "showTemplates": "Show Templates",
+  "showTemplates": "Vis skabeloner",
   "@showTemplates": {
     "description": "Tooltip for showing templates"
   },
   
-  "settings": "Settings",
+  "settings": "Indstillinger",
   "@settings": {
     "description": "Label for settings"
   },
   
-  "noAccountsYet": "No accounts yet",
+  "noAccountsYet": "Ingen konti endnu",
   "@noAccountsYet": {
     "description": "Message when no accounts exist"
   },
   
-  "createAccountToGetStarted": "Create an account to start tracking your transactions",
+  "createAccountToGetStarted": "Opret en konto for at begynde at spore dine transaktioner",
   "@createAccountToGetStarted": {
     "description": "Prompt to create first account"
   },
   
-  "create": "Create",
+  "create": "Opret",
   "@create": {
     "description": "Button text to create"
   },
   
-  "pleaseEnterTitle": "Please enter a title",
+  "pleaseEnterTitle": "Indtast venligst en titel",
   "@pleaseEnterTitle": {
     "description": "Validation error for empty title"
   },
   
-  "pleaseEnterAmount": "Please enter an amount",
+  "pleaseEnterAmount": "Indtast venligst et beløb",
   "@pleaseEnterAmount": {
     "description": "Validation error for empty amount"
   },
   
-  "pleaseEnterValidNumber": "Please enter a valid number",
+  "pleaseEnterValidNumber": "Indtast venligst et gyldigt tal",
   "@pleaseEnterValidNumber": {
     "description": "Validation error for invalid number"
   },
   
-  "pleaseSelectAccount": "Please select an account",
+  "pleaseSelectAccount": "Vælg venligst en konto",
   "@pleaseSelectAccount": {
     "description": "Validation error for unselected account"
   },
   
-  "pleaseSelectDestinationAccount": "Please select a destination account",
+  "pleaseSelectDestinationAccount": "Vælg venligst en destinationskonto",
   "@pleaseSelectDestinationAccount": {
     "description": "Validation error for unselected destination account"
   },
   
-  "pleaseEnterExchangeRate": "Please enter an exchange rate",
+  "pleaseEnterExchangeRate": "Indtast venligst en vekselkurs",
   "@pleaseEnterExchangeRate": {
     "description": "Validation error for empty exchange rate"
   }
