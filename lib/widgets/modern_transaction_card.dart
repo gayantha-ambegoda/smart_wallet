@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../database/entity/transaction.dart';
 
 class ModernTransactionCard extends StatelessWidget {
@@ -8,7 +8,8 @@ class ModernTransactionCard extends StatelessWidget {
   final String? budgetName;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
-  final int? contextAccountId; // The account from which this transaction is being viewed
+  final int?
+  contextAccountId; // The account from which this transaction is being viewed
 
   const ModernTransactionCard({
     super.key,
@@ -24,17 +25,19 @@ class ModernTransactionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isIncome = transaction.type == TransactionType.income;
     final isTransfer = transaction.type == TransactionType.transfer;
-    
+
     // For transfers, determine if it's incoming or outgoing based on context
     // Priority: outgoing > incoming (for same-account transfers)
-    final isTransferOutgoing = isTransfer && 
-        contextAccountId != null && 
+    final isTransferOutgoing =
+        isTransfer &&
+        contextAccountId != null &&
         transaction.accountId == contextAccountId;
-    final isTransferIncoming = isTransfer && 
-        contextAccountId != null && 
+    final isTransferIncoming =
+        isTransfer &&
+        contextAccountId != null &&
         transaction.toAccountId == contextAccountId &&
         !isTransferOutgoing; // Exclude if already marked as outgoing
-    
+
     final date = DateTime.fromMillisecondsSinceEpoch(transaction.date);
     final dateStr = '${date.month}/${date.day}/${date.year}';
     final l10n = AppLocalizations.of(context)!;
