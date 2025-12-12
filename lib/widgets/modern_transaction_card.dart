@@ -26,12 +26,14 @@ class ModernTransactionCard extends StatelessWidget {
     final isTransfer = transaction.type == TransactionType.transfer;
     
     // For transfers, determine if it's incoming or outgoing based on context
-    final isTransferIncoming = isTransfer && 
-        contextAccountId != null && 
-        transaction.toAccountId == contextAccountId;
+    // Priority: outgoing > incoming (for same-account transfers)
     final isTransferOutgoing = isTransfer && 
         contextAccountId != null && 
         transaction.accountId == contextAccountId;
+    final isTransferIncoming = isTransfer && 
+        contextAccountId != null && 
+        transaction.toAccountId == contextAccountId &&
+        !isTransferOutgoing; // Exclude if already marked as outgoing
     
     final date = DateTime.fromMillisecondsSinceEpoch(transaction.date);
     final dateStr = '${date.month}/${date.day}/${date.year}';
@@ -39,8 +41,8 @@ class ModernTransactionCard extends StatelessWidget {
 
     Color getColor() {
       if (isTransfer) {
-        if (isTransferIncoming) return Colors.green;
         if (isTransferOutgoing) return Colors.red;
+        if (isTransferIncoming) return Colors.green;
         return Colors.blue;
       }
       return isIncome ? Colors.green : Colors.red;
@@ -48,8 +50,8 @@ class ModernTransactionCard extends StatelessWidget {
 
     IconData getIcon() {
       if (isTransfer) {
-        if (isTransferIncoming) return Icons.arrow_downward;
         if (isTransferOutgoing) return Icons.arrow_upward;
+        if (isTransferIncoming) return Icons.arrow_downward;
         return Icons.swap_horiz;
       }
       return isIncome ? Icons.arrow_downward : Icons.arrow_upward;
@@ -57,8 +59,8 @@ class ModernTransactionCard extends StatelessWidget {
 
     String getTypeLabel() {
       if (isTransfer) {
-        if (isTransferIncoming) return l10n.transferIn;
         if (isTransferOutgoing) return l10n.transferOut;
+        if (isTransferIncoming) return l10n.transferIn;
         return l10n.transfer;
       }
       return isIncome ? l10n.income : l10n.expense;
@@ -178,11 +180,13 @@ class ModernTransactionCard extends StatelessWidget {
                   Text(
                     '${isIncome
                         ? '+'
-                        : isTransferIncoming
-                        ? '+'
                         : isTransferOutgoing
                         ? '-'
-                        : ''}$currencySymbol${transaction.amount.toStringAsFixed(2)}',
+                        : isTransferIncoming
+                        ? '+'
+                        : isTransfer
+                        ? ''
+                        : '-'}$currencySymbol${transaction.amount.toStringAsFixed(2)}',
                     style: TextStyle(
                       color: getColor(),
                       fontWeight: FontWeight.bold,
