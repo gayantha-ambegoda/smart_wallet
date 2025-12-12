@@ -17,10 +17,6 @@ void main() async {
     Migration(1, 2, (database) async {
       await database.execute('DROP TABLE IF EXISTS `Transaction`');
       await database.execute('''
-  final database = await $FloorAppDatabase.databaseBuilder('app_database.db').addMigrations([
-    Migration(1, 2, (database) async {
-      await database.execute('DROP TABLE IF EXISTS `Transaction`');
-      await database.execute('''
             CREATE TABLE IF NOT EXISTS `Transaction` (
               `id` INTEGER PRIMARY KEY AUTOINCREMENT,
               `title` TEXT NOT NULL,
@@ -33,10 +29,6 @@ void main() async {
               FOREIGN KEY (`budgetId`) REFERENCES `Budget` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
             )
           ''');
-    }),
-    Migration(2, 3, (database) async {
-      // Create Account table
-      await database.execute('''
     }),
     Migration(2, 3, (database) async {
       // Create Account table
@@ -60,23 +52,7 @@ void main() async {
       } catch (e) {
         print('Column accountId might already exist: $e');
       }
-      // Add account-related columns to Transaction table
-      // Use try-catch to handle cases where columns already exist
-      try {
-        await database.execute(
-          'ALTER TABLE `Transaction` ADD COLUMN `accountId` INTEGER',
-        );
-      } catch (e) {
-        print('Column accountId might already exist: $e');
-      }
 
-      try {
-        await database.execute(
-          'ALTER TABLE `Transaction` ADD COLUMN `toAccountId` INTEGER',
-        );
-      } catch (e) {
-        print('Column toAccountId might already exist: $e');
-      }
       try {
         await database.execute(
           'ALTER TABLE `Transaction` ADD COLUMN `toAccountId` INTEGER',
@@ -92,21 +68,7 @@ void main() async {
       } catch (e) {
         print('Column exchangeRate might already exist: $e');
       }
-      try {
-        await database.execute(
-          'ALTER TABLE `Transaction` ADD COLUMN `exchangeRate` REAL',
-        );
-      } catch (e) {
-        print('Column exchangeRate might already exist: $e');
-      }
 
-      try {
-        await database.execute(
-          'ALTER TABLE `Transaction` ADD COLUMN `onlyBudget` INTEGER DEFAULT 0',
-        );
-      } catch (e) {
-        print('Column onlyBudget might already exist: $e');
-      }
       try {
         await database.execute(
           'ALTER TABLE `Transaction` ADD COLUMN `onlyBudget` INTEGER DEFAULT 0',
@@ -120,37 +82,7 @@ void main() async {
         'SELECT COUNT(*) as count FROM `Transaction` WHERE accountId IS NULL',
       );
       final count = transactionsWithoutAccount.first['count'] as int;
-      // Check if there are any transactions without an account
-      final transactionsWithoutAccount = await database.rawQuery(
-        'SELECT COUNT(*) as count FROM `Transaction` WHERE accountId IS NULL',
-      );
-      final count = transactionsWithoutAccount.first['count'] as int;
 
-      if (count > 0) {
-        print(
-          'Found $count transactions without account. Creating default account...',
-        );
-
-        // Get default currency from settings or use USD as fallback
-        String defaultCurrency = 'USD';
-        try {
-          final prefs = await SharedPreferences.getInstance();
-          defaultCurrency = prefs.getString('currency_code') ?? 'USD';
-        } catch (e) {
-          print('Could not load currency preference, using USD: $e');
-        }
-
-        // Check if a default account already exists
-        final existingDefaultAccount = await database.rawQuery(
-          'SELECT id FROM `Account` WHERE name = "Default Account" AND bankName = "System" LIMIT 1',
-        );
-
-        int defaultAccountId;
-
-        if (existingDefaultAccount.isEmpty) {
-          // Create a default account for orphaned transactions
-          await database.execute(
-            '''
       if (count > 0) {
         print(
           'Found $count transactions without account. Creating default account...',
@@ -181,34 +113,7 @@ void main() async {
               ''',
             [defaultCurrency],
           );
-              ''',
-            [defaultCurrency],
-          );
 
-          // Get the ID of the newly created account
-          final defaultAccountResult = await database.rawQuery(
-            'SELECT id FROM `Account` WHERE name = "Default Account" AND bankName = "System" ORDER BY id DESC LIMIT 1',
-          );
-
-          defaultAccountId = defaultAccountResult.first['id'] as int;
-          print(
-            'Created default account (ID: $defaultAccountId) with currency: $defaultCurrency',
-          );
-        } else {
-          defaultAccountId = existingDefaultAccount.first['id'] as int;
-          print('Using existing default account (ID: $defaultAccountId)');
-        }
-
-        // Update all transactions without an account to use the default account
-        await database.execute(
-          'UPDATE `Transaction` SET accountId = ? WHERE accountId IS NULL',
-          [defaultAccountId],
-        );
-
-        print('Assigned $count transactions to default account');
-      }
-    }),
-  ]).build();
           // Get the ID of the newly created account
           final defaultAccountResult = await database.rawQuery(
             'SELECT id FROM `Account` WHERE name = "Default Account" AND bankName = "System" ORDER BY id DESC LIMIT 1',
