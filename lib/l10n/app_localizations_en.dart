@@ -1,0 +1,207 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for English (`en`).
+class AppLocalizationsEn extends AppLocalizations {
+  AppLocalizationsEn([String locale = 'en']) : super(locale);
+
+  @override
+  String get appTitle => 'Smart Wallet';
+
+  @override
+  String get dashboard => 'Dashboard';
+
+  @override
+  String get templates => 'Templates';
+
+  @override
+  String get availableBalance => 'Available Balance';
+
+  @override
+  String get totalIncome => 'Total Income';
+
+  @override
+  String get totalExpense => 'Total Expense';
+
+  @override
+  String get recentTransactions => 'Recent Transactions';
+
+  @override
+  String get noTransactionsYet => 'No transactions yet';
+
+  @override
+  String get addTransactionToGetStarted => 'Add a transaction to get started';
+
+  @override
+  String get noTemplatesYet => 'No templates yet';
+
+  @override
+  String get createTemplateToGetStarted => 'Create a template to get started';
+
+  @override
+  String get addTransaction => 'Add Transaction';
+
+  @override
+  String get updateTransaction => 'Update Transaction';
+
+  @override
+  String get transaction => 'Transaction';
+
+  @override
+  String get transfer => 'Transfer';
+
+  @override
+  String get title => 'Title';
+
+  @override
+  String get amount => 'Amount';
+
+  @override
+  String get type => 'Type';
+
+  @override
+  String get fromAccount => 'From Account';
+
+  @override
+  String get toAccount => 'To Account';
+
+  @override
+  String get exchangeRate => 'Exchange Rate';
+
+  @override
+  String get budget => 'Budget';
+
+  @override
+  String get budgetOptional => 'Budget (Optional)';
+
+  @override
+  String get tags => 'Tags';
+
+  @override
+  String get tagsCommaSeparated => 'Tags (comma-separated)';
+
+  @override
+  String get isTemplate => 'Is Template';
+
+  @override
+  String get saveTransaction => 'Save Transaction';
+
+  @override
+  String get income => 'Income';
+
+  @override
+  String get expense => 'Expense';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get update => 'Update';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get yes => 'Yes';
+
+  @override
+  String get confirmDelete => 'Confirm Delete';
+
+  @override
+  String deleteConfirmationMessage(String title) {
+    return 'Are you sure you want to delete \"$title\"? This action cannot be undone.';
+  }
+
+  @override
+  String get transactionDeletedSuccessfully =>
+      'Transaction deleted successfully';
+
+  @override
+  String get budgetOnlyTransaction => 'Budget-Only Transaction';
+
+  @override
+  String get templateTransaction => 'Template Transaction';
+
+  @override
+  String get doTransaction => 'Do Transaction';
+
+  @override
+  String get confirmTransaction => 'Confirm Transaction';
+
+  @override
+  String doTransactionConfirmationMessage(String title) {
+    return 'Do you want to execute \"$title\" transaction? This will make it count towards your actual balance.';
+  }
+
+  @override
+  String get transactionExecutedSuccessfully =>
+      'Transaction executed successfully';
+
+  @override
+  String get addAsTransaction => 'Add as Transaction';
+
+  @override
+  String createFromTemplateMessage(String title) {
+    return 'Create a new transaction from \"$title\" template?';
+  }
+
+  @override
+  String get transactionCreatedFromTemplate =>
+      'Transaction created from template';
+
+  @override
+  String get selectAccount => 'Select Account';
+
+  @override
+  String get primary => 'Primary';
+
+  @override
+  String get accounts => 'Accounts';
+
+  @override
+  String get budgets => 'Budgets';
+
+  @override
+  String get showTransactions => 'Show Transactions';
+
+  @override
+  String get showTemplates => 'Show Templates';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get noAccountsYet => 'No accounts yet';
+
+  @override
+  String get createAccountToGetStarted =>
+      'Create an account to start tracking your transactions';
+
+  @override
+  String get create => 'Create';
+
+  @override
+  String get pleaseEnterTitle => 'Please enter a title';
+
+  @override
+  String get pleaseEnterAmount => 'Please enter an amount';
+
+  @override
+  String get pleaseEnterValidNumber => 'Please enter a valid number';
+
+  @override
+  String get pleaseSelectAccount => 'Please select an account';
+
+  @override
+  String get pleaseSelectDestinationAccount =>
+      'Please select a destination account';
+
+  @override
+  String get pleaseEnterExchangeRate => 'Please enter an exchange rate';
+}
