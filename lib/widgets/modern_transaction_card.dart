@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../database/entity/transaction.dart';
 
 class ModernTransactionCard extends StatelessWidget {
@@ -34,6 +35,7 @@ class ModernTransactionCard extends StatelessWidget {
     
     final date = DateTime.fromMillisecondsSinceEpoch(transaction.date);
     final dateStr = '${date.month}/${date.day}/${date.year}';
+    final l10n = AppLocalizations.of(context)!;
 
     Color getColor() {
       if (isTransfer) {
@@ -55,11 +57,11 @@ class ModernTransactionCard extends StatelessWidget {
 
     String getTypeLabel() {
       if (isTransfer) {
-        if (isTransferIncoming) return 'Transfer In';
-        if (isTransferOutgoing) return 'Transfer Out';
-        return 'Transfer';
+        if (isTransferIncoming) return l10n.transferIn;
+        if (isTransferOutgoing) return l10n.transferOut;
+        return l10n.transfer;
       }
-      return isIncome ? 'Income' : 'Expense';
+      return isIncome ? l10n.income : l10n.expense;
     }
 
     return Card(

@@ -75,6 +75,16 @@
     "description": "Label for transfer"
   },
   
+  "transferIn": "Virement entrant",
+  "@transferIn": {
+    "description": "Label for incoming transfer"
+  },
+  
+  "transferOut": "Virement sortant",
+  "@transferOut": {
+    "description": "Label for outgoing transfer"
+  },
+  
   "title": "Titre",
   "@title": {
     "description": "Label for title field"

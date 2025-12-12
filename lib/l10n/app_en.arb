@@ -75,6 +75,16 @@
     "description": "Label for transfer"
   },
   
+  "transferIn": "Transfer In",
+  "@transferIn": {
+    "description": "Label for incoming transfer"
+  },
+  
+  "transferOut": "Transfer Out",
+  "@transferOut": {
+    "description": "Label for outgoing transfer"
+  },
+  
   "title": "Title",
   "@title": {
     "description": "Label for title field"
