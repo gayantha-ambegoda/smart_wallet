@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../database/entity/budget.dart';
 import '../providers/budget_provider.dart';
 
@@ -29,7 +30,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
       if (mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Budget created successfully')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.budgetCreatedSuccessfully)),
         );
       }
     }
@@ -37,12 +38,13 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: const Text(
-          'Create New Budget',
-          style: TextStyle(fontWeight: FontWeight.w600),
+        title: Text(
+          l10n.createNewBudget,
+          style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.grey[800],
@@ -56,15 +58,15 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
             children: [
               TextFormField(
                 controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Budget Title',
-                  hintText: 'Enter budget name',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.account_balance_wallet),
+                decoration: InputDecoration(
+                  labelText: l10n.budgetTitle,
+                  hintText: l10n.enterBudgetName,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.account_balance_wallet),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Please enter a budget title';
+                    return l10n.pleaseEnterBudgetTitle;
                   }
                   return null;
                 },
@@ -76,9 +78,9 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text(
-                  'Create Budget',
-                  style: TextStyle(fontSize: 16),
+                child: Text(
+                  l10n.createBudget,
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
             ],

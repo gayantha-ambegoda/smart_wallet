@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/budget_provider.dart';
 import 'add_budget_page.dart';
 import 'budget_detail_page.dart';
@@ -22,12 +23,13 @@ class _BudgetListPageState extends State<BudgetListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: const Text(
-          'Budgets',
-          style: TextStyle(fontWeight: FontWeight.w600),
+        title: Text(
+          l10n.budgets,
+          style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.grey[800],
@@ -39,7 +41,7 @@ class _BudgetListPageState extends State<BudgetListPage> {
             final budgets = budgetProvider.budgets;
 
             if (budgets.isEmpty) {
-              return const Center(child: Text('No budgets yet'));
+              return Center(child: Text(l10n.noBudgetsYet));
             }
 
             return ListView.builder(
