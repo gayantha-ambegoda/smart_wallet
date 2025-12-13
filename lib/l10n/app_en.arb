@@ -448,11 +448,6 @@
     "description": "Validation error for empty initial balance"
   },
   
-  "pleaseEnterValidNumber": "Please enter a valid number",
-  "@pleaseEnterValidNumber": {
-    "description": "Validation error for invalid number"
-  },
-  
   "exampleCheckingAccount": "e.g., Checking Account, Savings",
   "@exampleCheckingAccount": {
     "description": "Example text for account name"

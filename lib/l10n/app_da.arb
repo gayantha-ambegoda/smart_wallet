@@ -448,11 +448,6 @@
     "description": "Validation error for empty initial balance"
   },
   
-  "pleaseEnterValidNumber": "Indtast venligst et gyldigt tal",
-  "@pleaseEnterValidNumber": {
-    "description": "Validation error for invalid number"
-  },
-  
   "exampleCheckingAccount": "f.eks., Checkkonto, Opsparing",
   "@exampleCheckingAccount": {
     "description": "Example text for account name"
