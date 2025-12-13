@@ -336,5 +336,155 @@
   "pleaseEnterExchangeRate": "Please enter an exchange rate",
   "@pleaseEnterExchangeRate": {
     "description": "Validation error for empty exchange rate"
+  },
+  
+  "budgetCreatedSuccessfully": "Budget created successfully",
+  "@budgetCreatedSuccessfully": {
+    "description": "Success message for budget creation"
+  },
+  
+  "budgetTitle": "Budget Title",
+  "@budgetTitle": {
+    "description": "Label for budget title field"
+  },
+  
+  "enterBudgetName": "Enter budget name",
+  "@enterBudgetName": {
+    "description": "Hint text for budget name field"
+  },
+  
+  "pleaseEnterBudgetTitle": "Please enter a budget title",
+  "@pleaseEnterBudgetTitle": {
+    "description": "Validation error for empty budget title"
+  },
+  
+  "createNewBudget": "Create New Budget",
+  "@createNewBudget": {
+    "description": "Title for create new budget page"
+  },
+  
+  "createBudget": "Create Budget",
+  "@createBudget": {
+    "description": "Button text to create budget"
+  },
+  
+  "currencyUpdatedSuccessfully": "Currency updated successfully",
+  "@currencyUpdatedSuccessfully": {
+    "description": "Success message for currency update"
+  },
+  
+  "selectCurrency": "Select Currency",
+  "@selectCurrency": {
+    "description": "Label for currency selection field"
+  },
+  
+  "currency": "Currency",
+  "@currency": {
+    "description": "Label for currency"
+  },
+  
+  "appVersion": "App Version",
+  "@appVersion": {
+    "description": "Label for app version"
+  },
+  
+  "accountName": "Account Name",
+  "@accountName": {
+    "description": "Label for account name field"
+  },
+  
+  "bankName": "Bank Name",
+  "@bankName": {
+    "description": "Label for bank name field"
+  },
+  
+  "initialBalance": "Initial Balance",
+  "@initialBalance": {
+    "description": "Label for initial balance field"
+  },
+  
+  "setAsPrimaryAccount": "Set as Primary Account",
+  "@setAsPrimaryAccount": {
+    "description": "Label for primary account switch"
+  },
+  
+  "primaryAccountDescription": "The primary account is shown by default on the dashboard",
+  "@primaryAccountDescription": {
+    "description": "Description for primary account switch"
+  },
+  
+  "saveAccount": "Save Account",
+  "@saveAccount": {
+    "description": "Button text to save account"
+  },
+  
+  "updateAccount": "Update Account",
+  "@updateAccount": {
+    "description": "Button text to update account"
+  },
+  
+  "deleteAccount": "Delete Account",
+  "@deleteAccount": {
+    "description": "Button text/title to delete account"
+  },
+  
+  "deleteAccountConfirmation": "Are you sure you want to delete this account? This action cannot be undone.",
+  "@deleteAccountConfirmation": {
+    "description": "Confirmation message for account deletion"
+  },
+  
+  "pleaseEnterAccountName": "Please enter an account name",
+  "@pleaseEnterAccountName": {
+    "description": "Validation error for empty account name"
+  },
+  
+  "pleaseEnterBankName": "Please enter a bank name",
+  "@pleaseEnterBankName": {
+    "description": "Validation error for empty bank name"
+  },
+  
+  "pleaseEnterInitialBalance": "Please enter an initial balance",
+  "@pleaseEnterInitialBalance": {
+    "description": "Validation error for empty initial balance"
+  },
+  
+  "exampleCheckingAccount": "e.g., Checking Account, Savings",
+  "@exampleCheckingAccount": {
+    "description": "Example text for account name"
+  },
+  
+  "exampleBankName": "e.g., Bank of America, Chase",
+  "@exampleBankName": {
+    "description": "Example text for bank name"
+  },
+  
+  "currentBalanceDescription": "Current balance in this account",
+  "@currentBalanceDescription": {
+    "description": "Helper text for initial balance field"
+  },
+  
+  "editAccount": "Edit Account",
+  "@editAccount": {
+    "description": "Title for edit account page"
+  },
+  
+  "addAccount": "Add Account",
+  "@addAccount": {
+    "description": "Title for add account page"
+  },
+  
+  "totalBalance": "Total Balance",
+  "@totalBalance": {
+    "description": "Label for total balance"
+  },
+  
+  "noBudgetsYet": "No budgets yet",
+  "@noBudgetsYet": {
+    "description": "Message when no budgets exist"
+  },
+  
+  "selected": "Selected",
+  "@selected": {
+    "description": "Label for selected item"
   }
 }

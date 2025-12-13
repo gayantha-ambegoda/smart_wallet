@@ -336,5 +336,155 @@
   "pleaseEnterExchangeRate": "Indtast venligst en vekselkurs",
   "@pleaseEnterExchangeRate": {
     "description": "Validation error for empty exchange rate"
+  },
+  
+  "budgetCreatedSuccessfully": "Budget oprettet",
+  "@budgetCreatedSuccessfully": {
+    "description": "Success message for budget creation"
+  },
+  
+  "budgetTitle": "Budget titel",
+  "@budgetTitle": {
+    "description": "Label for budget title field"
+  },
+  
+  "enterBudgetName": "Indtast budgetnavn",
+  "@enterBudgetName": {
+    "description": "Hint text for budget name field"
+  },
+  
+  "pleaseEnterBudgetTitle": "Indtast venligst en budget titel",
+  "@pleaseEnterBudgetTitle": {
+    "description": "Validation error for empty budget title"
+  },
+  
+  "createNewBudget": "Opret nyt budget",
+  "@createNewBudget": {
+    "description": "Title for create new budget page"
+  },
+  
+  "createBudget": "Opret budget",
+  "@createBudget": {
+    "description": "Button text to create budget"
+  },
+  
+  "currencyUpdatedSuccessfully": "Valuta opdateret",
+  "@currencyUpdatedSuccessfully": {
+    "description": "Success message for currency update"
+  },
+  
+  "selectCurrency": "Vælg valuta",
+  "@selectCurrency": {
+    "description": "Label for currency selection field"
+  },
+  
+  "currency": "Valuta",
+  "@currency": {
+    "description": "Label for currency"
+  },
+  
+  "appVersion": "App version",
+  "@appVersion": {
+    "description": "Label for app version"
+  },
+  
+  "accountName": "Kontonavn",
+  "@accountName": {
+    "description": "Label for account name field"
+  },
+  
+  "bankName": "Banknavn",
+  "@bankName": {
+    "description": "Label for bank name field"
+  },
+  
+  "initialBalance": "Begyndelsessaldo",
+  "@initialBalance": {
+    "description": "Label for initial balance field"
+  },
+  
+  "setAsPrimaryAccount": "Indstil som primær konto",
+  "@setAsPrimaryAccount": {
+    "description": "Label for primary account switch"
+  },
+  
+  "primaryAccountDescription": "Den primære konto vises som standard på dashboardet",
+  "@primaryAccountDescription": {
+    "description": "Description for primary account switch"
+  },
+  
+  "saveAccount": "Gem konto",
+  "@saveAccount": {
+    "description": "Button text to save account"
+  },
+  
+  "updateAccount": "Opdater konto",
+  "@updateAccount": {
+    "description": "Button text to update account"
+  },
+  
+  "deleteAccount": "Slet konto",
+  "@deleteAccount": {
+    "description": "Button text/title to delete account"
+  },
+  
+  "deleteAccountConfirmation": "Er du sikker på, at du vil slette denne konto? Denne handling kan ikke fortrydes.",
+  "@deleteAccountConfirmation": {
+    "description": "Confirmation message for account deletion"
+  },
+  
+  "pleaseEnterAccountName": "Indtast venligst et kontonavn",
+  "@pleaseEnterAccountName": {
+    "description": "Validation error for empty account name"
+  },
+  
+  "pleaseEnterBankName": "Indtast venligst et banknavn",
+  "@pleaseEnterBankName": {
+    "description": "Validation error for empty bank name"
+  },
+  
+  "pleaseEnterInitialBalance": "Indtast venligst en begyndelsessaldo",
+  "@pleaseEnterInitialBalance": {
+    "description": "Validation error for empty initial balance"
+  },
+  
+  "exampleCheckingAccount": "f.eks., Checkkonto, Opsparing",
+  "@exampleCheckingAccount": {
+    "description": "Example text for account name"
+  },
+  
+  "exampleBankName": "f.eks., Danske Bank, Nordea",
+  "@exampleBankName": {
+    "description": "Example text for bank name"
+  },
+  
+  "currentBalanceDescription": "Nuværende saldo på denne konto",
+  "@currentBalanceDescription": {
+    "description": "Helper text for initial balance field"
+  },
+  
+  "editAccount": "Rediger konto",
+  "@editAccount": {
+    "description": "Title for edit account page"
+  },
+  
+  "addAccount": "Tilføj konto",
+  "@addAccount": {
+    "description": "Title for add account page"
+  },
+  
+  "totalBalance": "Total saldo",
+  "@totalBalance": {
+    "description": "Label for total balance"
+  },
+  
+  "noBudgetsYet": "Ingen budgetter endnu",
+  "@noBudgetsYet": {
+    "description": "Message when no budgets exist"
+  },
+  
+  "selected": "Valgt",
+  "@selected": {
+    "description": "Label for selected item"
   }
 }

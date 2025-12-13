@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../database/entity/account.dart';
 import '../database/entity/currency.dart';
 import '../providers/account_provider.dart';
@@ -46,12 +47,13 @@ class _AddAccountPageState extends State<AddAccountPage> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.accountToEdit != null;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          isEditing ? 'Edit Account' : 'Add Account',
+          isEditing ? l10n.editAccount : l10n.addAccount,
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         backgroundColor: Colors.white,
@@ -61,7 +63,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
                 IconButton(
                   icon: const Icon(Icons.delete),
                   onPressed: () => _deleteAccount(),
-                  tooltip: 'Delete Account',
+                  tooltip: l10n.deleteAccount,
                 ),
               ]
             : null,
@@ -74,14 +76,14 @@ class _AddAccountPageState extends State<AddAccountPage> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Account Name',
-                  border: OutlineInputBorder(),
-                  helperText: 'e.g., Checking Account, Savings',
+                decoration: InputDecoration(
+                  labelText: l10n.accountName,
+                  border: const OutlineInputBorder(),
+                  helperText: l10n.exampleCheckingAccount,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter an account name';
+                    return l10n.pleaseEnterAccountName;
                   }
                   return null;
                 },
@@ -89,14 +91,14 @@ class _AddAccountPageState extends State<AddAccountPage> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _bankNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Bank Name',
-                  border: OutlineInputBorder(),
-                  helperText: 'e.g., Bank of America, Chase',
+                decoration: InputDecoration(
+                  labelText: l10n.bankName,
+                  border: const OutlineInputBorder(),
+                  helperText: l10n.exampleBankName,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a bank name';
+                    return l10n.pleaseEnterBankName;
                   }
                   return null;
                 },
@@ -104,9 +106,9 @@ class _AddAccountPageState extends State<AddAccountPage> {
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 initialValue: _selectedCurrencyCode,
-                decoration: const InputDecoration(
-                  labelText: 'Currency',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.currency,
+                  border: const OutlineInputBorder(),
                 ),
                 items: CurrencyList.currencies.map((currency) {
                   return DropdownMenuItem(
@@ -126,31 +128,31 @@ class _AddAccountPageState extends State<AddAccountPage> {
               TextFormField(
                 controller: _initialBalanceController,
                 decoration: InputDecoration(
-                  labelText: 'Initial Balance',
+                  labelText: l10n.initialBalance,
                   border: const OutlineInputBorder(),
                   prefixText: CurrencyList.getByCode(
                     _selectedCurrencyCode,
                   ).symbol,
-                  helperText: 'Current balance in this account',
+                  helperText: l10n.currentBalanceDescription,
                 ),
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter an initial balance';
+                    return l10n.pleaseEnterInitialBalance;
                   }
                   if (double.tryParse(value) == null) {
-                    return 'Please enter a valid number';
+                    return l10n.pleaseEnterValidNumber;
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               SwitchListTile(
-                title: const Text('Set as Primary Account'),
-                subtitle: const Text(
-                  'The primary account is shown by default on the dashboard',
+                title: Text(l10n.setAsPrimaryAccount),
+                subtitle: Text(
+                  l10n.primaryAccountDescription,
                 ),
                 value: _isPrimary,
                 onChanged: (value) {
@@ -165,7 +167,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(16),
                 ),
-                child: Text(isEditing ? 'Update Account' : 'Save Account'),
+                child: Text(isEditing ? l10n.updateAccount : l10n.saveAccount),
               ),
             ],
           ),
@@ -198,23 +200,24 @@ class _AddAccountPageState extends State<AddAccountPage> {
   }
 
   void _deleteAccount() async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Account'),
-          content: const Text(
-            'Are you sure you want to delete this account? This action cannot be undone.',
+          title: Text(l10n.deleteAccount),
+          content: Text(
+            l10n.deleteAccountConfirmation,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(true),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: const Text('Delete'),
+              child: Text(l10n.delete),
             ),
           ],
         );
