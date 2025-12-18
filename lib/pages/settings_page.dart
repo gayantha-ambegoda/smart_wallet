@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import '../database/entity/currency.dart';
 import '../services/settings_service.dart';
 
@@ -36,9 +37,11 @@ class _SettingsPageState extends State<SettingsPage> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Currency updated successfully'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.currencyUpdatedSuccessfully,
+          ),
+          duration: const Duration(seconds: 2),
         ),
       );
     }
@@ -46,12 +49,13 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: const Text(
-          'Settings',
-          style: TextStyle(fontWeight: FontWeight.w600),
+        title: Text(
+          l10n.settings,
+          style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.grey[800],
@@ -75,7 +79,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              'Currency',
+                              l10n.currency,
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                           ],
@@ -83,10 +87,10 @@ class _SettingsPageState extends State<SettingsPage> {
                         const SizedBox(height: 16),
                         DropdownButtonFormField<String>(
                           initialValue: _selectedCurrencyCode,
-                          decoration: const InputDecoration(
-                            labelText: 'Select Currency',
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.monetization_on),
+                          decoration: InputDecoration(
+                            labelText: l10n.selectCurrency,
+                            border: const OutlineInputBorder(),
+                            prefixIcon: const Icon(Icons.monetization_on),
                           ),
                           isExpanded: true,
                           items: CurrencyList.currencies.map((currency) {
@@ -120,7 +124,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Selected: ${CurrencyList.getByCode(_selectedCurrencyCode).name} (${CurrencyList.getByCode(_selectedCurrencyCode).symbol})',
+                          '${l10n.selected}: ${CurrencyList.getByCode(_selectedCurrencyCode).name} (${CurrencyList.getByCode(_selectedCurrencyCode).symbol})',
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey[600],
@@ -134,7 +138,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 Card(
                   child: ListTile(
                     leading: const Icon(Icons.info),
-                    title: const Text('App Version'),
+                    title: Text(l10n.appVersion),
                     trailing: const Text('1.0.0'),
                   ),
                 ),

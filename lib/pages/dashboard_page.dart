@@ -180,22 +180,23 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> _createTransactionFromTemplate(Transaction template) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Add as Transaction'),
+          title: Text(l10n.addAsTransaction),
           content: Text(
-            'Create a new transaction from "${template.title}" template?',
+            l10n.createFromTemplateMessage(template.title),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Yes'),
+              child: Text(l10n.yes),
             ),
           ],
         );
@@ -218,9 +219,9 @@ class _DashboardPageState extends State<DashboardPage> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Transaction created from template'),
-            duration: Duration(seconds: 2),
+          SnackBar(
+            content: Text(l10n.transactionCreatedFromTemplate),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
@@ -229,6 +230,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
@@ -240,7 +242,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
             if (accounts.isEmpty) {
               return Text(
-                _showTemplates ? 'Templates' : 'Dashboard',
+                _showTemplates ? l10n.templates : l10n.dashboard,
                 style: const TextStyle(fontWeight: FontWeight.w600),
               );
             }
@@ -277,7 +279,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     const Icon(Icons.arrow_drop_down, size: 20),
                   ] else
                     Text(
-                      _showTemplates ? 'Templates' : 'Dashboard',
+                      _showTemplates ? l10n.templates : l10n.dashboard,
                       style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                 ],
@@ -303,7 +305,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 context.read<AccountProvider>().loadAccounts();
               }
             },
-            tooltip: 'Accounts',
+            tooltip: l10n.accounts,
           ),
           IconButton(
             icon: const Icon(Icons.account_balance_wallet_outlined),
@@ -313,7 +315,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 MaterialPageRoute(builder: (context) => const BudgetListPage()),
               );
             },
-            tooltip: 'Budgets',
+            tooltip: l10n.budgets,
           ),
           IconButton(
             icon: Icon(
@@ -324,7 +326,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 _showTemplates = !_showTemplates;
               });
             },
-            tooltip: _showTemplates ? 'Show Transactions' : 'Show Templates',
+            tooltip: _showTemplates ? l10n.showTransactions : l10n.showTemplates,
           ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
@@ -336,7 +338,7 @@ class _DashboardPageState extends State<DashboardPage> {
               // Reload currency when returning from settings
               _loadCurrency();
             },
-            tooltip: 'Settings',
+            tooltip: l10n.settings,
           ),
           const SizedBox(width: 4),
         ],
@@ -360,7 +362,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'No accounts yet',
+                              l10n.noAccountsYet,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Colors.orange.shade700,
@@ -368,7 +370,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Create an account to start tracking your transactions',
+                              l10n.createAccountToGetStarted,
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Colors.orange.shade700,
@@ -390,7 +392,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             context.read<AccountProvider>().loadAccounts();
                           }
                         },
-                        child: const Text('Create'),
+                        child: Text(l10n.create),
                       ),
                     ],
                   ),
@@ -547,7 +549,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Text(
-                      _showTemplates ? 'Templates' : 'Recent Transactions',
+                      _showTemplates ? l10n.templates : l10n.recentTransactions,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,

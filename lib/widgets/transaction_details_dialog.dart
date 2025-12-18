@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../l10n/app_localizations.dart';
 import '../database/entity/transaction.dart';
 import '../database/entity/currency.dart';
 import '../providers/transaction_provider.dart';
@@ -33,6 +34,7 @@ class TransactionDetailsDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final SettingsService settingsService = SettingsService();
     final isIncome = transaction.type == TransactionType.income;
     final date = DateTime.fromMillisecondsSinceEpoch(transaction.date);
@@ -51,9 +53,7 @@ class TransactionDetailsDialog extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: isIncome
-                      ? Colors.green.shade600
-                      : Colors.red.shade600,
+                  color: isIncome ? Colors.green.shade600 : Colors.red.shade600,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20),
@@ -72,7 +72,7 @@ class TransactionDetailsDialog extends StatelessWidget {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            isIncome ? 'Income' : 'Expense',
+                            isIncome ? l10n.income : l10n.expense,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -283,7 +283,7 @@ class TransactionDetailsDialog extends StatelessWidget {
                       ElevatedButton.icon(
                         onPressed: () => _handleDoTransaction(context),
                         icon: const Icon(Icons.check_circle),
-                        label: const Text('Do Transaction'),
+                        label: Text(l10n.doTransaction),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
                           foregroundColor: Colors.white,
@@ -302,7 +302,7 @@ class TransactionDetailsDialog extends StatelessWidget {
                           child: OutlinedButton.icon(
                             onPressed: () => _handleDelete(context),
                             icon: const Icon(Icons.delete),
-                            label: const Text('Delete'),
+                            label: Text(l10n.delete),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: Colors.red,
                               side: const BorderSide(color: Colors.red),
@@ -318,7 +318,7 @@ class TransactionDetailsDialog extends StatelessWidget {
                           child: ElevatedButton.icon(
                             onPressed: () => _handleUpdate(context),
                             icon: const Icon(Icons.edit),
-                            label: const Text('Update'),
+                            label: Text(l10n.update),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue,
                               foregroundColor: Colors.white,
@@ -385,6 +385,7 @@ class TransactionDetailsDialog extends StatelessWidget {
   }
 
   Future<void> _handleDelete(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -396,16 +397,14 @@ class TransactionDetailsDialog extends StatelessWidget {
             children: [
               Icon(Icons.warning_amber_rounded, color: Colors.orange.shade700),
               const SizedBox(width: 12),
-              const Text('Confirm Delete'),
+              Text(l10n.confirmDelete),
             ],
           ),
-          content: Text(
-            'Are you sure you want to delete "${transaction.title}"? This action cannot be undone.',
-          ),
+          content: Text(l10n.deleteConfirmationMessage(transaction.title)),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
@@ -413,7 +412,7 @@ class TransactionDetailsDialog extends StatelessWidget {
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Delete'),
+              child: Text(l10n.delete),
             ),
           ],
         );
@@ -428,11 +427,11 @@ class TransactionDetailsDialog extends StatelessWidget {
         onTransactionChanged?.call();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Row(
+            content: Row(
               children: [
-                Icon(Icons.check_circle, color: Colors.white),
-                SizedBox(width: 12),
-                Text('Transaction deleted successfully'),
+                const Icon(Icons.check_circle, color: Colors.white),
+                const SizedBox(width: 12),
+                Text(l10n.transactionDeletedSuccessfully),
               ],
             ),
             backgroundColor: Colors.green,
@@ -470,6 +469,7 @@ class TransactionDetailsDialog extends StatelessWidget {
   }
 
   Future<void> _handleDoTransaction(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -481,16 +481,16 @@ class TransactionDetailsDialog extends StatelessWidget {
             children: [
               Icon(Icons.check_circle, color: Colors.green.shade700),
               const SizedBox(width: 12),
-              const Text('Confirm Transaction'),
+              Text(l10n.confirmTransaction),
             ],
           ),
           content: Text(
-            'Do you want to execute "${transaction.title}" transaction? This will make it count towards your actual balance.',
+            l10n.doTransactionConfirmationMessage(transaction.title),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
@@ -498,7 +498,7 @@ class TransactionDetailsDialog extends StatelessWidget {
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Do Transaction'),
+              child: Text(l10n.doTransaction),
             ),
           ],
         );
@@ -528,11 +528,11 @@ class TransactionDetailsDialog extends StatelessWidget {
         onTransactionChanged?.call();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Row(
+            content: Row(
               children: [
-                Icon(Icons.check_circle, color: Colors.white),
-                SizedBox(width: 12),
-                Text('Transaction executed successfully'),
+                const Icon(Icons.check_circle, color: Colors.white),
+                const SizedBox(width: 12),
+                Text(l10n.transactionExecutedSuccessfully),
               ],
             ),
             backgroundColor: Colors.green,

@@ -210,4 +210,97 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get pleaseEnterExchangeRate => 'Indtast venligst en vekselkurs';
+
+  @override
+  String get budgetCreatedSuccessfully => 'Budget oprettet';
+
+  @override
+  String get budgetTitle => 'Budget titel';
+
+  @override
+  String get enterBudgetName => 'Indtast budgetnavn';
+
+  @override
+  String get pleaseEnterBudgetTitle => 'Indtast venligst en budget titel';
+
+  @override
+  String get createNewBudget => 'Opret nyt budget';
+
+  @override
+  String get createBudget => 'Opret budget';
+
+  @override
+  String get currencyUpdatedSuccessfully => 'Valuta opdateret';
+
+  @override
+  String get selectCurrency => 'Vælg valuta';
+
+  @override
+  String get currency => 'Valuta';
+
+  @override
+  String get appVersion => 'App version';
+
+  @override
+  String get accountName => 'Kontonavn';
+
+  @override
+  String get bankName => 'Banknavn';
+
+  @override
+  String get initialBalance => 'Begyndelsessaldo';
+
+  @override
+  String get setAsPrimaryAccount => 'Indstil som primær konto';
+
+  @override
+  String get primaryAccountDescription =>
+      'Den primære konto vises som standard på dashboardet';
+
+  @override
+  String get saveAccount => 'Gem konto';
+
+  @override
+  String get updateAccount => 'Opdater konto';
+
+  @override
+  String get deleteAccount => 'Slet konto';
+
+  @override
+  String get deleteAccountConfirmation =>
+      'Er du sikker på, at du vil slette denne konto? Denne handling kan ikke fortrydes.';
+
+  @override
+  String get pleaseEnterAccountName => 'Indtast venligst et kontonavn';
+
+  @override
+  String get pleaseEnterBankName => 'Indtast venligst et banknavn';
+
+  @override
+  String get pleaseEnterInitialBalance =>
+      'Indtast venligst en begyndelsessaldo';
+
+  @override
+  String get exampleCheckingAccount => 'f.eks., Checkkonto, Opsparing';
+
+  @override
+  String get exampleBankName => 'f.eks., Danske Bank, Nordea';
+
+  @override
+  String get currentBalanceDescription => 'Nuværende saldo på denne konto';
+
+  @override
+  String get editAccount => 'Rediger konto';
+
+  @override
+  String get addAccount => 'Tilføj konto';
+
+  @override
+  String get totalBalance => 'Total saldo';
+
+  @override
+  String get noBudgetsYet => 'Ingen budgetter endnu';
+
+  @override
+  String get selected => 'Valgt';
 }

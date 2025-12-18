@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../l10n/app_localizations.dart';
 import '../database/entity/budget.dart';
 import '../database/entity/transaction.dart';
 import '../database/entity/currency.dart';
@@ -75,6 +76,7 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
   @override
   Widget build(BuildContext context) {
     final total = _calculateTotal();
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -96,9 +98,12 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  const Text(
-                    'Total Balance',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  Text(
+                    l10n.totalBalance,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -130,7 +135,10 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                               color: Colors.green,
                             ),
                           ),
-                          const Text('Income', style: TextStyle(fontSize: 12)),
+                          Text(
+                            l10n.income,
+                            style: const TextStyle(fontSize: 12),
+                          ),
                         ],
                       ),
                       Column(
@@ -150,7 +158,10 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                               color: Colors.red,
                             ),
                           ),
-                          const Text('Expense', style: TextStyle(fontSize: 12)),
+                          Text(
+                            l10n.expense,
+                            style: const TextStyle(fontSize: 12),
+                          ),
                         ],
                       ),
                     ],
@@ -164,7 +175,7 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _transactions.isEmpty
-                ? const Center(child: Text('No transactions yet'))
+                ? Center(child: Text(l10n.noTransactionsYet))
                 : RefreshIndicator(
                     onRefresh: _loadTransactions,
                     child: ListView.builder(

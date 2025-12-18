@@ -336,5 +336,155 @@
   "pleaseEnterExchangeRate": "Veuillez entrer un taux de change",
   "@pleaseEnterExchangeRate": {
     "description": "Validation error for empty exchange rate"
+  },
+  
+  "budgetCreatedSuccessfully": "Budget créé avec succès",
+  "@budgetCreatedSuccessfully": {
+    "description": "Success message for budget creation"
+  },
+  
+  "budgetTitle": "Titre du budget",
+  "@budgetTitle": {
+    "description": "Label for budget title field"
+  },
+  
+  "enterBudgetName": "Entrez le nom du budget",
+  "@enterBudgetName": {
+    "description": "Hint text for budget name field"
+  },
+  
+  "pleaseEnterBudgetTitle": "Veuillez entrer un titre de budget",
+  "@pleaseEnterBudgetTitle": {
+    "description": "Validation error for empty budget title"
+  },
+  
+  "createNewBudget": "Créer un nouveau budget",
+  "@createNewBudget": {
+    "description": "Title for create new budget page"
+  },
+  
+  "createBudget": "Créer un budget",
+  "@createBudget": {
+    "description": "Button text to create budget"
+  },
+  
+  "currencyUpdatedSuccessfully": "Devise mise à jour avec succès",
+  "@currencyUpdatedSuccessfully": {
+    "description": "Success message for currency update"
+  },
+  
+  "selectCurrency": "Sélectionner la devise",
+  "@selectCurrency": {
+    "description": "Label for currency selection field"
+  },
+  
+  "currency": "Devise",
+  "@currency": {
+    "description": "Label for currency"
+  },
+  
+  "appVersion": "Version de l'application",
+  "@appVersion": {
+    "description": "Label for app version"
+  },
+  
+  "accountName": "Nom du compte",
+  "@accountName": {
+    "description": "Label for account name field"
+  },
+  
+  "bankName": "Nom de la banque",
+  "@bankName": {
+    "description": "Label for bank name field"
+  },
+  
+  "initialBalance": "Solde initial",
+  "@initialBalance": {
+    "description": "Label for initial balance field"
+  },
+  
+  "setAsPrimaryAccount": "Définir comme compte principal",
+  "@setAsPrimaryAccount": {
+    "description": "Label for primary account switch"
+  },
+  
+  "primaryAccountDescription": "Le compte principal est affiché par défaut sur le tableau de bord",
+  "@primaryAccountDescription": {
+    "description": "Description for primary account switch"
+  },
+  
+  "saveAccount": "Enregistrer le compte",
+  "@saveAccount": {
+    "description": "Button text to save account"
+  },
+  
+  "updateAccount": "Mettre à jour le compte",
+  "@updateAccount": {
+    "description": "Button text to update account"
+  },
+  
+  "deleteAccount": "Supprimer le compte",
+  "@deleteAccount": {
+    "description": "Button text/title to delete account"
+  },
+  
+  "deleteAccountConfirmation": "Êtes-vous sûr de vouloir supprimer ce compte ? Cette action ne peut pas être annulée.",
+  "@deleteAccountConfirmation": {
+    "description": "Confirmation message for account deletion"
+  },
+  
+  "pleaseEnterAccountName": "Veuillez entrer un nom de compte",
+  "@pleaseEnterAccountName": {
+    "description": "Validation error for empty account name"
+  },
+  
+  "pleaseEnterBankName": "Veuillez entrer un nom de banque",
+  "@pleaseEnterBankName": {
+    "description": "Validation error for empty bank name"
+  },
+  
+  "pleaseEnterInitialBalance": "Veuillez entrer un solde initial",
+  "@pleaseEnterInitialBalance": {
+    "description": "Validation error for empty initial balance"
+  },
+  
+  "exampleCheckingAccount": "par ex., Compte courant, Épargne",
+  "@exampleCheckingAccount": {
+    "description": "Example text for account name"
+  },
+  
+  "exampleBankName": "par ex., Banque de France, BNP Paribas",
+  "@exampleBankName": {
+    "description": "Example text for bank name"
+  },
+  
+  "currentBalanceDescription": "Solde actuel dans ce compte",
+  "@currentBalanceDescription": {
+    "description": "Helper text for initial balance field"
+  },
+  
+  "editAccount": "Modifier le compte",
+  "@editAccount": {
+    "description": "Title for edit account page"
+  },
+  
+  "addAccount": "Ajouter un compte",
+  "@addAccount": {
+    "description": "Title for add account page"
+  },
+  
+  "totalBalance": "Solde total",
+  "@totalBalance": {
+    "description": "Label for total balance"
+  },
+  
+  "noBudgetsYet": "Aucun budget pour le moment",
+  "@noBudgetsYet": {
+    "description": "Message when no budgets exist"
+  },
+  
+  "selected": "Sélectionné",
+  "@selected": {
+    "description": "Label for selected item"
   }
 }
