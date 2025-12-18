@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../database/entity/currency.dart';
 import '../services/settings_service.dart';
 
@@ -38,7 +38,9 @@ class _SettingsPageState extends State<SettingsPage> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.currencyUpdatedSuccessfully),
+          content: Text(
+            AppLocalizations.of(context)!.currencyUpdatedSuccessfully,
+          ),
           duration: const Duration(seconds: 2),
         ),
       );

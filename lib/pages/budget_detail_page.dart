@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../database/entity/budget.dart';
 import '../database/entity/transaction.dart';
 import '../database/entity/currency.dart';
@@ -100,7 +100,10 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                 children: [
                   Text(
                     l10n.totalBalance,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -132,7 +135,10 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                               color: Colors.green,
                             ),
                           ),
-                          Text(l10n.income, style: const TextStyle(fontSize: 12)),
+                          Text(
+                            l10n.income,
+                            style: const TextStyle(fontSize: 12),
+                          ),
                         ],
                       ),
                       Column(
@@ -152,7 +158,10 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                               color: Colors.red,
                             ),
                           ),
-                          Text(l10n.expense, style: const TextStyle(fontSize: 12)),
+                          Text(
+                            l10n.expense,
+                            style: const TextStyle(fontSize: 12),
+                          ),
                         ],
                       ),
                     ],

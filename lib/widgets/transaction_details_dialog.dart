@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../database/entity/transaction.dart';
 import '../database/entity/currency.dart';
 import '../providers/transaction_provider.dart';
@@ -53,9 +53,7 @@ class TransactionDetailsDialog extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: isIncome
-                      ? Colors.green.shade600
-                      : Colors.red.shade600,
+                  color: isIncome ? Colors.green.shade600 : Colors.red.shade600,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20),
@@ -402,9 +400,7 @@ class TransactionDetailsDialog extends StatelessWidget {
               Text(l10n.confirmDelete),
             ],
           ),
-          content: Text(
-            l10n.deleteConfirmationMessage(transaction.title),
-          ),
+          content: Text(l10n.deleteConfirmationMessage(transaction.title)),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),

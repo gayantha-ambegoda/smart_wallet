@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../database/entity/budget.dart';
 import '../providers/budget_provider.dart';
+import '../l10n/app_localizations.dart';
 
 class AddBudgetPage extends StatefulWidget {
   const AddBudgetPage({super.key});
@@ -30,7 +30,11 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
       if (mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.budgetCreatedSuccessfully)),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.budgetCreatedSuccessfully,
+            ),
+          ),
         );
       }
     }

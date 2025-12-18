@@ -483,6 +483,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter an exchange rate'**
   String get pleaseEnterExchangeRate;
+
+  /// Success message for budget creation
+  ///
+  /// In en, this message translates to:
+  /// **'Budget created successfully'**
+  String get budgetCreatedSuccessfully;
+
+  /// Label for budget title field
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Title'**
+  String get budgetTitle;
+
+  /// Hint text for budget name field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter budget name'**
+  String get enterBudgetName;
+
+  /// Validation error for empty budget title
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a budget title'**
+  String get pleaseEnterBudgetTitle;
+
+  /// Title for create new budget page
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Budget'**
+  String get createNewBudget;
+
+  /// Button text to create budget
+  ///
+  /// In en, this message translates to:
+  /// **'Create Budget'**
+  String get createBudget;
+
+  /// Success message for currency update
+  ///
+  /// In en, this message translates to:
+  /// **'Currency updated successfully'**
+  String get currencyUpdatedSuccessfully;
+
+  /// Label for currency selection field
+  ///
+  /// In en, this message translates to:
+  /// **'Select Currency'**
+  String get selectCurrency;
+
+  /// Label for currency
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get currency;
+
+  /// Label for app version
+  ///
+  /// In en, this message translates to:
+  /// **'App Version'**
+  String get appVersion;
+
+  /// Label for account name field
+  ///
+  /// In en, this message translates to:
+  /// **'Account Name'**
+  String get accountName;
+
+  /// Label for bank name field
+  ///
+  /// In en, this message translates to:
+  /// **'Bank Name'**
+  String get bankName;
+
+  /// Label for initial balance field
+  ///
+  /// In en, this message translates to:
+  /// **'Initial Balance'**
+  String get initialBalance;
+
+  /// Label for primary account switch
+  ///
+  /// In en, this message translates to:
+  /// **'Set as Primary Account'**
+  String get setAsPrimaryAccount;
+
+  /// Description for primary account switch
+  ///
+  /// In en, this message translates to:
+  /// **'The primary account is shown by default on the dashboard'**
+  String get primaryAccountDescription;
+
+  /// Button text to save account
+  ///
+  /// In en, this message translates to:
+  /// **'Save Account'**
+  String get saveAccount;
+
+  /// Button text to update account
+  ///
+  /// In en, this message translates to:
+  /// **'Update Account'**
+  String get updateAccount;
+
+  /// Button text/title to delete account
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get deleteAccount;
+
+  /// Confirmation message for account deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this account? This action cannot be undone.'**
+  String get deleteAccountConfirmation;
+
+  /// Validation error for empty account name
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter an account name'**
+  String get pleaseEnterAccountName;
+
+  /// Validation error for empty bank name
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a bank name'**
+  String get pleaseEnterBankName;
+
+  /// Validation error for empty initial balance
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter an initial balance'**
+  String get pleaseEnterInitialBalance;
+
+  /// Example text for account name
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Checking Account, Savings'**
+  String get exampleCheckingAccount;
+
+  /// Example text for bank name
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Bank of America, Chase'**
+  String get exampleBankName;
+
+  /// Helper text for initial balance field
+  ///
+  /// In en, this message translates to:
+  /// **'Current balance in this account'**
+  String get currentBalanceDescription;
+
+  /// Title for edit account page
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Account'**
+  String get editAccount;
+
+  /// Title for add account page
+  ///
+  /// In en, this message translates to:
+  /// **'Add Account'**
+  String get addAccount;
+
+  /// Label for total balance
+  ///
+  /// In en, this message translates to:
+  /// **'Total Balance'**
+  String get totalBalance;
+
+  /// Message when no budgets exist
+  ///
+  /// In en, this message translates to:
+  /// **'No budgets yet'**
+  String get noBudgetsYet;
+
+  /// Label for selected item
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get selected;
 }
 
 class _AppLocalizationsDelegate

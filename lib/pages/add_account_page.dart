@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../database/entity/account.dart';
 import '../database/entity/currency.dart';
 import '../providers/account_provider.dart';
+import '../l10n/app_localizations.dart';
 
 class AddAccountPage extends StatefulWidget {
   final Account? accountToEdit;
@@ -151,9 +151,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
               const SizedBox(height: 16),
               SwitchListTile(
                 title: Text(l10n.setAsPrimaryAccount),
-                subtitle: Text(
-                  l10n.primaryAccountDescription,
-                ),
+                subtitle: Text(l10n.primaryAccountDescription),
                 value: _isPrimary,
                 onChanged: (value) {
                   setState(() {
@@ -206,9 +204,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(l10n.deleteAccount),
-          content: Text(
-            l10n.deleteAccountConfirmation,
-          ),
+          content: Text(l10n.deleteAccountConfirmation),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),

@@ -211,4 +211,96 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get pleaseEnterExchangeRate => 'Veuillez entrer un taux de change';
+
+  @override
+  String get budgetCreatedSuccessfully => 'Budget créé avec succès';
+
+  @override
+  String get budgetTitle => 'Titre du budget';
+
+  @override
+  String get enterBudgetName => 'Entrez le nom du budget';
+
+  @override
+  String get pleaseEnterBudgetTitle => 'Veuillez entrer un titre de budget';
+
+  @override
+  String get createNewBudget => 'Créer un nouveau budget';
+
+  @override
+  String get createBudget => 'Créer un budget';
+
+  @override
+  String get currencyUpdatedSuccessfully => 'Devise mise à jour avec succès';
+
+  @override
+  String get selectCurrency => 'Sélectionner la devise';
+
+  @override
+  String get currency => 'Devise';
+
+  @override
+  String get appVersion => 'Version de l\'application';
+
+  @override
+  String get accountName => 'Nom du compte';
+
+  @override
+  String get bankName => 'Nom de la banque';
+
+  @override
+  String get initialBalance => 'Solde initial';
+
+  @override
+  String get setAsPrimaryAccount => 'Définir comme compte principal';
+
+  @override
+  String get primaryAccountDescription =>
+      'Le compte principal est affiché par défaut sur le tableau de bord';
+
+  @override
+  String get saveAccount => 'Enregistrer le compte';
+
+  @override
+  String get updateAccount => 'Mettre à jour le compte';
+
+  @override
+  String get deleteAccount => 'Supprimer le compte';
+
+  @override
+  String get deleteAccountConfirmation =>
+      'Êtes-vous sûr de vouloir supprimer ce compte ? Cette action ne peut pas être annulée.';
+
+  @override
+  String get pleaseEnterAccountName => 'Veuillez entrer un nom de compte';
+
+  @override
+  String get pleaseEnterBankName => 'Veuillez entrer un nom de banque';
+
+  @override
+  String get pleaseEnterInitialBalance => 'Veuillez entrer un solde initial';
+
+  @override
+  String get exampleCheckingAccount => 'par ex., Compte courant, Épargne';
+
+  @override
+  String get exampleBankName => 'par ex., Banque de France, BNP Paribas';
+
+  @override
+  String get currentBalanceDescription => 'Solde actuel dans ce compte';
+
+  @override
+  String get editAccount => 'Modifier le compte';
+
+  @override
+  String get addAccount => 'Ajouter un compte';
+
+  @override
+  String get totalBalance => 'Solde total';
+
+  @override
+  String get noBudgetsYet => 'Aucun budget pour le moment';
+
+  @override
+  String get selected => 'Sélectionné';
 }
