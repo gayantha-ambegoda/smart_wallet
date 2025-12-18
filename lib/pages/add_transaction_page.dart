@@ -371,9 +371,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         tags: tags,
         type: _selectedType,
         isTemplate: _isTemplate,
-        onlyBudget:
-            widget.transactionToEdit?.onlyBudget ??
-            onlyBudget, // Keep original onlyBudget if editing
+        onlyBudget: onlyBudget, // Always false for visibility in account transactions
         budgetId: _selectedBudgetId,
         accountId: _selectedAccountId,
         toAccountId: _selectedType == TransactionType.transfer
