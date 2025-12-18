@@ -10,7 +10,8 @@ class MainActivity : FlutterActivity() {
         super.onCreate(savedInstanceState)
         
         // Enable edge-to-edge for Android 15+ compatibility
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        // WindowCompat.setDecorFitsSystemWindows is available from API 29 (Android 10)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             WindowCompat.setDecorFitsSystemWindows(window, false)
         }
     }
