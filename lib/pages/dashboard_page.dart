@@ -100,7 +100,11 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   title: Row(
                     children: [
-                      Text(account.name),
+                      Text(
+                        account.name.length > 15
+                            ? '${account.name.substring(0, 15)}...'
+                            : account.name,
+                      ),
                       if (account.isPrimary) ...[
                         const SizedBox(width: 8),
                         Container(
@@ -260,7 +264,9 @@ class _DashboardPageState extends State<DashboardPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          selectedAccount.name,
+                          selectedAccount.name.length > 15
+                              ? '${selectedAccount.name.substring(0, 15)}...'
+                              : selectedAccount.name,
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 16,

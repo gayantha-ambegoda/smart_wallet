@@ -90,7 +90,11 @@ class _AccountListPageState extends State<AccountListPage> {
                     ),
                     title: Row(
                       children: [
-                        Text(account.name),
+                        Text(
+                          account.name.length > 15
+                              ? '${account.name.substring(0, 15)}...'
+                              : account.name,
+                        ),
                         if (account.isPrimary) ...[
                           const SizedBox(width: 8),
                           Container(

@@ -350,8 +350,9 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
           .where((tag) => tag.isNotEmpty)
           .toList();
 
-      // onlyBudget is true when created from budget (preselectedBudgetId exists)
-      final onlyBudget = widget.preselectedBudgetId != null;
+      // onlyBudget should be false to ensure transaction appears in account list
+      // Transactions from budgets should still be visible in account transactions
+      final onlyBudget = false;
 
       double? exchangeRate;
       if (_selectedType == TransactionType.transfer &&
