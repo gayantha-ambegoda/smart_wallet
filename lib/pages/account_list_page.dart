@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/account_provider.dart';
 import '../database/entity/currency.dart';
+import '../utils/constants.dart';
 import 'add_account_page.dart';
 
 class AccountListPage extends StatefulWidget {
@@ -90,11 +91,7 @@ class _AccountListPageState extends State<AccountListPage> {
                     ),
                     title: Row(
                       children: [
-                        Text(
-                          account.name.length > 15
-                              ? '${account.name.substring(0, 15)}...'
-                              : account.name,
-                        ),
+                        Text(StringUtils.truncateAccountName(account.name)),
                         if (account.isPrimary) ...[
                           const SizedBox(width: 8),
                           Container(

@@ -12,6 +12,7 @@ import '../widgets/stat_card.dart';
 import '../widgets/modern_transaction_card.dart';
 import '../widgets/date_filter_card.dart';
 import '../widgets/expandable_fab.dart';
+import '../utils/constants.dart';
 import 'add_transaction_page.dart';
 import 'budget_list_page.dart';
 import 'settings_page.dart';
@@ -100,11 +101,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   title: Row(
                     children: [
-                      Text(
-                        account.name.length > 15
-                            ? '${account.name.substring(0, 15)}...'
-                            : account.name,
-                      ),
+                      Text(StringUtils.truncateAccountName(account.name)),
                       if (account.isPrimary) ...[
                         const SizedBox(width: 8),
                         Container(
@@ -264,9 +261,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          selectedAccount.name.length > 15
-                              ? '${selectedAccount.name.substring(0, 15)}...'
-                              : selectedAccount.name,
+                          StringUtils.truncateAccountName(selectedAccount.name),
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
