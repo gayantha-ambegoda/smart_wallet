@@ -350,10 +350,6 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
           .where((tag) => tag.isNotEmpty)
           .toList();
 
-      // onlyBudget should be false to ensure transaction appears in account list
-      // Transactions from budgets should still be visible in account transactions
-      final onlyBudget = false;
-
       double? exchangeRate;
       if (_selectedType == TransactionType.transfer &&
           _exchangeRateController.text.isNotEmpty) {
@@ -371,7 +367,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         tags: tags,
         type: _selectedType,
         isTemplate: _isTemplate,
-        onlyBudget: onlyBudget, // Always false for visibility in account transactions
+        onlyBudget: false, // Always false for visibility in account transactions
         budgetId: _selectedBudgetId,
         accountId: _selectedAccountId,
         toAccountId: _selectedType == TransactionType.transfer
