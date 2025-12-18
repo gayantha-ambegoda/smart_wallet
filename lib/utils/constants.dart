@@ -7,8 +7,9 @@ class AppConstants {
 /// Helper class for string utilities
 class StringUtils {
   /// Truncates a string to a maximum length and adds ellipsis if truncated
-  static String truncateAccountName(String name) {
-    if (name.isEmpty) return name;
+  /// Returns empty string if [name] is null
+  static String truncateAccountName(String? name) {
+    if (name == null || name.isEmpty) return '';
     if (name.length > AppConstants.maxAccountNameLength) {
       return '${name.substring(0, AppConstants.maxAccountNameLength)}...';
     }
