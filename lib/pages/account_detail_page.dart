@@ -100,6 +100,11 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
     return '${currency.symbol}${amount.toStringAsFixed(2)}';
   }
 
+  String _formatCurrencyWithSign(double amount, String sign) {
+    final currency = CurrencyList.getByCode(widget.account.currencyCode);
+    return '$sign${currency.symbol}${amount.toStringAsFixed(2)}';
+  }
+
   String _formatDate(int timestamp) {
     final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
     return '${date.month}/${date.day}/${date.year}';
@@ -356,7 +361,10 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
                                           _formatDate(transaction.date),
                                         ),
                                         trailing: Text(
-                                          '${getSign()}${_formatCurrency(transaction.amount)}',
+                                          _formatCurrencyWithSign(
+                                            transaction.amount,
+                                            getSign(),
+                                          ),
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16,
