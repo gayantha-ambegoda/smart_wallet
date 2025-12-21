@@ -534,188 +534,184 @@ class _DashboardPageState extends State<DashboardPage> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Date Range Filter (only show when not in template mode)
-                  if (!_showTemplates)
-                    DateFilterCard(
-                      fromDate: _fromDate,
-                      toDate: _toDate,
-                      onPickFromDate: _pickFromDate,
-                      onPickToDate: _pickToDate,
-                      onClearFilter: _clearDateFilter,
-                    ),
-                  // Section Title
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Text(
-                      _showTemplates ? l10n.templates : l10n.recentTransactions,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[800],
+              child: Consumer2<TransactionProvider, AccountProvider>(
+                builder: (
+                  context,
+                  transactionProvider,
+                  accountProvider,
+                  child,
+                ) {
+                  final allTransactions = transactionProvider.transactions;
+                  final selectedAccount = accountProvider.selectedAccount;
+
+                  var transactions = _showTemplates
+                      ? allTransactions.where((t) => t.isTemplate).toList()
+                      : allTransactions
+                          .where(
+                            (t) => !t.isTemplate && !t.onlyBudget,
+                          )
+                          .toList();
+
+                  // Filter by selected account if one is selected
+                  if (!_showTemplates && selectedAccount != null) {
+                    transactions = transactions
+                        .where(
+                          (t) =>
+                              t.accountId == selectedAccount.id ||
+                              (t.type == TransactionType.transfer &&
+                                  t.toAccountId == selectedAccount.id),
+                        )
+                        .toList();
+                  }
+
+                  // Apply date range filter if dates are selected
+                  if (!_showTemplates &&
+                      (_fromDate != null || _toDate != null)) {
+                    transactions = transactions.where((t) {
+                      final transactionDate =
+                          DateTime.fromMillisecondsSinceEpoch(t.date);
+
+                      // Check from date
+                      if (_fromDate != null) {
+                        final fromStart = DateTime(
+                          _fromDate!.year,
+                          _fromDate!.month,
+                          _fromDate!.day,
+                        );
+                        if (transactionDate.isBefore(fromStart)) {
+                          return false;
+                        }
+                      }
+
+                      // Check to date
+                      if (_toDate != null) {
+                        final toEnd = DateTime(
+                          _toDate!.year,
+                          _toDate!.month,
+                          _toDate!.day,
+                          23,
+                          59,
+                          59,
+                        );
+                        if (transactionDate.isAfter(toEnd)) {
+                          return false;
+                        }
+                      }
+
+                      return true;
+                    }).toList();
+                  }
+
+                  // Sort transactions by date in descending order (latest first)
+                  transactions.sort(
+                    (a, b) => b.date.compareTo(a.date),
+                  );
+
+                  if (transactions.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            _showTemplates
+                                ? Icons.description_outlined
+                                : Icons.receipt_long_outlined,
+                            size: 64,
+                            color: Colors.grey[300],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            _showTemplates
+                                ? 'No templates yet'
+                                : 'No transactions yet',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            _showTemplates
+                                ? 'Create a template to get started'
+                                : 'Add a transaction to get started',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                  // Transaction List
-                  Expanded(
-                    child: Consumer2<TransactionProvider, AccountProvider>(
-                      builder:
-                          (
-                            context,
-                            transactionProvider,
-                            accountProvider,
-                            child,
-                          ) {
-                            final allTransactions =
-                                transactionProvider.transactions;
-                            final selectedAccount =
-                                accountProvider.selectedAccount;
+                    );
+                  }
 
-                            var transactions = _showTemplates
-                                ? allTransactions
-                                      .where((t) => t.isTemplate)
-                                      .toList()
-                                : allTransactions
-                                      .where(
-                                        (t) => !t.isTemplate && !t.onlyBudget,
-                                      )
-                                      .toList();
+                  return ListView.builder(
+                    itemCount: transactions.length +
+                        (!_showTemplates ? 2 : 1), // +2 for filter and title, +1 for title only
+                    itemBuilder: (context, index) {
+                      // Date filter card (only when not in template mode)
+                      if (!_showTemplates && index == 0) {
+                        return DateFilterCard(
+                          fromDate: _fromDate,
+                          toDate: _toDate,
+                          onPickFromDate: _pickFromDate,
+                          onPickToDate: _pickToDate,
+                          onClearFilter: _clearDateFilter,
+                        );
+                      }
 
-                            // Filter by selected account if one is selected
-                            if (!_showTemplates && selectedAccount != null) {
-                              transactions = transactions
-                                  .where(
-                                    (t) =>
-                                        t.accountId == selectedAccount.id ||
-                                        (t.type == TransactionType.transfer &&
-                                            t.toAccountId ==
-                                                selectedAccount.id),
-                                  )
-                                  .toList();
-                            }
+                      // Section title
+                      if ((!_showTemplates && index == 1) ||
+                          (_showTemplates && index == 0)) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Text(
+                            _showTemplates
+                                ? l10n.templates
+                                : l10n.recentTransactions,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[800],
+                            ),
+                          ),
+                        );
+                      }
 
-                            // Apply date range filter if dates are selected
-                            if (!_showTemplates &&
-                                (_fromDate != null || _toDate != null)) {
-                              transactions = transactions.where((t) {
-                                final transactionDate =
-                                    DateTime.fromMillisecondsSinceEpoch(t.date);
+                      // Transaction items
+                      final transactionIndex =
+                          !_showTemplates ? index - 2 : index - 1;
+                      final transaction = transactions[transactionIndex];
 
-                                // Check from date
-                                if (_fromDate != null) {
-                                  final fromStart = DateTime(
-                                    _fromDate!.year,
-                                    _fromDate!.month,
-                                    _fromDate!.day,
-                                  );
-                                  if (transactionDate.isBefore(fromStart)) {
-                                    return false;
-                                  }
-                                }
+                      // Get budget name if budgetId exists
+                      final budgetProvider = context.read<BudgetProvider>();
+                      final budget = transaction.budgetId != null
+                          ? budgetProvider.budgets.firstWhere(
+                              (b) => b.id == transaction.budgetId,
+                              orElse: () => budgetProvider.budgets.first,
+                            )
+                          : null;
 
-                                // Check to date
-                                if (_toDate != null) {
-                                  final toEnd = DateTime(
-                                    _toDate!.year,
-                                    _toDate!.month,
-                                    _toDate!.day,
-                                    23,
-                                    59,
-                                    59,
-                                  );
-                                  if (transactionDate.isAfter(toEnd)) {
-                                    return false;
-                                  }
-                                }
-
-                                return true;
-                              }).toList();
-                            }
-
-                            // Sort transactions by date in descending order (latest first)
-                            transactions.sort(
-                              (a, b) => b.date.compareTo(a.date),
-                            );
-
-                            if (transactions.isEmpty) {
-                              return Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      _showTemplates
-                                          ? Icons.description_outlined
-                                          : Icons.receipt_long_outlined,
-                                      size: 64,
-                                      color: Colors.grey[300],
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      _showTemplates
-                                          ? 'No templates yet'
-                                          : 'No transactions yet',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey[600],
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      _showTemplates
-                                          ? 'Create a template to get started'
-                                          : 'Add a transaction to get started',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey[500],
-                                      ),
-                                    ),
-                                  ],
+                      return ModernTransactionCard(
+                        transaction: transaction,
+                        currencySymbol: _currencySymbol,
+                        budgetName: budget?.title,
+                        contextAccountId: selectedAccount?.id,
+                        onTap: _showTemplates
+                            ? null
+                            : () => TransactionDetailsDialog.show(
+                                  context,
+                                  transaction,
                                 ),
-                              );
-                            }
-
-                            return ListView.builder(
-                              itemCount: transactions.length,
-                              itemBuilder: (context, index) {
-                                final transaction = transactions[index];
-
-                                // Get budget name if budgetId exists
-                                final budgetProvider = context
-                                    .read<BudgetProvider>();
-                                final budget = transaction.budgetId != null
-                                    ? budgetProvider.budgets.firstWhere(
-                                        (b) => b.id == transaction.budgetId,
-                                        orElse: () =>
-                                            budgetProvider.budgets.first,
-                                      )
-                                    : null;
-
-                                return ModernTransactionCard(
-                                  transaction: transaction,
-                                  currencySymbol: _currencySymbol,
-                                  budgetName: budget?.title,
-                                  contextAccountId: selectedAccount?.id,
-                                  onTap: _showTemplates
-                                      ? null
-                                      : () => TransactionDetailsDialog.show(
-                                          context,
-                                          transaction,
-                                        ),
-                                  onLongPress: _showTemplates
-                                      ? () => _createTransactionFromTemplate(
-                                          transaction,
-                                        )
-                                      : null,
-                                );
-                              },
-                            );
-                          },
-                    ),
-                  ),
-                ],
+                        onLongPress: _showTemplates
+                            ? () => _createTransactionFromTemplate(
+                                  transaction,
+                                )
+                            : null,
+                      );
+                    },
+                  );
+                },
               ),
             ),
           ),
