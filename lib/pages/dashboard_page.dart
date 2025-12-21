@@ -646,11 +646,19 @@ class _DashboardPageState extends State<DashboardPage> {
                   }
 
                   return ListView.builder(
-                    itemCount: transactions.length +
-                        (!_showTemplates ? 2 : 1), // +2 for filter and title, +1 for title only
+                    itemCount: () {
+                      // Calculate item count: transactions + header items
+                      final headerItems = _showTemplates ? 1 : 2; // title only vs filter + title
+                      return transactions.length + headerItems;
+                    }(),
                     itemBuilder: (context, index) {
+                      // Constants for header positions
+                      const filterIndex = 0;
+                      final titleIndex = _showTemplates ? 0 : 1;
+                      final transactionStartIndex = _showTemplates ? 1 : 2;
+
                       // Date filter card (only when not in template mode)
-                      if (!_showTemplates && index == 0) {
+                      if (!_showTemplates && index == filterIndex) {
                         return DateFilterCard(
                           fromDate: _fromDate,
                           toDate: _toDate,
@@ -661,8 +669,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       }
 
                       // Section title
-                      if ((!_showTemplates && index == 1) ||
-                          (_showTemplates && index == 0)) {
+                      if (index == titleIndex) {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: Text(
@@ -679,8 +686,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       }
 
                       // Transaction items
-                      final transactionIndex =
-                          !_showTemplates ? index - 2 : index - 1;
+                      final transactionIndex = index - transactionStartIndex;
                       final transaction = transactions[transactionIndex];
 
                       // Get budget name if budgetId exists
