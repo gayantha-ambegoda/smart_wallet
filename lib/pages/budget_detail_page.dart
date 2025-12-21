@@ -179,6 +179,7 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                 : RefreshIndicator(
                     onRefresh: _loadTransactions,
                     child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: _transactions.length,
                       itemBuilder: (context, index) {
                         final transaction = _transactions[index];
@@ -186,10 +187,7 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                             transaction.type == TransactionType.income;
 
                         return Card(
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 4,
-                          ),
+                          margin: const EdgeInsets.only(bottom: 8),
                           child: ListTile(
                             onTap: () => TransactionDetailsDialog.show(
                               context,
@@ -207,7 +205,34 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                                 color: isIncome ? Colors.green : Colors.red,
                               ),
                             ),
-                            title: Text(transaction.title),
+                            title: Row(
+                              children: [
+                                Expanded(child: Text(transaction.title)),
+                                if (transaction.onlyBudget)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.orange.shade100,
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(
+                                        color: Colors.orange.shade300,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Budget Only',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.orange.shade700,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

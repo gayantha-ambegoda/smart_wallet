@@ -175,6 +175,11 @@
     "description": "Button text to cancel"
   },
   
+  "edit": "Rediger",
+  "@edit": {
+    "description": "Button text to edit"
+  },
+  
   "yes": "Ja",
   "@yes": {
     "description": "Button text for yes"

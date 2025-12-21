@@ -4,6 +4,7 @@ import '../providers/account_provider.dart';
 import '../database/entity/currency.dart';
 import '../utils/constants.dart';
 import 'add_account_page.dart';
+import 'account_detail_page.dart';
 
 class AccountListPage extends StatefulWidget {
   const AccountListPage({super.key});
@@ -77,67 +78,128 @@ class _AccountListPageState extends State<AccountListPage> {
                 final account = accounts[index];
                 final currency = CurrencyList.getByCode(account.currencyCode);
 
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: account.isPrimary
-                          ? Theme.of(context).primaryColor
-                          : Colors.grey[400],
-                      child: Icon(
-                        Icons.account_balance,
-                        color: Colors.white,
+                return Dismissible(
+                  key: Key('account_${account.id}'),
+                  direction: DismissDirection.horizontal,
+                  confirmDismiss: (direction) async {
+                    // Don't actually dismiss, just show edit page
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            AddAccountPage(accountToEdit: account),
                       ),
+                    );
+                    return false; // Prevent actual dismissal
+                  },
+                  background: Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    title: Row(
+                    alignment: Alignment.centerLeft,
+                    child: const Row(
                       children: [
-                        Text(StringUtils.truncateAccountName(account.name)),
-                        if (account.isPrimary) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: const Text(
-                              'Primary',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                        Icon(Icons.edit, color: Colors.white),
+                        SizedBox(width: 8),
+                        Text(
+                          'Edit',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
                           ),
-                        ],
+                        ),
                       ],
                     ),
-                    subtitle: Text('${account.bankName} • ${currency.code}'),
-                    trailing: FutureBuilder<double>(
-                      future: accountProvider.getAccountBalance(account.id!),
-                      builder: (context, snapshot) {
-                        final balance = snapshot.data ?? account.initialBalance;
-                        return Text(
-                          '${currency.symbol}${balance.toStringAsFixed(2)}',
+                  ),
+                  secondaryBackground: Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    alignment: Alignment.centerRight,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Edit',
                           style: TextStyle(
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            color: balance >= 0 ? Colors.green : Colors.red,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Icon(Icons.edit, color: Colors.white),
+                      ],
+                    ),
+                  ),
+                  child: Card(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: account.isPrimary
+                            ? Theme.of(context).primaryColor
+                            : Colors.grey[400],
+                        child: const Icon(
+                          Icons.account_balance,
+                          color: Colors.white,
+                        ),
+                      ),
+                      title: Row(
+                        children: [
+                          Text(StringUtils.truncateAccountName(account.name)),
+                          if (account.isPrimary) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColor,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text(
+                                'Primary',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      subtitle: Text('${account.bankName} • ${currency.code}'),
+                      trailing: FutureBuilder<double>(
+                        future: accountProvider.getAccountBalance(account.id!),
+                        builder: (context, snapshot) {
+                          final balance =
+                              snapshot.data ?? account.initialBalance;
+                          return Text(
+                            '${currency.symbol}${balance.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: balance >= 0 ? Colors.green : Colors.red,
+                            ),
+                          );
+                        },
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                AccountDetailPage(account: account),
                           ),
                         );
                       },
                     ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              AddAccountPage(accountToEdit: account),
-                        ),
-                      );
-                    },
                   ),
                 );
               },

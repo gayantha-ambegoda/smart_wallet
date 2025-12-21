@@ -116,6 +116,9 @@ class AppLocalizationsDa extends AppLocalizations {
   String get cancel => 'Annuller';
 
   @override
+  String get edit => 'Rediger';
+
+  @override
   String get yes => 'Ja';
 
   @override
