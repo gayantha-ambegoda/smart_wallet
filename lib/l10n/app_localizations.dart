@@ -310,6 +310,12 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get cancel;
 
+  /// Button text to edit
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
   /// Button text for yes
   ///
   /// In en, this message translates to:
