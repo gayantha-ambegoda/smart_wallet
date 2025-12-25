@@ -25,8 +25,9 @@ class DashboardPage extends StatefulWidget {
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
-  bool _showTemplates = false;
+class _DashboardPageState extends State<DashboardPage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   final SettingsService _settingsService = SettingsService();
   String _currencySymbol = '\$';
   DateTime? _fromDate;
@@ -35,12 +36,19 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<TransactionProvider>().loadTransactions();
       context.read<BudgetProvider>().loadBudgets();
       context.read<AccountProvider>().loadAccounts();
       _loadCurrency();
     });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadCurrency() async {
@@ -92,11 +100,13 @@ class _DashboardPageState extends State<DashboardPage> {
                 return ListTile(
                   leading: CircleAvatar(
                     backgroundColor: account.isPrimary
-                        ? Theme.of(context).primaryColor
-                        : Colors.grey[400],
-                    child: const Icon(
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.surfaceContainerHighest,
+                    child: Icon(
                       Icons.account_balance,
-                      color: Colors.white,
+                      color: account.isPrimary
+                          ? Theme.of(context).colorScheme.onPrimary
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   title: Row(
@@ -110,14 +120,14 @@ class _DashboardPageState extends State<DashboardPage> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor,
+                            color: Theme.of(context).colorScheme.primary,
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Primary',
                             style: TextStyle(
                               fontSize: 10,
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onPrimary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -127,7 +137,10 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   subtitle: Text('${account.bankName} • ${currency.code}'),
                   trailing: isSelected
-                      ? Icon(Icons.check, color: Theme.of(context).primaryColor)
+                      ? Icon(
+                          Icons.check,
+                          color: Theme.of(context).colorScheme.primary,
+                        )
                       : null,
                   onTap: () {
                     accountProvider.selectAccount(account);
@@ -229,11 +242,190 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
+  Widget _buildTransactionsList(bool showTemplates) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: Consumer2<TransactionProvider, AccountProvider>(
+        builder: (
+          context,
+          transactionProvider,
+          accountProvider,
+          child,
+        ) {
+          final allTransactions = transactionProvider.transactions;
+          final selectedAccount = accountProvider.selectedAccount;
+
+          var transactions = showTemplates
+              ? allTransactions.where((t) => t.isTemplate).toList()
+              : allTransactions
+                  .where(
+                    (t) => !t.isTemplate && !t.onlyBudget,
+                  )
+                  .toList();
+
+          // Filter by selected account if one is selected
+          if (!showTemplates && selectedAccount != null) {
+            transactions = transactions
+                .where(
+                  (t) =>
+                      t.accountId == selectedAccount.id ||
+                      (t.type == TransactionType.transfer &&
+                          t.toAccountId == selectedAccount.id),
+                )
+                .toList();
+          }
+
+          // Apply date range filter if dates are selected
+          if (!showTemplates && (_fromDate != null || _toDate != null)) {
+            transactions = transactions.where((t) {
+              final transactionDate =
+                  DateTime.fromMillisecondsSinceEpoch(t.date);
+
+              // Check from date
+              if (_fromDate != null) {
+                final fromStart = DateTime(
+                  _fromDate!.year,
+                  _fromDate!.month,
+                  _fromDate!.day,
+                );
+                if (transactionDate.isBefore(fromStart)) {
+                  return false;
+                }
+              }
+
+              // Check to date
+              if (_toDate != null) {
+                final toEnd = DateTime(
+                  _toDate!.year,
+                  _toDate!.month,
+                  _toDate!.day,
+                  23,
+                  59,
+                  59,
+                );
+                if (transactionDate.isAfter(toEnd)) {
+                  return false;
+                }
+              }
+
+              return true;
+            }).toList();
+          }
+
+          // Sort transactions by date in descending order (latest first)
+          transactions.sort(
+            (a, b) => b.date.compareTo(a.date),
+          );
+
+          if (transactions.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    showTemplates
+                        ? Icons.description_outlined
+                        : Icons.receipt_long_outlined,
+                    size: 64,
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    showTemplates ? l10n.noTemplatesYet : l10n.noTransactionsYet,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    showTemplates
+                        ? l10n.createTemplateToGetStarted
+                        : l10n.addTransactionToGetStarted,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: () {
+              // Calculate item count: transactions + header items
+              final headerItems = showTemplates ? 0 : 1; // filter card for transactions only
+              return transactions.length + headerItems;
+            }(),
+            itemBuilder: (context, index) {
+              // Date filter card (only when not in template mode)
+              if (!showTemplates && index == 0) {
+                return DateFilterCard(
+                  fromDate: _fromDate,
+                  toDate: _toDate,
+                  onPickFromDate: _pickFromDate,
+                  onPickToDate: _pickToDate,
+                  onClearFilter: _clearDateFilter,
+                );
+              }
+
+              // Transaction items
+              final transactionIndex = showTemplates ? index : index - 1;
+              final transaction = transactions[transactionIndex];
+
+              // Get budget name if budgetId exists
+              final budgetProvider = context.read<BudgetProvider>();
+              final budget = transaction.budgetId != null
+                  ? budgetProvider.budgets.firstWhere(
+                      (b) => b.id == transaction.budgetId,
+                      orElse: () => budgetProvider.budgets.first,
+                    )
+                  : null;
+
+              return ModernTransactionCard(
+                transaction: transaction,
+                currencySymbol: _currencySymbol,
+                budgetName: budget?.title,
+                contextAccountId: selectedAccount?.id,
+                onTap: showTemplates
+                    ? () => _openTransactionFormFromTemplate(transaction)
+                    : () => TransactionDetailsDialog.show(
+                          context,
+                          transaction,
+                        ),
+                onLongPress: null,
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  void _openTransactionFormFromTemplate(Transaction template) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AddTransactionPage(
+          templateToUse: template,
+        ),
+      ),
+    ).then((_) {
+      // Reload transactions after returning
+      if (mounted) {
+        context.read<TransactionProvider>().loadTransactions();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
       appBar: AppBar(
         elevation: 0,
         title: Consumer<AccountProvider>(
@@ -243,7 +435,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
             if (accounts.isEmpty) {
               return Text(
-                _showTemplates ? l10n.templates : l10n.dashboard,
+                l10n.dashboard,
                 style: const TextStyle(fontWeight: FontWeight.w600),
               );
             }
@@ -271,7 +463,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           selectedAccount.bankName,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[600],
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -280,7 +472,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     const Icon(Icons.arrow_drop_down, size: 20),
                   ] else
                     Text(
-                      _showTemplates ? l10n.templates : l10n.dashboard,
+                      l10n.dashboard,
                       style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                 ],
@@ -288,8 +480,8 @@ class _DashboardPageState extends State<DashboardPage> {
             );
           },
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.grey[800],
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         actions: [
           IconButton(
             icon: const Icon(Icons.account_balance),
@@ -319,17 +511,6 @@ class _DashboardPageState extends State<DashboardPage> {
             tooltip: l10n.budgets,
           ),
           IconButton(
-            icon: Icon(
-              _showTemplates ? Icons.list : Icons.description_outlined,
-            ),
-            onPressed: () {
-              setState(() {
-                _showTemplates = !_showTemplates;
-              });
-            },
-            tooltip: _showTemplates ? l10n.showTransactions : l10n.showTemplates,
-          ),
-          IconButton(
             icon: const Icon(Icons.settings_outlined),
             onPressed: () async {
               await Navigator.push(
@@ -352,11 +533,14 @@ class _DashboardPageState extends State<DashboardPage> {
               if (accountProvider.accounts.isEmpty) {
                 return Container(
                   width: double.infinity,
-                  color: Colors.orange.shade50,
+                  color: Theme.of(context).colorScheme.errorContainer,
                   padding: const EdgeInsets.all(16),
                   child: Row(
                     children: [
-                      Icon(Icons.info_outline, color: Colors.orange.shade700),
+                      Icon(
+                        Icons.info_outline,
+                        color: Theme.of(context).colorScheme.onErrorContainer,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -366,7 +550,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               l10n.noAccountsYet,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                color: Colors.orange.shade700,
+                                color: Theme.of(context).colorScheme.onErrorContainer,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -374,7 +558,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               l10n.createAccountToGetStarted,
                               style: TextStyle(
                                 fontSize: 13,
-                                color: Colors.orange.shade700,
+                                color: Theme.of(context).colorScheme.onErrorContainer,
                               ),
                             ),
                           ],
@@ -402,13 +586,12 @@ class _DashboardPageState extends State<DashboardPage> {
               return const SizedBox.shrink();
             },
           ),
-          // Statistics Section (only show when not in template mode)
-          if (!_showTemplates)
-            Container(
-              width: double.infinity,
-              color: Colors.white,
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-              child: Consumer2<TransactionProvider, AccountProvider>(
+          // Statistics Section
+          Container(
+            width: double.infinity,
+            color: Theme.of(context).colorScheme.surface,
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            child: Consumer2<TransactionProvider, AccountProvider>(
                 builder: (context, transactionProvider, accountProvider, child) {
                   final selectedAccount = accountProvider.selectedAccount;
 
@@ -463,13 +646,13 @@ class _DashboardPageState extends State<DashboardPage> {
                             width: double.infinity,
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor,
+                              color: Theme.of(context).colorScheme.primary,
                               borderRadius: BorderRadius.circular(16),
                               boxShadow: [
                                 BoxShadow(
                                   color: Theme.of(
                                     context,
-                                  ).primaryColor.withAlpha(25),
+                                  ).colorScheme.primary.withAlpha(25),
                                   blurRadius: 12,
                                   offset: const Offset(0, 4),
                                 ),
@@ -482,17 +665,20 @@ class _DashboardPageState extends State<DashboardPage> {
                                   l10n.availableBalance,
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: Colors.white.withOpacity(0.7),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimary
+                                        .withOpacity(0.7),
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
                                   '$_currencySymbol${balance.toStringAsFixed(2)}',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 32,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: Theme.of(context).colorScheme.onPrimary,
                                   ),
                                 ),
                               ],
@@ -508,7 +694,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                   label: l10n.totalIncome,
                                   value:
                                       '$_currencySymbol${income.toStringAsFixed(2)}',
-                                  color: Colors.green.shade700,
+                                  color: Theme.of(context).colorScheme.tertiary,
+                                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -518,7 +705,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                   label: l10n.totalExpense,
                                   value:
                                       '$_currencySymbol${expense.toStringAsFixed(2)}',
-                                  color: Colors.red.shade700,
+                                  color: Theme.of(context).colorScheme.error,
+                                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                                 ),
                               ),
                             ],
@@ -530,195 +718,39 @@ class _DashboardPageState extends State<DashboardPage> {
                 },
               ),
             ),
-          // Transactions List
+          // Tab bar and list section
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: Consumer2<TransactionProvider, AccountProvider>(
-                builder: (
-                  context,
-                  transactionProvider,
-                  accountProvider,
-                  child,
-                ) {
-                  final allTransactions = transactionProvider.transactions;
-                  final selectedAccount = accountProvider.selectedAccount;
-
-                  var transactions = _showTemplates
-                      ? allTransactions.where((t) => t.isTemplate).toList()
-                      : allTransactions
-                          .where(
-                            (t) => !t.isTemplate && !t.onlyBudget,
-                          )
-                          .toList();
-
-                  // Filter by selected account if one is selected
-                  if (!_showTemplates && selectedAccount != null) {
-                    transactions = transactions
-                        .where(
-                          (t) =>
-                              t.accountId == selectedAccount.id ||
-                              (t.type == TransactionType.transfer &&
-                                  t.toAccountId == selectedAccount.id),
-                        )
-                        .toList();
-                  }
-
-                  // Apply date range filter if dates are selected
-                  if (!_showTemplates &&
-                      (_fromDate != null || _toDate != null)) {
-                    transactions = transactions.where((t) {
-                      final transactionDate =
-                          DateTime.fromMillisecondsSinceEpoch(t.date);
-
-                      // Check from date
-                      if (_fromDate != null) {
-                        final fromStart = DateTime(
-                          _fromDate!.year,
-                          _fromDate!.month,
-                          _fromDate!.day,
-                        );
-                        if (transactionDate.isBefore(fromStart)) {
-                          return false;
-                        }
-                      }
-
-                      // Check to date
-                      if (_toDate != null) {
-                        final toEnd = DateTime(
-                          _toDate!.year,
-                          _toDate!.month,
-                          _toDate!.day,
-                          23,
-                          59,
-                          59,
-                        );
-                        if (transactionDate.isAfter(toEnd)) {
-                          return false;
-                        }
-                      }
-
-                      return true;
-                    }).toList();
-                  }
-
-                  // Sort transactions by date in descending order (latest first)
-                  transactions.sort(
-                    (a, b) => b.date.compareTo(a.date),
-                  );
-
-                  if (transactions.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            _showTemplates
-                                ? Icons.description_outlined
-                                : Icons.receipt_long_outlined,
-                            size: 64,
-                            color: Colors.grey[300],
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            _showTemplates
-                                ? 'No templates yet'
-                                : 'No transactions yet',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            _showTemplates
-                                ? 'Create a template to get started'
-                                : 'Add a transaction to get started',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[500],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  return ListView.builder(
-                    itemCount: () {
-                      // Calculate item count: transactions + header items
-                      final headerItems = _showTemplates ? 1 : 2; // title only vs filter + title
-                      return transactions.length + headerItems;
-                    }(),
-                    itemBuilder: (context, index) {
-                      // Constants for header positions
-                      const filterIndex = 0;
-                      final titleIndex = _showTemplates ? 0 : 1;
-                      final transactionStartIndex = _showTemplates ? 1 : 2;
-
-                      // Date filter card (only when not in template mode)
-                      if (!_showTemplates && index == filterIndex) {
-                        return DateFilterCard(
-                          fromDate: _fromDate,
-                          toDate: _toDate,
-                          onPickFromDate: _pickFromDate,
-                          onPickToDate: _pickToDate,
-                          onClearFilter: _clearDateFilter,
-                        );
-                      }
-
-                      // Section title
-                      if (index == titleIndex) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: Text(
-                            _showTemplates
-                                ? l10n.templates
-                                : l10n.recentTransactions,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey[800],
-                            ),
-                          ),
-                        );
-                      }
-
-                      // Transaction items
-                      final transactionIndex = index - transactionStartIndex;
-                      final transaction = transactions[transactionIndex];
-
-                      // Get budget name if budgetId exists
-                      final budgetProvider = context.read<BudgetProvider>();
-                      final budget = transaction.budgetId != null
-                          ? budgetProvider.budgets.firstWhere(
-                              (b) => b.id == transaction.budgetId,
-                              orElse: () => budgetProvider.budgets.first,
-                            )
-                          : null;
-
-                      return ModernTransactionCard(
-                        transaction: transaction,
-                        currencySymbol: _currencySymbol,
-                        budgetName: budget?.title,
-                        contextAccountId: selectedAccount?.id,
-                        onTap: _showTemplates
-                            ? null
-                            : () => TransactionDetailsDialog.show(
-                                  context,
-                                  transaction,
-                                ),
-                        onLongPress: _showTemplates
-                            ? () => _createTransactionFromTemplate(
-                                  transaction,
-                                )
-                            : null,
-                      );
-                    },
-                  );
-                },
-              ),
+            child: Column(
+              children: [
+                // Tab Bar
+                Container(
+                  color: Theme.of(context).colorScheme.surface,
+                  child: TabBar(
+                    controller: _tabController,
+                    labelColor: Theme.of(context).colorScheme.primary,
+                    unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                    indicatorColor: Theme.of(context).colorScheme.primary,
+                    tabs: [
+                      Tab(text: l10n.recentTransactions),
+                      Tab(text: l10n.templates),
+                    ],
+                  ),
+                ),
+                // Tab views
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      // Transactions tab
+                      _buildTransactionsList(false),
+                      // Templates tab
+                      _buildTransactionsList(true),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
             ),
           ),
         ],

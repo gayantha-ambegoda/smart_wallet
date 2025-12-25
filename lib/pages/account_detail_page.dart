@@ -19,14 +19,23 @@ class AccountDetailPage extends StatefulWidget {
   State<AccountDetailPage> createState() => _AccountDetailPageState();
 }
 
-class _AccountDetailPageState extends State<AccountDetailPage> {
+class _AccountDetailPageState extends State<AccountDetailPage>
+    with SingleTickerProviderStateMixin {
   List<Transaction> _transactions = [];
   bool _isLoading = true;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     _loadTransactions();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadTransactions() async {
@@ -47,7 +56,8 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
   double _calculateBalance() {
     double balance = widget.account.initialBalance;
     for (var transaction in _transactions) {
-      if (transaction.onlyBudget) continue; // Skip budget-only transactions
+      // Skip budget-only transactions and templates
+      if (transaction.onlyBudget || transaction.isTemplate) continue;
       
       if (transaction.type == TransactionType.income) {
         balance += transaction.amount;
@@ -70,7 +80,8 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
   double _calculateTotalIncome() {
     double total = 0;
     for (var transaction in _transactions) {
-      if (transaction.onlyBudget) continue;
+      // Skip budget-only transactions and templates
+      if (transaction.onlyBudget || transaction.isTemplate) continue;
       if (transaction.type == TransactionType.income) {
         total += transaction.amount;
       } else if (transaction.type == TransactionType.transfer &&
@@ -84,7 +95,8 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
   double _calculateTotalExpense() {
     double total = 0;
     for (var transaction in _transactions) {
-      if (transaction.onlyBudget) continue;
+      // Skip budget-only transactions and templates
+      if (transaction.onlyBudget || transaction.isTemplate) continue;
       if (transaction.type == TransactionType.expense) {
         total += transaction.amount;
       } else if (transaction.type == TransactionType.transfer &&
@@ -110,6 +122,114 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
     return '${date.month}/${date.day}/${date.year}';
   }
 
+  Widget _buildTransactionsList(bool showTemplates) {
+    final l10n = AppLocalizations.of(context)!;
+    final filteredTransactions = _transactions
+        .where((t) => showTemplates ? t.isTemplate : !t.isTemplate && !t.onlyBudget)
+        .toList();
+
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (filteredTransactions.isEmpty) {
+      return Center(
+        child: Text(
+          showTemplates ? l10n.noTemplatesYet : l10n.noTransactionsYet,
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: _loadTransactions,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: filteredTransactions.length,
+        itemBuilder: (context, index) {
+          final transaction = filteredTransactions[index];
+          final isIncome = transaction.type == TransactionType.income;
+          final isTransfer = transaction.type == TransactionType.transfer;
+          final isTransferOut =
+              isTransfer && transaction.accountId == widget.account.id;
+          final isTransferIn =
+              isTransfer && transaction.toAccountId == widget.account.id;
+
+          Color getColor() {
+            if (isTransfer) {
+              if (isTransferOut) {
+                return Theme.of(context).colorScheme.error;
+              }
+              if (isTransferIn) {
+                return Theme.of(context).colorScheme.tertiary;
+              }
+            }
+            return isIncome
+                ? Theme.of(context).colorScheme.tertiary
+                : Theme.of(context).colorScheme.error;
+          }
+
+          String getSign() {
+            if (isIncome) return '+';
+            if (isTransferOut) return '-';
+            if (isTransferIn) return '+';
+            return '-';
+          }
+
+          return Card(
+            margin: const EdgeInsets.only(bottom: 8),
+            child: ListTile(
+              onTap: showTemplates
+                  ? () => _openTransactionFormFromTemplate(transaction)
+                  : () => TransactionDetailsDialog.show(
+                        context,
+                        transaction,
+                        onTransactionChanged: _loadTransactions,
+                      ),
+              leading: CircleAvatar(
+                backgroundColor: getColor().withAlpha(25),
+                child: Icon(
+                  isIncome
+                      ? Icons.arrow_downward
+                      : isTransferOut
+                          ? Icons.arrow_upward
+                          : isTransferIn
+                              ? Icons.arrow_downward
+                              : Icons.arrow_upward,
+                  color: getColor(),
+                ),
+              ),
+              title: Text(transaction.title),
+              subtitle: showTemplates
+                  ? null
+                  : Text(_formatDate(transaction.date)),
+              trailing: Text(
+                _formatCurrencyWithSign(
+                  transaction.amount,
+                  getSign(),
+                ),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: getColor(),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _openTransactionFormFromTemplate(Transaction template) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AddTransactionPage(
+          templateToUse: template,
+        ),
+      ),
+    ).then((_) => _loadTransactions());
+  }
+
   @override
   Widget build(BuildContext context) {
     final balance = _calculateBalance();
@@ -125,8 +245,8 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
           widget.account.name,
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.grey[800],
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -153,7 +273,7 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
           // Account Summary Card
           Container(
             width: double.infinity,
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
@@ -161,11 +281,13 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
                 CircleAvatar(
                   radius: 32,
                   backgroundColor: widget.account.isPrimary
-                      ? Theme.of(context).primaryColor
-                      : Colors.grey[400],
-                  child: const Icon(
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.surfaceContainerHighest,
+                  child: Icon(
                     Icons.account_balance,
-                    color: Colors.white,
+                    color: widget.account.isPrimary
+                        ? Theme.of(context).colorScheme.onPrimary
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
                     size: 32,
                   ),
                 ),
@@ -177,14 +299,14 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
+                      color: Theme.of(context).colorScheme.primary,
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Primary',
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -194,7 +316,7 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
                   widget.account.bankName,
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey[600],
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -202,7 +324,7 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
                   currency.name,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey[500],
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -211,7 +333,7 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
                   l10n.availableBalance,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey[600],
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -221,7 +343,9 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
                   style: TextStyle(
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
-                    color: balance >= 0 ? Colors.green : Colors.red,
+                    color: balance >= 0
+                        ? Theme.of(context).colorScheme.tertiary
+                        : Theme.of(context).colorScheme.error,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -231,13 +355,16 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
                   children: [
                     Column(
                       children: [
-                        const Icon(Icons.arrow_downward, color: Colors.green),
+                        Icon(
+                          Icons.arrow_downward,
+                          color: Theme.of(context).colorScheme.tertiary,
+                        ),
                         const SizedBox(height: 4),
                         Text(
                           _formatCurrency(totalIncome),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.green,
+                            color: Theme.of(context).colorScheme.tertiary,
                           ),
                         ),
                         Text(
@@ -248,13 +375,16 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
                     ),
                     Column(
                       children: [
-                        const Icon(Icons.arrow_upward, color: Colors.red),
+                        Icon(
+                          Icons.arrow_upward,
+                          color: Theme.of(context).colorScheme.error,
+                        ),
                         const SizedBox(height: 4),
                         Text(
                           _formatCurrency(totalExpense),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.red,
+                            color: Theme.of(context).colorScheme.error,
                           ),
                         ),
                         Text(
@@ -268,114 +398,34 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
               ],
             ),
           ),
-          // Transactions List
+          // Tab bar and transactions/templates list
           Expanded(
             child: Container(
-              color: Colors.grey[50],
+              color: Theme.of(context).colorScheme.surface,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(
-                      l10n.recentTransactions,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[800],
-                      ),
-                    ),
+                  // Tab Bar
+                  TabBar(
+                    controller: _tabController,
+                    labelColor: Theme.of(context).colorScheme.primary,
+                    unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                    indicatorColor: Theme.of(context).colorScheme.primary,
+                    tabs: [
+                      Tab(text: l10n.recentTransactions),
+                      Tab(text: l10n.templates),
+                    ],
                   ),
+                  // Tab views
                   Expanded(
-                    child: _isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : _transactions.isEmpty
-                            ? Center(child: Text(l10n.noTransactionsYet))
-                            : RefreshIndicator(
-                                onRefresh: _loadTransactions,
-                                child: ListView.builder(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                  ),
-                                  itemCount: _transactions.length,
-                                  itemBuilder: (context, index) {
-                                    final transaction = _transactions[index];
-                                    final isIncome =
-                                        transaction.type ==
-                                            TransactionType.income;
-                                    final isTransfer =
-                                        transaction.type ==
-                                            TransactionType.transfer;
-                                    final isTransferOut =
-                                        isTransfer &&
-                                        transaction.accountId ==
-                                            widget.account.id;
-                                    final isTransferIn =
-                                        isTransfer &&
-                                        transaction.toAccountId ==
-                                            widget.account.id;
-
-                                    Color getColor() {
-                                      if (isTransfer) {
-                                        if (isTransferOut) return Colors.red;
-                                        if (isTransferIn) return Colors.green;
-                                      }
-                                      return isIncome
-                                          ? Colors.green
-                                          : Colors.red;
-                                    }
-
-                                    String getSign() {
-                                      if (isIncome) return '+';
-                                      if (isTransferOut) return '-';
-                                      if (isTransferIn) return '+';
-                                      return '-';
-                                    }
-
-                                    return Card(
-                                      margin: const EdgeInsets.only(bottom: 8),
-                                      child: ListTile(
-                                        onTap: () =>
-                                            TransactionDetailsDialog.show(
-                                          context,
-                                          transaction,
-                                          onTransactionChanged:
-                                              _loadTransactions,
-                                        ),
-                                        leading: CircleAvatar(
-                                          backgroundColor:
-                                              getColor().withAlpha(25),
-                                          child: Icon(
-                                            isIncome
-                                                ? Icons.arrow_downward
-                                                : isTransferOut
-                                                    ? Icons.arrow_upward
-                                                    : isTransferIn
-                                                        ? Icons.arrow_downward
-                                                        : Icons.arrow_upward,
-                                            color: getColor(),
-                                          ),
-                                        ),
-                                        title: Text(transaction.title),
-                                        subtitle: Text(
-                                          _formatDate(transaction.date),
-                                        ),
-                                        trailing: Text(
-                                          _formatCurrencyWithSign(
-                                            transaction.amount,
-                                            getSign(),
-                                          ),
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                            color: getColor(),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        // Transactions tab
+                        _buildTransactionsList(false),
+                        // Templates tab
+                        _buildTransactionsList(true),
+                      ],
+                    ),
                   ),
                 ],
               ),
