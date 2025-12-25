@@ -294,6 +294,30 @@ class _$TransactionDao extends TransactionDao {
   }
 
   @override
+  Future<List<Transaction>> findTransactionsByAccountIdOrToAccountId(
+    int accountId,
+  ) async {
+    return _queryAdapter.queryList(
+      'SELECT * FROM `Transaction` WHERE accountId = ?1 OR toAccountId = ?1',
+      mapper: (Map<String, Object?> row) => Transaction(
+        id: row['id'] as int?,
+        title: row['title'] as String,
+        amount: row['amount'] as double,
+        date: row['date'] as int,
+        tags: _tagsConverter.decode(row['tags'] as String),
+        type: _transactionTypeConverter.decode(row['type'] as String),
+        isTemplate: (row['isTemplate'] as int) != 0,
+        onlyBudget: (row['onlyBudget'] as int) != 0,
+        budgetId: row['budgetId'] as int?,
+        accountId: row['accountId'] as int?,
+        toAccountId: row['toAccountId'] as int?,
+        exchangeRate: row['exchangeRate'] as double?,
+      ),
+      arguments: [accountId],
+    );
+  }
+
+  @override
   Future<double?> getTotalIncomeByAccount(int accountId) async {
     return _queryAdapter.query(
       'SELECT SUM(amount) FROM `Transaction` WHERE isTemplate = 0 AND onlyBudget = 0 AND type = \'income\' AND accountId = ?1',

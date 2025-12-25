@@ -34,21 +34,15 @@ class _AccountDetailPageState extends State<AccountDetailPage> {
     setState(() => _isLoading = true);
     
     // Get all transactions where this account is either the source or destination
-    final allTransactions = await context
+    final transactions = await context
         .read<TransactionProvider>()
         .database
         .transactionDao
-        .findAllTransactions();
-    
-    // Filter to only include transactions involving this account
-    final relevantTransactions = allTransactions.where((transaction) {
-      return transaction.accountId == widget.account.id ||
-          transaction.toAccountId == widget.account.id;
-    }).toList();
+        .findTransactionsByAccountIdOrToAccountId(widget.account.id!);
     
     if (!mounted) return;
     setState(() {
-      _transactions = relevantTransactions;
+      _transactions = transactions;
       _isLoading = false;
     });
   }
