@@ -16,6 +16,13 @@ abstract class TransactionDao {
   Future<List<Transaction>> findTransactionsByAccountId(int accountId);
 
   @Query(
+    'SELECT * FROM `Transaction` WHERE accountId = :accountId OR toAccountId = :accountId',
+  )
+  Future<List<Transaction>> findTransactionsByAccountIdOrToAccountId(
+    int accountId,
+  );
+
+  @Query(
     'SELECT SUM(amount) FROM `Transaction` WHERE isTemplate = 0 AND onlyBudget = 0 AND type = \'income\' AND accountId = :accountId',
   )
   Future<double?> getTotalIncomeByAccount(int accountId);

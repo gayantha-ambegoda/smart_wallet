@@ -17,6 +17,12 @@ class BudgetListPage extends StatefulWidget {
 class _BudgetListPageState extends State<BudgetListPage> {
   final SettingsService _settingsService = SettingsService();
   String _currencySymbol = '\$';
+  
+  static const Map<String, double> _defaultStats = {
+    'totalSaved': 0.0,
+    'totalIncome': 0.0,
+    'totalExpense': 0.0,
+  };
 
   @override
   void initState() {
@@ -69,11 +75,7 @@ class _BudgetListPageState extends State<BudgetListPage> {
                 return FutureBuilder<Map<String, double>>(
                   future: budgetProvider.getBudgetStatistics(budget.id!),
                   builder: (context, snapshot) {
-                    final stats = snapshot.data ?? {
-                      'totalSaved': 0.0,
-                      'totalIncome': 0.0,
-                      'totalExpense': 0.0,
-                    };
+                    final stats = snapshot.data ?? _defaultStats;
                     final totalSaved = stats['totalSaved']!;
                     final totalIncome = stats['totalIncome']!;
                     final totalExpense = stats['totalExpense']!;
