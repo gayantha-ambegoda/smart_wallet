@@ -41,14 +41,23 @@ class _AccountDetailPageState extends State<AccountDetailPage>
   Future<void> _loadTransactions() async {
     if (!mounted) return;
     setState(() => _isLoading = true);
-    final transactions = await context
+    
+    // Get all transactions where this account is either the source or destination
+    final allTransactions = await context
         .read<TransactionProvider>()
         .database
         .transactionDao
-        .findTransactionsByAccountId(widget.account.id!);
+        .findAllTransactions();
+    
+    // Filter to only include transactions involving this account
+    final relevantTransactions = allTransactions.where((transaction) {
+      return transaction.accountId == widget.account.id ||
+          transaction.toAccountId == widget.account.id;
+    }).toList();
+    
     if (!mounted) return;
     setState(() {
-      _transactions = transactions;
+      _transactions = relevantTransactions;
       _isLoading = false;
     });
   }
@@ -66,11 +75,15 @@ class _AccountDetailPageState extends State<AccountDetailPage>
       } else if (transaction.type == TransactionType.transfer) {
         // For transfers, check if this is the source or destination account
         if (transaction.accountId == widget.account.id) {
-          // Money going out
+          // Money going out (deduct from source account)
           balance -= transaction.amount;
         } else if (transaction.toAccountId == widget.account.id) {
-          // Money coming in
-          balance += transaction.amount;
+          // Money coming in (add to destination account with exchange rate)
+          double amountToAdd = transaction.amount;
+          if (transaction.exchangeRate != null) {
+            amountToAdd = transaction.amount * transaction.exchangeRate!;
+          }
+          balance += amountToAdd;
         }
       }
     }
@@ -86,7 +99,12 @@ class _AccountDetailPageState extends State<AccountDetailPage>
         total += transaction.amount;
       } else if (transaction.type == TransactionType.transfer &&
           transaction.toAccountId == widget.account.id) {
-        total += transaction.amount;
+        // Add incoming transfer amount with exchange rate
+        double amountToAdd = transaction.amount;
+        if (transaction.exchangeRate != null) {
+          amountToAdd = transaction.amount * transaction.exchangeRate!;
+        }
+        total += amountToAdd;
       }
     }
     return total;
