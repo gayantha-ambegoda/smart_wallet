@@ -44,11 +44,17 @@ class ModernTransactionCard extends StatelessWidget {
 
     Color getColor() {
       if (isTransfer) {
-        if (isTransferOutgoing) return Colors.red;
-        if (isTransferIncoming) return Colors.green;
-        return Colors.blue;
+        if (isTransferOutgoing) {
+          return Theme.of(context).colorScheme.error;
+        }
+        if (isTransferIncoming) {
+          return Theme.of(context).colorScheme.tertiary;
+        }
+        return Theme.of(context).colorScheme.primary;
       }
-      return isIncome ? Colors.green : Colors.red;
+      return isIncome
+          ? Theme.of(context).colorScheme.tertiary
+          : Theme.of(context).colorScheme.error;
     }
 
     IconData getIcon() {
@@ -74,7 +80,10 @@ class ModernTransactionCard extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.shade200, width: 1),
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.outlineVariant,
+          width: 1,
+        ),
       ),
       child: InkWell(
         onTap: onTap,
@@ -113,14 +122,14 @@ class ModernTransactionCard extends StatelessWidget {
                         Icon(
                           Icons.calendar_today_outlined,
                           size: 14,
-                          color: Colors.grey[600],
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           dateStr,
                           style: TextStyle(
                             fontSize: 13,
-                            color: Colors.grey[600],
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                         if (budgetName != null) ...[
@@ -128,7 +137,7 @@ class ModernTransactionCard extends StatelessWidget {
                           Icon(
                             Icons.account_balance_wallet_outlined,
                             size: 14,
-                            color: Colors.grey[600],
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                           const SizedBox(width: 4),
                           Flexible(
@@ -136,7 +145,7 @@ class ModernTransactionCard extends StatelessWidget {
                               budgetName!,
                               style: TextStyle(
                                 fontSize: 13,
-                                color: Colors.grey[600],
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -156,14 +165,18 @@ class ModernTransactionCard extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.blue.shade50,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
                               tag,
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Colors.blue.shade700,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimaryContainer,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
