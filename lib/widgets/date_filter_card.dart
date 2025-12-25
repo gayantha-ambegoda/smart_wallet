@@ -22,7 +22,10 @@ class DateFilterCard extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.shade200, width: 1),
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.outlineVariant,
+          width: 1,
+        ),
       ),
       margin: const EdgeInsets.only(bottom: 16),
       child: Padding(
@@ -32,14 +35,18 @@ class DateFilterCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.filter_list, size: 20, color: Colors.grey[700]),
+                Icon(
+                  Icons.filter_list,
+                  size: 20,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   'Filter by Date Range',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey[800],
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],
