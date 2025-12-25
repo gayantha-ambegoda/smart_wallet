@@ -517,6 +517,9 @@ class TransactionDetailsDialog extends StatelessWidget {
         isTemplate: transaction.isTemplate,
         onlyBudget: false, // Set to false to make it count in actual balance
         budgetId: transaction.budgetId,
+        accountId: transaction.accountId, // Preserve the account ID
+        toAccountId: transaction.toAccountId, // Preserve the destination account ID for transfers
+        exchangeRate: transaction.exchangeRate, // Preserve the exchange rate for transfers
       );
 
       await context.read<TransactionProvider>().updateTransactionData(
