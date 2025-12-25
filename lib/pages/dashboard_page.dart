@@ -193,55 +193,6 @@ class _DashboardPageState extends State<DashboardPage>
     });
   }
 
-  Future<void> _createTransactionFromTemplate(Transaction template) async {
-    final l10n = AppLocalizations.of(context)!;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(l10n.addAsTransaction),
-          content: Text(
-            l10n.createFromTemplateMessage(template.title),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.cancel),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(l10n.yes),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (confirmed == true && mounted) {
-      final newTransaction = Transaction(
-        title: template.title,
-        amount: template.amount,
-        date: DateTime.now().millisecondsSinceEpoch,
-        tags: template.tags,
-        type: template.type,
-        isTemplate: false,
-        onlyBudget: false, // Created from dashboard, not budget-specific
-        budgetId: template.budgetId,
-      );
-
-      await context.read<TransactionProvider>().addTransaction(newTransaction);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.transactionCreatedFromTemplate),
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      }
-    }
-  }
-
   Widget _buildTransactionsList(bool showTemplates) {
     final l10n = AppLocalizations.of(context)!;
     
@@ -695,7 +646,7 @@ class _DashboardPageState extends State<DashboardPage>
                                   value:
                                       '$_currencySymbol${income.toStringAsFixed(2)}',
                                   color: Theme.of(context).colorScheme.tertiary,
-                                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                  backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -706,7 +657,7 @@ class _DashboardPageState extends State<DashboardPage>
                                   value:
                                       '$_currencySymbol${expense.toStringAsFixed(2)}',
                                   color: Theme.of(context).colorScheme.error,
-                                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                  backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
                                 ),
                               ),
                             ],
