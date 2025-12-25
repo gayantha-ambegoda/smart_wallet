@@ -723,7 +723,7 @@ class _DashboardPageState extends State<DashboardPage>
             child: Column(
               children: [
                 // Tab Bar
-                Container(
+                Material(
                   color: Theme.of(context).colorScheme.surface,
                   child: TabBar(
                     controller: _tabController,
