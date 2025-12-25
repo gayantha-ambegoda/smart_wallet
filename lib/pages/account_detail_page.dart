@@ -168,6 +168,20 @@ class _AccountDetailPageState extends State<AccountDetailPage>
                 : Theme.of(context).colorScheme.error;
           }
 
+          Color getBackgroundColor() {
+            if (isTransfer) {
+              if (isTransferOut) {
+                return Theme.of(context).colorScheme.errorContainer;
+              }
+              if (isTransferIn) {
+                return Theme.of(context).colorScheme.tertiaryContainer;
+              }
+            }
+            return isIncome
+                ? Theme.of(context).colorScheme.tertiaryContainer
+                : Theme.of(context).colorScheme.errorContainer;
+          }
+
           String getSign() {
             if (isIncome) return '+';
             if (isTransferOut) return '-';
@@ -186,7 +200,7 @@ class _AccountDetailPageState extends State<AccountDetailPage>
                         onTransactionChanged: _loadTransactions,
                       ),
               leading: CircleAvatar(
-                backgroundColor: getColor().withAlpha(25),
+                backgroundColor: getBackgroundColor(),
                 child: Icon(
                   isIncome
                       ? Icons.arrow_downward
