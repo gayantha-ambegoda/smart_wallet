@@ -12,6 +12,7 @@ class AddTransactionPage extends StatefulWidget {
   final int? preselectedAccountId;
   final Transaction? transactionToEdit;
   final TransactionType? preselectedType;
+  final Transaction? templateToUse;
 
   const AddTransactionPage({
     super.key,
@@ -19,6 +20,7 @@ class AddTransactionPage extends StatefulWidget {
     this.preselectedAccountId,
     this.transactionToEdit,
     this.preselectedType,
+    this.templateToUse,
   });
 
   @override
@@ -51,8 +53,23 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       _selectedType = widget.preselectedType!;
     }
 
+    // If using a template, pre-fill the form WITHOUT date
+    if (widget.templateToUse != null) {
+      final template = widget.templateToUse!;
+      _titleController.text = template.title;
+      _amountController.text = template.amount.toString();
+      _tagsController.text = template.tags.join(', ');
+      _selectedType = template.type;
+      _isTemplate = false; // Creating a real transaction from template
+      _selectedBudgetId = template.budgetId;
+      _selectedAccountId = template.accountId;
+      _toAccountId = template.toAccountId;
+      if (template.exchangeRate != null) {
+        _exchangeRateController.text = template.exchangeRate.toString();
+      }
+    }
     // If editing an existing transaction, pre-fill the form
-    if (widget.transactionToEdit != null) {
+    else if (widget.transactionToEdit != null) {
       final transaction = widget.transactionToEdit!;
       _titleController.text = transaction.title;
       _amountController.text = transaction.amount.toString();
