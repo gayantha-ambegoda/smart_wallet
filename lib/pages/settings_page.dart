@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import '../database/entity/currency.dart';
 import '../services/settings_service.dart';
+import '../providers/locale_provider.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -13,6 +15,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final SettingsService _settingsService = SettingsService();
   String _selectedCurrencyCode = 'USD';
+  String _selectedLanguageCode = 'en';
   bool _isLoading = true;
 
   @override
@@ -23,8 +26,10 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _loadSettings() async {
     final currencyCode = await _settingsService.getCurrencyCode();
+    final languageCode = await _settingsService.getLanguageCode();
     setState(() {
       _selectedCurrencyCode = currencyCode;
+      _selectedLanguageCode = languageCode;
       _isLoading = false;
     });
   }
@@ -44,6 +49,26 @@ class _SettingsPageState extends State<SettingsPage> {
           duration: const Duration(seconds: 2),
         ),
       );
+    }
+  }
+
+  Future<void> _saveLanguage(String languageCode) async {
+    if (mounted) {
+      await context.read<LocaleProvider>().setLocale(languageCode);
+      setState(() {
+        _selectedLanguageCode = languageCode;
+      });
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.languageUpdatedSuccessfully,
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
     }
   }
 
@@ -136,10 +161,55 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 const SizedBox(height: 16),
                 Card(
-                  child: ListTile(
-                    leading: const Icon(Icons.info),
-                    title: Text(l10n.appVersion),
-                    trailing: const Text('1.0.0'),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.language,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              l10n.language,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<String>(
+                          value: _selectedLanguageCode,
+                          decoration: InputDecoration(
+                            labelText: l10n.selectLanguage,
+                            border: const OutlineInputBorder(),
+                            prefixIcon: const Icon(Icons.translate),
+                          ),
+                          isExpanded: true,
+                          items: [
+                            DropdownMenuItem<String>(
+                              value: 'en',
+                              child: Text(l10n.english),
+                            ),
+                            DropdownMenuItem<String>(
+                              value: 'fr',
+                              child: Text(l10n.french),
+                            ),
+                            DropdownMenuItem<String>(
+                              value: 'da',
+                              child: Text(l10n.danish),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            if (value != null) {
+                              _saveLanguage(value);
+                            }
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

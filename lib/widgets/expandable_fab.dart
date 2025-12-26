@@ -187,12 +187,12 @@ class _ActionButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, color: theme.primaryColor),
+              Icon(icon, color: theme.colorScheme.primary),
               const SizedBox(width: 8),
               Text(
                 label,
                 style: TextStyle(
-                  color: theme.primaryColor,
+                  color: theme.colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),

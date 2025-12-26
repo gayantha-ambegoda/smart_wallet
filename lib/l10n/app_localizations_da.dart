@@ -242,7 +242,22 @@ class AppLocalizationsDa extends AppLocalizations {
   String get currency => 'Valuta';
 
   @override
-  String get appVersion => 'App version';
+  String get language => 'Sprog';
+
+  @override
+  String get selectLanguage => 'Vælg sprog';
+
+  @override
+  String get english => 'Engelsk';
+
+  @override
+  String get french => 'Fransk';
+
+  @override
+  String get danish => 'Dansk';
+
+  @override
+  String get languageUpdatedSuccessfully => 'Sprog opdateret';
 
   @override
   String get accountName => 'Kontonavn';

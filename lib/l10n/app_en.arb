@@ -388,9 +388,34 @@
     "description": "Label for currency"
   },
   
-  "appVersion": "App Version",
-  "@appVersion": {
-    "description": "Label for app version"
+  "language": "Language",
+  "@language": {
+    "description": "Label for language"
+  },
+  
+  "selectLanguage": "Select Language",
+  "@selectLanguage": {
+    "description": "Label for language selection field"
+  },
+  
+  "english": "English",
+  "@english": {
+    "description": "English language name"
+  },
+  
+  "french": "French",
+  "@french": {
+    "description": "French language name"
+  },
+  
+  "danish": "Danish",
+  "@danish": {
+    "description": "Danish language name"
+  },
+  
+  "languageUpdatedSuccessfully": "Language updated successfully",
+  "@languageUpdatedSuccessfully": {
+    "description": "Success message for language update"
   },
   
   "accountName": "Account Name",

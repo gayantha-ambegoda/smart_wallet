@@ -243,7 +243,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get currency => 'Devise';
 
   @override
-  String get appVersion => 'Version de l\'application';
+  String get language => 'Langue';
+
+  @override
+  String get selectLanguage => 'Sélectionner la langue';
+
+  @override
+  String get english => 'Anglais';
+
+  @override
+  String get french => 'Français';
+
+  @override
+  String get danish => 'Danois';
+
+  @override
+  String get languageUpdatedSuccessfully => 'Langue mise à jour avec succès';
 
   @override
   String get accountName => 'Nom du compte';

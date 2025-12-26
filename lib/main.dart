@@ -7,6 +7,7 @@ import 'database/app_database.dart';
 import 'providers/transaction_provider.dart';
 import 'providers/budget_provider.dart';
 import 'providers/account_provider.dart';
+import 'providers/locale_provider.dart';
 import 'pages/dashboard_page.dart';
 import '../l10n/app_localizations.dart';
 
@@ -158,7 +159,6 @@ class MyApp extends StatelessWidget {
 
   const MyApp({super.key, required this.database});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -168,27 +168,33 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(create: (context) => BudgetProvider(database)),
         ChangeNotifierProvider(create: (context) => AccountProvider(database)),
+        ChangeNotifierProvider(create: (context) => LocaleProvider()),
       ],
-      child: MaterialApp(
-        title: 'Smart Wallet',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.deepPurple,
-            brightness: Brightness.light,
-          ),
-          useMaterial3: true,
-        ),
-        darkTheme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.deepPurple,
-            brightness: Brightness.dark,
-          ),
-          useMaterial3: true,
-        ),
-        themeMode: ThemeMode.system,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: const DashboardPage(),
+      child: Consumer<LocaleProvider>(
+        builder: (context, localeProvider, child) {
+          return MaterialApp(
+            title: 'Smart Wallet',
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: Colors.deepPurple,
+                brightness: Brightness.light,
+              ),
+              useMaterial3: true,
+            ),
+            darkTheme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: Colors.deepPurple,
+                brightness: Brightness.dark,
+              ),
+              useMaterial3: true,
+            ),
+            themeMode: ThemeMode.system,
+            locale: localeProvider.locale,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: const DashboardPage(),
+          );
+        },
       ),
     );
   }

@@ -544,11 +544,41 @@ abstract class AppLocalizations {
   /// **'Currency'**
   String get currency;
 
-  /// Label for app version
+  /// Label for language
   ///
   /// In en, this message translates to:
-  /// **'App Version'**
-  String get appVersion;
+  /// **'Language'**
+  String get language;
+
+  /// Label for language selection field
+  ///
+  /// In en, this message translates to:
+  /// **'Select Language'**
+  String get selectLanguage;
+
+  /// English language name
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// French language name
+  ///
+  /// In en, this message translates to:
+  /// **'French'**
+  String get french;
+
+  /// Danish language name
+  ///
+  /// In en, this message translates to:
+  /// **'Danish'**
+  String get danish;
+
+  /// Success message for language update
+  ///
+  /// In en, this message translates to:
+  /// **'Language updated successfully'**
+  String get languageUpdatedSuccessfully;
 
   /// Label for account name field
   ///

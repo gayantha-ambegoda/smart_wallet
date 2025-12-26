@@ -195,26 +195,19 @@ class _DashboardPageState extends State<DashboardPage>
 
   Widget _buildTransactionsList(bool showTemplates) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Consumer2<TransactionProvider, AccountProvider>(
-        builder: (
-          context,
-          transactionProvider,
-          accountProvider,
-          child,
-        ) {
+        builder: (context, transactionProvider, accountProvider, child) {
           final allTransactions = transactionProvider.transactions;
           final selectedAccount = accountProvider.selectedAccount;
 
           var transactions = showTemplates
               ? allTransactions.where((t) => t.isTemplate).toList()
               : allTransactions
-                  .where(
-                    (t) => !t.isTemplate && !t.onlyBudget,
-                  )
-                  .toList();
+                    .where((t) => !t.isTemplate && !t.onlyBudget)
+                    .toList();
 
           // Filter by selected account if one is selected
           if (!showTemplates && selectedAccount != null) {
@@ -231,8 +224,9 @@ class _DashboardPageState extends State<DashboardPage>
           // Apply date range filter if dates are selected
           if (!showTemplates && (_fromDate != null || _toDate != null)) {
             transactions = transactions.where((t) {
-              final transactionDate =
-                  DateTime.fromMillisecondsSinceEpoch(t.date);
+              final transactionDate = DateTime.fromMillisecondsSinceEpoch(
+                t.date,
+              );
 
               // Check from date
               if (_fromDate != null) {
@@ -266,9 +260,7 @@ class _DashboardPageState extends State<DashboardPage>
           }
 
           // Sort transactions by date in descending order (latest first)
-          transactions.sort(
-            (a, b) => b.date.compareTo(a.date),
-          );
+          transactions.sort((a, b) => b.date.compareTo(a.date));
 
           if (transactions.isEmpty) {
             return Center(
@@ -284,7 +276,9 @@ class _DashboardPageState extends State<DashboardPage>
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    showTemplates ? l10n.noTemplatesYet : l10n.noTransactionsYet,
+                    showTemplates
+                        ? l10n.noTemplatesYet
+                        : l10n.noTransactionsYet,
                     style: TextStyle(
                       fontSize: 16,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -309,7 +303,9 @@ class _DashboardPageState extends State<DashboardPage>
           return ListView.builder(
             itemCount: () {
               // Calculate item count: transactions + header items
-              final headerItems = showTemplates ? 0 : 1; // filter card for transactions only
+              final headerItems = showTemplates
+                  ? 0
+                  : 1; // filter card for transactions only
               return transactions.length + headerItems;
             }(),
             itemBuilder: (context, index) {
@@ -344,10 +340,7 @@ class _DashboardPageState extends State<DashboardPage>
                 contextAccountId: selectedAccount?.id,
                 onTap: showTemplates
                     ? () => _openTransactionFormFromTemplate(transaction)
-                    : () => TransactionDetailsDialog.show(
-                          context,
-                          transaction,
-                        ),
+                    : () => TransactionDetailsDialog.show(context, transaction),
                 onLongPress: null,
               );
             },
@@ -358,18 +351,18 @@ class _DashboardPageState extends State<DashboardPage>
   }
 
   void _openTransactionFormFromTemplate(Transaction template) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => AddTransactionPage(
-          templateToUse: template,
-        ),
-      ),
-    ).then((_) {
-      // Reload transactions after returning
-      if (mounted) {
-        context.read<TransactionProvider>().loadTransactions();
-      }
-    });
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (context) => AddTransactionPage(templateToUse: template),
+          ),
+        )
+        .then((_) {
+          // Reload transactions after returning
+          if (mounted) {
+            context.read<TransactionProvider>().loadTransactions();
+          }
+        });
   }
 
   @override
@@ -414,7 +407,9 @@ class _DashboardPageState extends State<DashboardPage>
                           selectedAccount.bankName,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -501,7 +496,9 @@ class _DashboardPageState extends State<DashboardPage>
                               l10n.noAccountsYet,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                color: Theme.of(context).colorScheme.onErrorContainer,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onErrorContainer,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -509,7 +506,9 @@ class _DashboardPageState extends State<DashboardPage>
                               l10n.createAccountToGetStarted,
                               style: TextStyle(
                                 fontSize: 13,
-                                color: Theme.of(context).colorScheme.onErrorContainer,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onErrorContainer,
                               ),
                             ),
                           ],
@@ -543,122 +542,130 @@ class _DashboardPageState extends State<DashboardPage>
             color: Theme.of(context).colorScheme.surface,
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
             child: Consumer2<TransactionProvider, AccountProvider>(
-                builder: (context, transactionProvider, accountProvider, child) {
-                  final selectedAccount = accountProvider.selectedAccount;
+              builder: (context, transactionProvider, accountProvider, child) {
+                final selectedAccount = accountProvider.selectedAccount;
 
-                  return FutureBuilder<Map<String, double>>(
-                    future: selectedAccount != null
-                        ? accountProvider
-                              .getAccountBalance(selectedAccount.id!)
-                              .then((balance) async {
-                                final income =
-                                    await transactionProvider
-                                        .database
-                                        .transactionDao
-                                        .getTotalIncomeByAccount(
-                                          selectedAccount.id!,
-                                        ) ??
-                                    0.0;
-                                final expense =
-                                    await transactionProvider
-                                        .database
-                                        .transactionDao
-                                        .getTotalExpenseByAccount(
-                                          selectedAccount.id!,
-                                        ) ??
-                                    0.0;
-                                return {
-                                  'balance': balance,
-                                  'income': income,
-                                  'expense': expense,
-                                };
-                              })
-                        : Future.wait([
-                            transactionProvider.getAvailableBalance(),
-                            transactionProvider.getTotalIncome(),
-                            transactionProvider.getTotalExpense(),
-                          ]).then(
-                            (values) => {
-                              'balance': values[0],
-                              'income': values[1],
-                              'expense': values[2],
-                            },
-                          ),
-                    builder: (context, snapshot) {
-                      final balance = snapshot.data?['balance'] ?? 0.0;
-                      final income = snapshot.data?['income'] ?? 0.0;
-                      final expense = snapshot.data?['expense'] ?? 0.0;
-                      final l10n = AppLocalizations.of(context)!;
+                return FutureBuilder<Map<String, double>>(
+                  future: selectedAccount != null
+                      ? accountProvider
+                            .getAccountBalance(selectedAccount.id!)
+                            .then((balance) async {
+                              final income =
+                                  await transactionProvider
+                                      .database
+                                      .transactionDao
+                                      .getTotalIncomeByAccount(
+                                        selectedAccount.id!,
+                                      ) ??
+                                  0.0;
+                              final expense =
+                                  await transactionProvider
+                                      .database
+                                      .transactionDao
+                                      .getTotalExpenseByAccount(
+                                        selectedAccount.id!,
+                                      ) ??
+                                  0.0;
+                              return {
+                                'balance': balance,
+                                'income': income,
+                                'expense': expense,
+                              };
+                            })
+                      : Future.wait([
+                          transactionProvider.getAvailableBalance(),
+                          transactionProvider.getTotalIncome(),
+                          transactionProvider.getTotalExpense(),
+                        ]).then(
+                          (values) => {
+                            'balance': values[0],
+                            'income': values[1],
+                            'expense': values[2],
+                          },
+                        ),
+                  builder: (context, snapshot) {
+                    final balance = snapshot.data?['balance'] ?? 0.0;
+                    final income = snapshot.data?['income'] ?? 0.0;
+                    final expense = snapshot.data?['expense'] ?? 0.0;
+                    final l10n = AppLocalizations.of(context)!;
 
-                      return Column(
-                        children: [
-                          // Available Balance - Large display
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primaryContainer,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  l10n.availableBalance,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimaryContainer,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  '$_currencySymbol${balance.toStringAsFixed(2)}',
-                                  style: TextStyle(
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                                  ),
-                                ),
-                              ],
-                            ),
+                    return Column(
+                      children: [
+                        // Available Balance - Large display
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          const SizedBox(height: 16),
-                          // Income and Expense cards
-                          Row(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: StatCard(
-                                  icon: Icons.arrow_downward,
-                                  label: l10n.totalIncome,
-                                  value:
-                                      '$_currencySymbol${income.toStringAsFixed(2)}',
-                                  color: Theme.of(context).colorScheme.tertiary,
-                                  backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+                              Text(
+                                l10n.availableBalance,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimaryContainer,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: StatCard(
-                                  icon: Icons.arrow_upward,
-                                  label: l10n.totalExpense,
-                                  value:
-                                      '$_currencySymbol${expense.toStringAsFixed(2)}',
-                                  color: Theme.of(context).colorScheme.error,
-                                  backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+                              const SizedBox(height: 8),
+                              Text(
+                                '$_currencySymbol${balance.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimaryContainer,
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Income and Expense cards
+                        Row(
+                          children: [
+                            Expanded(
+                              child: StatCard(
+                                icon: Icons.arrow_downward,
+                                label: l10n.totalIncome,
+                                value:
+                                    '$_currencySymbol${income.toStringAsFixed(2)}',
+                                color: Theme.of(context).colorScheme.tertiary,
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainer,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: StatCard(
+                                icon: Icons.arrow_upward,
+                                label: l10n.totalExpense,
+                                value:
+                                    '$_currencySymbol${expense.toStringAsFixed(2)}',
+                                color: Theme.of(context).colorScheme.error,
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainer,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
             ),
+          ),
           // Tab bar and list section
           Expanded(
             child: Column(
@@ -669,7 +676,9 @@ class _DashboardPageState extends State<DashboardPage>
                   child: TabBar(
                     controller: _tabController,
                     labelColor: Theme.of(context).colorScheme.primary,
-                    unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                    unselectedLabelColor: Theme.of(
+                      context,
+                    ).colorScheme.onSurfaceVariant,
                     indicatorColor: Theme.of(context).colorScheme.primary,
                     tabs: [
                       Tab(text: l10n.recentTransactions),
