@@ -58,7 +58,7 @@ class _SettingsPageState extends State<SettingsPage> {
       setState(() {
         _selectedLanguageCode = languageCode;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
