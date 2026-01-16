@@ -48,15 +48,31 @@ class _BudgetListPageState extends State<BudgetListPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? Theme.of(context).colorScheme.surface : Colors.white;
+    final cardColor = isDarkMode ? Theme.of(context).colorScheme.surfaceContainer : Colors.white;
+    
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         elevation: 0,
         title: Text(
           l10n.budgets,
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.grey[800],
+        backgroundColor: backgroundColor,
+        foregroundColor: isDarkMode ? Colors.white : Colors.grey[800],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const AddBudgetPage()),
+              );
+            },
+            tooltip: l10n.createNewBudget,
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -82,7 +98,15 @@ class _BudgetListPageState extends State<BudgetListPage> {
 
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
-                      elevation: 2,
+                      elevation: 0,
+                      color: cardColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(
+                          color: Colors.grey.shade300,
+                          width: 1,
+                        ),
+                      ),
                       child: InkWell(
                         onTap: () {
                           Navigator.of(context).push(
@@ -102,10 +126,10 @@ class _BudgetListPageState extends State<BudgetListPage> {
                               Row(
                                 children: [
                                   CircleAvatar(
-                                    backgroundColor: Colors.blue.shade100,
+                                    backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
                                     child: Icon(
                                       Icons.account_balance_wallet,
-                                      color: Colors.blue.shade700,
+                                      color: isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700,
                                     ),
                                   ),
                                   const SizedBox(width: 12),
@@ -129,14 +153,10 @@ class _BudgetListPageState extends State<BudgetListPage> {
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: totalSaved >= 0
-                                      ? Colors.green.shade50
-                                      : Colors.red.shade50,
+                                  color: isDarkMode ? Colors.transparent : Colors.white,
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: totalSaved >= 0
-                                        ? Colors.green.shade200
-                                        : Colors.red.shade200,
+                                    color: Colors.grey.shade400,
                                   ),
                                 ),
                                 child: Row(
@@ -148,7 +168,7 @@ class _BudgetListPageState extends State<BudgetListPage> {
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
-                                        color: Colors.grey[700],
+                                        color: isDarkMode ? Colors.grey.shade300 : Colors.grey[700],
                                       ),
                                     ),
                                     Text(
@@ -156,9 +176,7 @@ class _BudgetListPageState extends State<BudgetListPage> {
                                       style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
-                                        color: totalSaved >= 0
-                                            ? Colors.green.shade700
-                                            : Colors.red.shade700,
+                                        color: isDarkMode ? Colors.white : Colors.black,
                                       ),
                                     ),
                                   ],
@@ -173,8 +191,11 @@ class _BudgetListPageState extends State<BudgetListPage> {
                                     child: Container(
                                       padding: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
-                                        color: Colors.green.shade50,
+                                        color: isDarkMode ? Colors.transparent : Colors.white,
                                         borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: Colors.grey.shade400,
+                                        ),
                                       ),
                                       child: Column(
                                         crossAxisAlignment:
@@ -184,7 +205,7 @@ class _BudgetListPageState extends State<BudgetListPage> {
                                             children: [
                                               Icon(
                                                 Icons.arrow_upward,
-                                                color: Colors.green.shade700,
+                                                color: isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700,
                                                 size: 16,
                                               ),
                                               const SizedBox(width: 4),
@@ -192,7 +213,7 @@ class _BudgetListPageState extends State<BudgetListPage> {
                                                 l10n.income,
                                                 style: TextStyle(
                                                   fontSize: 12,
-                                                  color: Colors.grey[600],
+                                                  color: isDarkMode ? Colors.grey.shade400 : Colors.grey[600],
                                                 ),
                                               ),
                                             ],
@@ -203,7 +224,7 @@ class _BudgetListPageState extends State<BudgetListPage> {
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.green.shade700,
+                                              color: isDarkMode ? Colors.white : Colors.black,
                                             ),
                                           ),
                                         ],
@@ -216,8 +237,11 @@ class _BudgetListPageState extends State<BudgetListPage> {
                                     child: Container(
                                       padding: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
-                                        color: Colors.red.shade50,
+                                        color: isDarkMode ? Colors.transparent : Colors.white,
                                         borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: Colors.grey.shade400,
+                                        ),
                                       ),
                                       child: Column(
                                         crossAxisAlignment:
@@ -227,7 +251,7 @@ class _BudgetListPageState extends State<BudgetListPage> {
                                             children: [
                                               Icon(
                                                 Icons.arrow_downward,
-                                                color: Colors.red.shade700,
+                                                color: isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700,
                                                 size: 16,
                                               ),
                                               const SizedBox(width: 4),
@@ -235,7 +259,7 @@ class _BudgetListPageState extends State<BudgetListPage> {
                                                 l10n.expense,
                                                 style: TextStyle(
                                                   fontSize: 12,
-                                                  color: Colors.grey[600],
+                                                  color: isDarkMode ? Colors.grey.shade400 : Colors.grey[600],
                                                 ),
                                               ),
                                             ],
@@ -246,7 +270,7 @@ class _BudgetListPageState extends State<BudgetListPage> {
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.red.shade700,
+                                              color: isDarkMode ? Colors.white : Colors.black,
                                             ),
                                           ),
                                         ],
@@ -266,14 +290,6 @@ class _BudgetListPageState extends State<BudgetListPage> {
             );
           },
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const AddBudgetPage()),
-          );
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }

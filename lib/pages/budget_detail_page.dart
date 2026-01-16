@@ -77,97 +77,125 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
   Widget build(BuildContext context) {
     final total = _calculateTotal();
     final l10n = AppLocalizations.of(context)!;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? Theme.of(context).colorScheme.surface : Colors.white;
+    final cardColor = isDarkMode ? Theme.of(context).colorScheme.surfaceContainer : Colors.white;
 
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         elevation: 0,
         title: Text(
           widget.budget.title,
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.grey[800],
+        backgroundColor: backgroundColor,
+        foregroundColor: isDarkMode ? Colors.white : Colors.grey[800],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      AddTransactionPage(preselectedBudgetId: widget.budget.id),
+                ),
+              );
+              // Reload transactions after returning from add page
+              _loadTransactions();
+            },
+            tooltip: l10n.addTransaction,
+          ),
+        ],
       ),
       body: Column(
         children: [
-          // Budget Summary Card
-          Card(
+          // Budget Summary Card - Remove elevation and make background transparent/white
+          Container(
             margin: const EdgeInsets.all(16),
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Text(
-                    l10n.totalBalance,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  l10n.totalBalance,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: isDarkMode ? Colors.grey.shade300 : Colors.grey[700],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  _formatCurrency(total),
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      children: [
+                        Icon(Icons.arrow_upward, color: isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700),
+                        const SizedBox(height: 4),
+                        Text(
+                          _formatCurrency(
+                            _transactions
+                                .where(
+                                  (t) => t.type == TransactionType.income,
+                                )
+                                .fold(0.0, (sum, t) => sum + t.amount),
+                          ),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isDarkMode ? Colors.white : Colors.black,
+                          ),
+                        ),
+                        Text(
+                          l10n.income,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isDarkMode ? Colors.grey.shade400 : Colors.grey[600],
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    _formatCurrency(total),
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: total >= 0 ? Colors.green : Colors.red,
+                    Column(
+                      children: [
+                        Icon(Icons.arrow_downward, color: isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700),
+                        const SizedBox(height: 4),
+                        Text(
+                          _formatCurrency(
+                            _transactions
+                                .where(
+                                  (t) => t.type == TransactionType.expense,
+                                )
+                                .fold(0.0, (sum, t) => sum + t.amount),
+                          ),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isDarkMode ? Colors.white : Colors.black,
+                          ),
+                        ),
+                        Text(
+                          l10n.expense,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isDarkMode ? Colors.grey.shade400 : Colors.grey[600],
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Column(
-                        children: [
-                          const Icon(Icons.arrow_upward, color: Colors.green),
-                          const SizedBox(height: 4),
-                          Text(
-                            _formatCurrency(
-                              _transactions
-                                  .where(
-                                    (t) => t.type == TransactionType.income,
-                                  )
-                                  .fold(0.0, (sum, t) => sum + t.amount),
-                            ),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green,
-                            ),
-                          ),
-                          Text(
-                            l10n.income,
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          const Icon(Icons.arrow_downward, color: Colors.red),
-                          const SizedBox(height: 4),
-                          Text(
-                            _formatCurrency(
-                              _transactions
-                                  .where(
-                                    (t) => t.type == TransactionType.expense,
-                                  )
-                                  .fold(0.0, (sum, t) => sum + t.amount),
-                            ),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                            ),
-                          ),
-                          Text(
-                            l10n.expense,
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
           ),
           // Transactions List
@@ -188,6 +216,15 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
 
                         return Card(
                           margin: const EdgeInsets.only(bottom: 8),
+                          elevation: 0,
+                          color: cardColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(
+                              color: Colors.grey.shade300,
+                              width: 1,
+                            ),
+                          ),
                           child: ListTile(
                             onTap: () => TransactionDetailsDialog.show(
                               context,
@@ -195,14 +232,12 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                               onTransactionChanged: _loadTransactions,
                             ),
                             leading: CircleAvatar(
-                              backgroundColor: isIncome
-                                  ? Colors.green.shade100
-                                  : Colors.red.shade100,
+                              backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
                               child: Icon(
                                 isIncome
                                     ? Icons.arrow_upward
                                     : Icons.arrow_downward,
-                                color: isIncome ? Colors.green : Colors.red,
+                                color: isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700,
                               ),
                             ),
                             title: Row(
@@ -215,18 +250,14 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.orange.shade100,
+                                      color: Colors.grey.shade200,
                                       borderRadius: BorderRadius.circular(4),
-                                      border: Border.all(
-                                        color: Colors.orange.shade300,
-                                        width: 1,
-                                      ),
                                     ),
                                     child: Text(
                                       'Budget Only',
                                       style: TextStyle(
                                         fontSize: 10,
-                                        color: Colors.orange.shade700,
+                                        color: isDarkMode ? Colors.grey.shade800 : Colors.black,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -240,18 +271,25 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                                 if (transaction.tags.isNotEmpty)
                                   Wrap(
                                     spacing: 4,
+                                    runSpacing: 4,
                                     children: transaction.tags
                                         .map(
-                                          (tag) => Chip(
-                                            label: Text(
+                                          (tag) => Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 2,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey.shade200,
+                                              borderRadius: BorderRadius.circular(4),
+                                            ),
+                                            child: Text(
                                               tag,
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontSize: 10,
+                                                color: isDarkMode ? Colors.grey.shade800 : Colors.black,
                                               ),
                                             ),
-                                            padding: EdgeInsets.zero,
-                                            visualDensity:
-                                                VisualDensity.compact,
                                           ),
                                         )
                                         .toList(),
@@ -263,7 +301,7 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
-                                color: isIncome ? Colors.green : Colors.red,
+                                color: isDarkMode ? Colors.white : Colors.black,
                               ),
                             ),
                           ),
@@ -273,19 +311,6 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                   ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) =>
-                  AddTransactionPage(preselectedBudgetId: widget.budget.id),
-            ),
-          );
-          // Reload transactions after returning from add page
-          _loadTransactions();
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }
