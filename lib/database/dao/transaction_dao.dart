@@ -9,9 +9,6 @@ abstract class TransactionDao {
   @Query('SELECT * FROM `Transaction` WHERE id = :id')
   Future<Transaction?> findTransactionById(int id);
 
-  @Query('SELECT * FROM `Transaction` WHERE budgetId = :budgetId')
-  Future<List<Transaction>> findTransactionsByBudgetId(int budgetId);
-
   @Query('SELECT * FROM `Transaction` WHERE accountId = :accountId')
   Future<List<Transaction>> findTransactionsByAccountId(int accountId);
 

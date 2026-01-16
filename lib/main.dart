@@ -213,6 +213,46 @@ void main() async {
 
       print('Migration to version 4 completed');
     }),
+    // Migration 4 to 5: Remove budgetId column from Transaction table
+    Migration(4, 5, (database) async {
+      // Create a new temporary table without budgetId
+      await database.execute('''
+            CREATE TABLE IF NOT EXISTS `Transaction_new` (
+              `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+              `title` TEXT NOT NULL,
+              `amount` REAL NOT NULL,
+              `date` INTEGER NOT NULL,
+              `tags` TEXT NOT NULL,
+              `type` TEXT NOT NULL,
+              `isTemplate` INTEGER NOT NULL,
+              `onlyBudget` INTEGER NOT NULL,
+              `accountId` INTEGER,
+              `toAccountId` INTEGER,
+              `exchangeRate` REAL,
+              `budgetTransactionId` INTEGER,
+              FOREIGN KEY (`accountId`) REFERENCES `Account` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION,
+              FOREIGN KEY (`toAccountId`) REFERENCES `Account` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION,
+              FOREIGN KEY (`budgetTransactionId`) REFERENCES `BudgetTransaction` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
+            )
+          ''');
+
+      // Copy data from old table to new table (excluding budgetId)
+      await database.execute('''
+            INSERT INTO `Transaction_new` (id, title, amount, date, tags, type, isTemplate, onlyBudget, accountId, toAccountId, exchangeRate, budgetTransactionId)
+            SELECT id, title, amount, date, tags, type, isTemplate, onlyBudget, accountId, toAccountId, exchangeRate, budgetTransactionId
+            FROM `Transaction`
+          ''');
+
+      // Drop the old table
+      await database.execute('DROP TABLE `Transaction`');
+
+      // Rename the new table to the original name
+      await database.execute(
+        'ALTER TABLE `Transaction_new` RENAME TO `Transaction`',
+      );
+
+      print('Migration to version 5 completed - budgetId removed from Transaction table');
+    }),
   ]).build();
 
   runApp(MyApp(database: database));

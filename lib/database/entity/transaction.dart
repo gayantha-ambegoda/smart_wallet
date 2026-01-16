@@ -43,10 +43,6 @@ class Transaction {
   final bool isTemplate;
   final bool onlyBudget;
 
-  // Keep budgetId for backward compatibility, will be deprecated
-  @ForeignKey(childColumns: ['budgetId'], parentColumns: ['id'], entity: Budget)
-  final int? budgetId;
-
   @ForeignKey(childColumns: ['accountId'], parentColumns: ['id'], entity: Account)
   final int? accountId;
 
@@ -70,7 +66,6 @@ class Transaction {
     required this.type,
     required this.isTemplate,
     required this.onlyBudget,
-    this.budgetId,
     this.accountId,
     this.toAccountId,
     this.exchangeRate,

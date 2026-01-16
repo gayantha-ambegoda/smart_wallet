@@ -15,10 +15,6 @@ class TransactionProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<Transaction>> getTransactionsByBudgetId(int budgetId) async {
-    return await database.transactionDao.findTransactionsByBudgetId(budgetId);
-  }
-
   Future<double> getAvailableBalance() async {
     final income = await database.transactionDao.getTotalIncome() ?? 0.0;
     final expense = await database.transactionDao.getTotalExpense() ?? 0.0;
