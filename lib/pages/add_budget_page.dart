@@ -68,6 +68,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
               TextFormField(
                 controller: _titleController,
                 decoration: InputDecoration(
+                  labelText: l10n.budgetTitle,
                   hintText: l10n.enterBudgetName,
                   border: InputBorder.none,
                   filled: true,
