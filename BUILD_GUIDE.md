@@ -163,7 +163,7 @@ Update this before building a new release.
 ```cmd
 flutter clean
 flutter pub get
-flutter pub run build_runner build --delete-conflicting-outputs
+dart run build_runner build --delete-conflicting-outputs
 flutter build appbundle --release
 ```
 
@@ -185,7 +185,7 @@ flutter build appbundle --release
 **Solution:** Run code generation separately:
 
 ```cmd
-flutter pub run build_runner build --delete-conflicting-outputs
+dart run build_runner build --delete-conflicting-outputs
 ```
 
 ## Uploading to Google Play Console

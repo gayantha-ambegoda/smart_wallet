@@ -63,7 +63,7 @@ echo.
 
 REM Run code generation for Floor database
 echo Running code generation (build_runner)...
-flutter pub run build_runner build --delete-conflicting-outputs
+dart run build_runner build --delete-conflicting-outputs
 if %ERRORLEVEL% NEQ 0 (
     echo WARNING: Code generation failed, but continuing...
 )
