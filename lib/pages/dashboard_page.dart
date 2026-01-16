@@ -17,6 +17,7 @@ import 'add_transaction_page.dart';
 import 'budget_list_page.dart';
 import 'settings_page.dart';
 import 'account_list_page.dart';
+import 'tags_list_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -450,6 +451,16 @@ class _DashboardPageState extends State<DashboardPage>
               );
             },
             tooltip: l10n.budgets,
+          ),
+          IconButton(
+            icon: const Icon(Icons.label_outline),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const TagsListPage()),
+              );
+            },
+            tooltip: l10n.tags,
           ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),

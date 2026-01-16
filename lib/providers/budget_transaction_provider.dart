@@ -19,6 +19,10 @@ class BudgetTransactionProvider extends ChangeNotifier {
     return await database.budgetTransactionDao.findBudgetTransactionsByBudgetId(budgetId);
   }
 
+  Future<List<BudgetTransaction>> getAllTransactions() async {
+    return await database.budgetTransactionDao.findAllBudgetTransactions();
+  }
+
   Future<void> addTransaction(BudgetTransaction transaction) async {
     await database.budgetTransactionDao.insertBudgetTransaction(transaction);
     await loadTransactions();
