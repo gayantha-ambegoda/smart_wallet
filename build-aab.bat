@@ -92,8 +92,10 @@ echo build\app\outputs\bundle\release\app-release.aab
 echo.
 echo You can now upload this file to Google Play Console.
 echo.
-echo File size:
-for %%A in ("build\app\outputs\bundle\release\app-release.aab") do echo %%~zA bytes
-echo.
+if exist "build\app\outputs\bundle\release\app-release.aab" (
+    echo File size:
+    for %%A in ("build\app\outputs\bundle\release\app-release.aab") do echo %%~zA bytes
+    echo.
+)
 echo ============================================================
 pause
