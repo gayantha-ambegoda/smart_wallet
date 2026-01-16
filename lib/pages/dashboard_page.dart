@@ -77,6 +77,7 @@ class _DashboardPageState extends State<DashboardPage>
     final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
+      useSafeArea: true,
       builder: (BuildContext context) {
         return Container(
           padding: const EdgeInsets.all(16),
