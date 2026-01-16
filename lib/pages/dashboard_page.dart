@@ -369,8 +369,11 @@ class _DashboardPageState extends State<DashboardPage>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? Theme.of(context).colorScheme.surfaceContainerLow : Colors.white;
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         elevation: 0,
         title: Consumer<AccountProvider>(

@@ -98,16 +98,20 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   Widget build(BuildContext context) {
     final isEditing = widget.transactionToEdit != null;
     final l10n = AppLocalizations.of(context)!;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? Theme.of(context).colorScheme.surface : Colors.white;
+    final inputFillColor = isDarkMode ? Theme.of(context).colorScheme.surfaceContainerHighest : Colors.grey.shade100;
 
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         elevation: 0,
         title: Text(
           isEditing ? l10n.updateTransaction : l10n.addTransaction,
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.grey[800],
+        backgroundColor: backgroundColor,
+        foregroundColor: isDarkMode ? Colors.white : Colors.grey[800],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -119,7 +123,26 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 controller: _titleController,
                 decoration: InputDecoration(
                   labelText: l10n.title,
-                  border: const OutlineInputBorder(),
+                  border: InputBorder.none,
+                  filled: true,
+                  fillColor: inputFillColor,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -133,7 +156,26 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 controller: _amountController,
                 decoration: InputDecoration(
                   labelText: l10n.amount,
-                  border: const OutlineInputBorder(),
+                  border: InputBorder.none,
+                  filled: true,
+                  fillColor: inputFillColor,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                  ),
                 ),
                 keyboardType: TextInputType.number,
                 validator: (value) {
@@ -148,10 +190,21 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<TransactionType>(
-                initialValue: _selectedType,
+                value: _selectedType,
                 decoration: InputDecoration(
                   labelText: l10n.type,
-                  border: const OutlineInputBorder(),
+                  border: InputBorder.none,
+                  filled: true,
+                  fillColor: inputFillColor,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
                 items: TransactionType.values.map((type) {
                   String typeLabel;
@@ -180,10 +233,29 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 builder: (context, accountProvider, child) {
                   final accounts = accountProvider.accounts;
                   return DropdownButtonFormField<int>(
-                    initialValue: _selectedAccountId,
+                    value: _selectedAccountId,
                     decoration: InputDecoration(
                       labelText: l10n.fromAccount,
-                      border: const OutlineInputBorder(),
+                      border: InputBorder.none,
+                      filled: true,
+                      fillColor: inputFillColor,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                      ),
                     ),
                     items: accounts.map((account) {
                       final currency = CurrencyList.getByCode(
@@ -215,10 +287,29 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                   builder: (context, accountProvider, child) {
                     final accounts = accountProvider.accounts;
                     return DropdownButtonFormField<int>(
-                      initialValue: _toAccountId,
+                      value: _toAccountId,
                       decoration: InputDecoration(
                         labelText: l10n.toAccount,
-                        border: const OutlineInputBorder(),
+                        border: InputBorder.none,
+                        filled: true,
+                        fillColor: inputFillColor,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                        ),
                       ),
                       items: accounts
                           .where((account) => account.id != _selectedAccountId)
@@ -279,7 +370,26 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                           controller: _exchangeRateController,
                           decoration: InputDecoration(
                             labelText: l10n.exchangeRate,
-                            border: const OutlineInputBorder(),
+                            border: InputBorder.none,
+                            filled: true,
+                            fillColor: inputFillColor,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                            ),
                             helperText:
                                 '1 ${fromAccount.currencyCode} = X ${toAccount.currencyCode}',
                           ),
@@ -309,10 +419,21 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                   builder: (context, budgetProvider, child) {
                     final budgets = budgetProvider.budgets;
                     return DropdownButtonFormField<int>(
-                      initialValue: _selectedBudgetId,
+                      value: _selectedBudgetId,
                       decoration: InputDecoration(
                         labelText: l10n.budgetOptional,
-                        border: const OutlineInputBorder(),
+                        border: InputBorder.none,
+                        filled: true,
+                        fillColor: inputFillColor,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
                       items: budgets.map((budget) {
                         return DropdownMenuItem(
@@ -334,7 +455,18 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 controller: _tagsController,
                 decoration: InputDecoration(
                   labelText: l10n.tagsCommaSeparated,
-                  border: const OutlineInputBorder(),
+                  border: InputBorder.none,
+                  filled: true,
+                  fillColor: inputFillColor,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -352,6 +484,12 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 onPressed: _saveTransaction,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(16),
+                  backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.black,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                 child: Text(
                   isEditing ? l10n.updateTransaction : l10n.saveTransaction,

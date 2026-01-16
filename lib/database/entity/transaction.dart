@@ -1,6 +1,7 @@
 import 'package:floor/floor.dart';
 import 'budget.dart';
 import 'account.dart';
+import 'budget_transaction.dart';
 
 enum TransactionType { income, expense, transfer }
 
@@ -42,6 +43,7 @@ class Transaction {
   final bool isTemplate;
   final bool onlyBudget;
 
+  // Keep budgetId for backward compatibility, will be deprecated
   @ForeignKey(childColumns: ['budgetId'], parentColumns: ['id'], entity: Budget)
   final int? budgetId;
 
@@ -54,6 +56,10 @@ class Transaction {
 
   // Exchange rate used for transfer (if different currencies)
   final double? exchangeRate;
+
+  // Link to budget transaction (new field for separate budget transactions)
+  @ForeignKey(childColumns: ['budgetTransactionId'], parentColumns: ['id'], entity: BudgetTransaction)
+  final int? budgetTransactionId;
 
   Transaction({
     this.id,
@@ -68,5 +74,6 @@ class Transaction {
     this.accountId,
     this.toAccountId,
     this.exchangeRate,
+    this.budgetTransactionId,
   });
 }
