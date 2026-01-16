@@ -120,10 +120,12 @@ The build process includes:
 
 1. **Clean**: Removes previous build artifacts
 2. **Dependencies**: Fetches all Flutter packages via `flutter pub get`
-3. **Code Generation**: Runs `build_runner` to generate Floor database code
+3. **Code Generation**: Runs `build_runner` to generate Floor database code (required for this project as it uses Floor ORM)
 4. **Compilation**: Compiles the Flutter app for Android in release mode
 5. **Bundling**: Creates the AAB file with all necessary resources
 6. **Signing**: Signs the AAB with your keystore (if configured)
+
+**Note:** The code generation step is specific to this project because it uses Floor (a SQLite database library). If the code generation fails, the build may not work correctly. The scripts continue with a warning to allow you to troubleshoot, but ensure the generated database code exists before deploying.
 
 ### Build Variants
 
@@ -182,9 +184,18 @@ flutter build appbundle --release
 
 ### Code generation errors
 
+**Context:** This project uses Floor ORM which requires code generation for database access. If you see errors related to missing database files or Floor classes, the code generation step may have failed.
+
 **Solution:** Run code generation separately:
 
 ```cmd
+dart run build_runner build --delete-conflicting-outputs
+```
+
+If the error persists, ensure all dependencies are installed:
+
+```cmd
+flutter pub get
 dart run build_runner build --delete-conflicting-outputs
 ```
 
