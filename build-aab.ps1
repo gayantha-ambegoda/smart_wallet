@@ -61,7 +61,7 @@ Write-Host ""
 
 # Run code generation for Floor database
 Write-Host "Running code generation (build_runner)..." -ForegroundColor Yellow
-flutter pub run build_runner build --delete-conflicting-outputs
+dart run build_runner build --delete-conflicting-outputs
 if ($LASTEXITCODE -ne 0) {
     Write-Host "WARNING: Code generation failed, but continuing..." -ForegroundColor Yellow
 }
