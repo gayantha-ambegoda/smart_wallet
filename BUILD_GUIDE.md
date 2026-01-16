@@ -17,7 +17,7 @@ Before you can build a signed AAB, you need:
 
 ## Quick Start
 
-### Option 1: Using the Batch File (Easiest)
+### Option 1: Using the Batch File (Easiest - Command Prompt)
 
 Simply double-click the `build-aab.bat` file in the project root, or run it from command prompt:
 
@@ -25,7 +25,15 @@ Simply double-click the `build-aab.bat` file in the project root, or run it from
 build-aab.bat
 ```
 
-The batch file will:
+### Option 2: Using PowerShell Script
+
+If you prefer PowerShell, run:
+
+```powershell
+.\build-aab.ps1
+```
+
+Both scripts will:
 - Check if Flutter is installed
 - Clean previous builds
 - Get dependencies
@@ -33,7 +41,7 @@ The batch file will:
 - Build the signed release AAB
 - Display the output file location
 
-### Option 2: Manual Command
+### Option 3: Manual Command
 
 If you prefer to run the build command manually:
 

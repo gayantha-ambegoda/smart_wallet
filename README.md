@@ -105,8 +105,14 @@ Built-in support for multiple currencies including:
 
 To build a signed Android App Bundle (AAB) without opening Android Studio:
 
+**Command Prompt:**
 ```cmd
 build-aab.bat
+```
+
+**PowerShell:**
+```powershell
+.\build-aab.ps1
 ```
 
 For detailed instructions on setting up app signing and building for release, see [BUILD_GUIDE.md](BUILD_GUIDE.md).
