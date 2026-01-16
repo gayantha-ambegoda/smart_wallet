@@ -325,19 +325,10 @@ class _DashboardPageState extends State<DashboardPage>
               final transactionIndex = showTemplates ? index : index - 1;
               final transaction = transactions[transactionIndex];
 
-              // Get budget name if budgetId exists
-              final budgetProvider = context.read<BudgetProvider>();
-              final budget = transaction.budgetId != null
-                  ? budgetProvider.budgets.firstWhere(
-                      (b) => b.id == transaction.budgetId,
-                      orElse: () => budgetProvider.budgets.first,
-                    )
-                  : null;
-
               return ModernTransactionCard(
                 transaction: transaction,
                 currencySymbol: _currencySymbol,
-                budgetName: budget?.title,
+                budgetName: null,
                 contextAccountId: selectedAccount?.id,
                 onTap: showTemplates
                     ? () => _openTransactionFormFromTemplate(transaction)

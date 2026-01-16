@@ -13,7 +13,7 @@ import 'entity/budget_transaction.dart';
 
 part 'app_database.g.dart';
 
-@Database(version: 4, entities: [Transaction, Budget, Account, BudgetTransaction])
+@Database(version: 5, entities: [Transaction, Budget, Account, BudgetTransaction])
 abstract class AppDatabase extends FloorDatabase {
   TransactionDao get transactionDao;
   BudgetDao get budgetDao;

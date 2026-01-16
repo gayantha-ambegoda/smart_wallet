@@ -102,7 +102,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-          'CREATE TABLE IF NOT EXISTS `Transaction` (`id` INTEGER, `title` TEXT NOT NULL, `amount` REAL NOT NULL, `date` INTEGER NOT NULL, `tags` TEXT NOT NULL, `type` TEXT NOT NULL, `isTemplate` INTEGER NOT NULL, `onlyBudget` INTEGER NOT NULL, `budgetId` INTEGER, `accountId` INTEGER, `toAccountId` INTEGER, `exchangeRate` REAL, `budgetTransactionId` INTEGER, PRIMARY KEY (`id`))',
+          'CREATE TABLE IF NOT EXISTS `Transaction` (`id` INTEGER, `title` TEXT NOT NULL, `amount` REAL NOT NULL, `date` INTEGER NOT NULL, `tags` TEXT NOT NULL, `type` TEXT NOT NULL, `isTemplate` INTEGER NOT NULL, `onlyBudget` INTEGER NOT NULL, `accountId` INTEGER, `toAccountId` INTEGER, `exchangeRate` REAL, `budgetTransactionId` INTEGER, PRIMARY KEY (`id`))',
         );
         await database.execute(
           'CREATE TABLE IF NOT EXISTS `Budget` (`id` INTEGER, `title` TEXT NOT NULL, PRIMARY KEY (`id`))',
@@ -159,7 +159,6 @@ class _$TransactionDao extends TransactionDao {
           'type': _transactionTypeConverter.encode(item.type),
           'isTemplate': item.isTemplate ? 1 : 0,
           'onlyBudget': item.onlyBudget ? 1 : 0,
-          'budgetId': item.budgetId,
           'accountId': item.accountId,
           'toAccountId': item.toAccountId,
           'exchangeRate': item.exchangeRate,
@@ -179,7 +178,6 @@ class _$TransactionDao extends TransactionDao {
           'type': _transactionTypeConverter.encode(item.type),
           'isTemplate': item.isTemplate ? 1 : 0,
           'onlyBudget': item.onlyBudget ? 1 : 0,
-          'budgetId': item.budgetId,
           'accountId': item.accountId,
           'toAccountId': item.toAccountId,
           'exchangeRate': item.exchangeRate,
@@ -199,7 +197,6 @@ class _$TransactionDao extends TransactionDao {
           'type': _transactionTypeConverter.encode(item.type),
           'isTemplate': item.isTemplate ? 1 : 0,
           'onlyBudget': item.onlyBudget ? 1 : 0,
-          'budgetId': item.budgetId,
           'accountId': item.accountId,
           'toAccountId': item.toAccountId,
           'exchangeRate': item.exchangeRate,
@@ -232,7 +229,6 @@ class _$TransactionDao extends TransactionDao {
         type: _transactionTypeConverter.decode(row['type'] as String),
         isTemplate: (row['isTemplate'] as int) != 0,
         onlyBudget: (row['onlyBudget'] as int) != 0,
-        budgetId: row['budgetId'] as int?,
         accountId: row['accountId'] as int?,
         toAccountId: row['toAccountId'] as int?,
         exchangeRate: row['exchangeRate'] as double?,
@@ -254,36 +250,12 @@ class _$TransactionDao extends TransactionDao {
         type: _transactionTypeConverter.decode(row['type'] as String),
         isTemplate: (row['isTemplate'] as int) != 0,
         onlyBudget: (row['onlyBudget'] as int) != 0,
-        budgetId: row['budgetId'] as int?,
         accountId: row['accountId'] as int?,
         toAccountId: row['toAccountId'] as int?,
         exchangeRate: row['exchangeRate'] as double?,
         budgetTransactionId: row['budgetTransactionId'] as int?,
       ),
       arguments: [id],
-    );
-  }
-
-  @override
-  Future<List<Transaction>> findTransactionsByBudgetId(int budgetId) async {
-    return _queryAdapter.queryList(
-      'SELECT * FROM `Transaction` WHERE budgetId = ?1',
-      mapper: (Map<String, Object?> row) => Transaction(
-        id: row['id'] as int?,
-        title: row['title'] as String,
-        amount: row['amount'] as double,
-        date: row['date'] as int,
-        tags: _tagsConverter.decode(row['tags'] as String),
-        type: _transactionTypeConverter.decode(row['type'] as String),
-        isTemplate: (row['isTemplate'] as int) != 0,
-        onlyBudget: (row['onlyBudget'] as int) != 0,
-        budgetId: row['budgetId'] as int?,
-        accountId: row['accountId'] as int?,
-        toAccountId: row['toAccountId'] as int?,
-        exchangeRate: row['exchangeRate'] as double?,
-        budgetTransactionId: row['budgetTransactionId'] as int?,
-      ),
-      arguments: [budgetId],
     );
   }
 
@@ -300,7 +272,6 @@ class _$TransactionDao extends TransactionDao {
         type: _transactionTypeConverter.decode(row['type'] as String),
         isTemplate: (row['isTemplate'] as int) != 0,
         onlyBudget: (row['onlyBudget'] as int) != 0,
-        budgetId: row['budgetId'] as int?,
         accountId: row['accountId'] as int?,
         toAccountId: row['toAccountId'] as int?,
         exchangeRate: row['exchangeRate'] as double?,
@@ -325,7 +296,6 @@ class _$TransactionDao extends TransactionDao {
         type: _transactionTypeConverter.decode(row['type'] as String),
         isTemplate: (row['isTemplate'] as int) != 0,
         onlyBudget: (row['onlyBudget'] as int) != 0,
-        budgetId: row['budgetId'] as int?,
         accountId: row['accountId'] as int?,
         toAccountId: row['toAccountId'] as int?,
         exchangeRate: row['exchangeRate'] as double?,
@@ -394,7 +364,6 @@ class _$TransactionDao extends TransactionDao {
         type: _transactionTypeConverter.decode(row['type'] as String),
         isTemplate: (row['isTemplate'] as int) != 0,
         onlyBudget: (row['onlyBudget'] as int) != 0,
-        budgetId: row['budgetId'] as int?,
         accountId: row['accountId'] as int?,
         toAccountId: row['toAccountId'] as int?,
         exchangeRate: row['exchangeRate'] as double?,

@@ -3,12 +3,10 @@ import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import '../database/entity/transaction.dart';
 import '../providers/transaction_provider.dart';
-import '../providers/budget_provider.dart';
 import '../providers/account_provider.dart';
 import '../database/entity/currency.dart';
 
 class AddTransactionPage extends StatefulWidget {
-  final int? preselectedBudgetId;
   final int? preselectedAccountId;
   final Transaction? transactionToEdit;
   final TransactionType? preselectedType;
@@ -16,7 +14,6 @@ class AddTransactionPage extends StatefulWidget {
 
   const AddTransactionPage({
     super.key,
-    this.preselectedBudgetId,
     this.preselectedAccountId,
     this.transactionToEdit,
     this.preselectedType,
@@ -34,7 +31,6 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   final _tagsController = TextEditingController();
   TransactionType _selectedType = TransactionType.expense;
   bool _isTemplate = false;
-  int? _selectedBudgetId;
   int? _selectedAccountId;
   int? _toAccountId; // For transfers
   final _exchangeRateController = TextEditingController();
@@ -42,9 +38,6 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   @override
   void initState() {
     super.initState();
-    // Set the preselected budget ID if provided
-    _selectedBudgetId = widget.preselectedBudgetId;
-    
     // Set the preselected account ID if provided
     _selectedAccountId = widget.preselectedAccountId;
 
@@ -61,7 +54,6 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       _tagsController.text = template.tags.join(', ');
       _selectedType = template.type;
       _isTemplate = false; // Creating a real transaction from template
-      _selectedBudgetId = template.budgetId;
       _selectedAccountId = template.accountId;
       _toAccountId = template.toAccountId;
       if (template.exchangeRate != null) {
@@ -76,7 +68,6 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       _tagsController.text = transaction.tags.join(', ');
       _selectedType = transaction.type;
       _isTemplate = transaction.isTemplate;
-      _selectedBudgetId = transaction.budgetId;
       _selectedAccountId = transaction.accountId;
       _toAccountId = transaction.toAccountId;
       if (transaction.exchangeRate != null) {
@@ -413,44 +404,6 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 if (_exchangeRateController.text.isNotEmpty)
                   const SizedBox(height: 16),
               ],
-              // Only show budget dropdown if no budget is preselected
-              if (widget.preselectedBudgetId == null)
-                Consumer<BudgetProvider>(
-                  builder: (context, budgetProvider, child) {
-                    final budgets = budgetProvider.budgets;
-                    return DropdownButtonFormField<int>(
-                      value: _selectedBudgetId,
-                      decoration: InputDecoration(
-                        labelText: l10n.budgetOptional,
-                        border: InputBorder.none,
-                        filled: true,
-                        fillColor: inputFillColor,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      items: budgets.map((budget) {
-                        return DropdownMenuItem(
-                          value: budget.id,
-                          child: Text(budget.title),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedBudgetId = value;
-                        });
-                      },
-                    );
-                  },
-                ),
-              if (widget.preselectedBudgetId == null)
-                const SizedBox(height: 16),
               TextFormField(
                 controller: _tagsController,
                 decoration: InputDecoration(
@@ -528,7 +481,6 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         type: _selectedType,
         isTemplate: _isTemplate,
         onlyBudget: false, // Always false for visibility in account transactions
-        budgetId: _selectedBudgetId,
         accountId: _selectedAccountId,
         toAccountId: _selectedType == TransactionType.transfer
             ? _toAccountId
