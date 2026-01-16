@@ -127,27 +127,6 @@ class TransactionDetailsDialog extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
-                    // Budget
-                    if (transaction.budgetId != null)
-                      Consumer<BudgetProvider>(
-                        builder: (context, budgetProvider, child) {
-                          final budget = budgetProvider.budgets.firstWhere(
-                            (b) => b.id == transaction.budgetId,
-                            orElse: () => budgetProvider.budgets.first,
-                          );
-                          return Column(
-                            children: [
-                              _buildInfoSection(
-                                icon: Icons.account_balance_wallet,
-                                label: 'Budget',
-                                value: budget.title,
-                              ),
-                              const SizedBox(height: 20),
-                            ],
-                          );
-                        },
-                      ),
-
                     // Tags
                     if (transaction.tags.isNotEmpty) ...[
                       Row(
@@ -516,10 +495,11 @@ class TransactionDetailsDialog extends StatelessWidget {
         type: transaction.type,
         isTemplate: transaction.isTemplate,
         onlyBudget: false, // Set to false to make it count in actual balance
-        budgetId: transaction.budgetId,
         accountId: transaction.accountId, // Preserve the account ID
-        toAccountId: transaction.toAccountId, // Preserve the destination account ID for transfers
-        exchangeRate: transaction.exchangeRate, // Preserve the exchange rate for transfers
+        toAccountId: transaction
+            .toAccountId, // Preserve the destination account ID for transfers
+        exchangeRate: transaction
+            .exchangeRate, // Preserve the exchange rate for transfers
       );
 
       await context.read<TransactionProvider>().updateTransactionData(
