@@ -99,6 +99,20 @@ Built-in support for multiple currencies including:
 
 ---
 
+## Building the App
+
+### Quick Build - Android AAB
+
+To build a signed Android App Bundle (AAB) without opening Android Studio:
+
+```cmd
+build-aab.bat
+```
+
+For detailed instructions on setting up app signing and building for release, see [BUILD_GUIDE.md](BUILD_GUIDE.md).
+
+---
+
 ## Project Architecture
 
 - **Database Layer:** SQLite with Floor ORM for type-safe database access
