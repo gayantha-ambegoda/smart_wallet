@@ -74,13 +74,15 @@ class _$AppDatabase extends AppDatabase {
 
   AccountDao? _accountDaoInstance;
 
+  BudgetTransactionDao? _budgetTransactionDaoInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
     Callback? callback,
   ]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 3,
+      version: 4,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -100,13 +102,16 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-          'CREATE TABLE IF NOT EXISTS `Transaction` (`id` INTEGER, `title` TEXT NOT NULL, `amount` REAL NOT NULL, `date` INTEGER NOT NULL, `tags` TEXT NOT NULL, `type` TEXT NOT NULL, `isTemplate` INTEGER NOT NULL, `onlyBudget` INTEGER NOT NULL, `budgetId` INTEGER, `accountId` INTEGER, `toAccountId` INTEGER, `exchangeRate` REAL, PRIMARY KEY (`id`))',
+          'CREATE TABLE IF NOT EXISTS `Transaction` (`id` INTEGER, `title` TEXT NOT NULL, `amount` REAL NOT NULL, `date` INTEGER NOT NULL, `tags` TEXT NOT NULL, `type` TEXT NOT NULL, `isTemplate` INTEGER NOT NULL, `onlyBudget` INTEGER NOT NULL, `budgetId` INTEGER, `accountId` INTEGER, `toAccountId` INTEGER, `exchangeRate` REAL, `budgetTransactionId` INTEGER, PRIMARY KEY (`id`))',
         );
         await database.execute(
           'CREATE TABLE IF NOT EXISTS `Budget` (`id` INTEGER, `title` TEXT NOT NULL, PRIMARY KEY (`id`))',
         );
         await database.execute(
           'CREATE TABLE IF NOT EXISTS `Account` (`id` INTEGER, `name` TEXT NOT NULL, `bankName` TEXT NOT NULL, `currencyCode` TEXT NOT NULL, `initialBalance` REAL NOT NULL, `isPrimary` INTEGER NOT NULL, PRIMARY KEY (`id`))',
+        );
+        await database.execute(
+          'CREATE TABLE IF NOT EXISTS `BudgetTransaction` (`id` INTEGER, `title` TEXT NOT NULL, `amount` REAL NOT NULL, `date` INTEGER NOT NULL, `tags` TEXT NOT NULL, `type` TEXT NOT NULL, `budgetId` INTEGER NOT NULL, PRIMARY KEY (`id`))',
         );
 
         await callback?.onCreate?.call(database, version);
@@ -132,6 +137,11 @@ class _$AppDatabase extends AppDatabase {
   AccountDao get accountDao {
     return _accountDaoInstance ??= _$AccountDao(database, changeListener);
   }
+
+  @override
+  BudgetTransactionDao get budgetTransactionDao {
+    return _budgetTransactionDaoInstance ??= _$BudgetTransactionDao(database, changeListener);
+  }
 }
 
 class _$TransactionDao extends TransactionDao {
@@ -153,6 +163,7 @@ class _$TransactionDao extends TransactionDao {
           'accountId': item.accountId,
           'toAccountId': item.toAccountId,
           'exchangeRate': item.exchangeRate,
+          'budgetTransactionId': item.budgetTransactionId,
         },
       ),
       _transactionUpdateAdapter = UpdateAdapter(
@@ -172,6 +183,7 @@ class _$TransactionDao extends TransactionDao {
           'accountId': item.accountId,
           'toAccountId': item.toAccountId,
           'exchangeRate': item.exchangeRate,
+          'budgetTransactionId': item.budgetTransactionId,
         },
       ),
       _transactionDeletionAdapter = DeletionAdapter(
@@ -191,6 +203,7 @@ class _$TransactionDao extends TransactionDao {
           'accountId': item.accountId,
           'toAccountId': item.toAccountId,
           'exchangeRate': item.exchangeRate,
+          'budgetTransactionId': item.budgetTransactionId,
         },
       );
 
@@ -223,6 +236,7 @@ class _$TransactionDao extends TransactionDao {
         accountId: row['accountId'] as int?,
         toAccountId: row['toAccountId'] as int?,
         exchangeRate: row['exchangeRate'] as double?,
+        budgetTransactionId: row['budgetTransactionId'] as int?,
       ),
     );
   }
@@ -244,6 +258,7 @@ class _$TransactionDao extends TransactionDao {
         accountId: row['accountId'] as int?,
         toAccountId: row['toAccountId'] as int?,
         exchangeRate: row['exchangeRate'] as double?,
+        budgetTransactionId: row['budgetTransactionId'] as int?,
       ),
       arguments: [id],
     );
@@ -266,6 +281,7 @@ class _$TransactionDao extends TransactionDao {
         accountId: row['accountId'] as int?,
         toAccountId: row['toAccountId'] as int?,
         exchangeRate: row['exchangeRate'] as double?,
+        budgetTransactionId: row['budgetTransactionId'] as int?,
       ),
       arguments: [budgetId],
     );
@@ -288,6 +304,7 @@ class _$TransactionDao extends TransactionDao {
         accountId: row['accountId'] as int?,
         toAccountId: row['toAccountId'] as int?,
         exchangeRate: row['exchangeRate'] as double?,
+        budgetTransactionId: row['budgetTransactionId'] as int?,
       ),
       arguments: [accountId],
     );
@@ -312,6 +329,7 @@ class _$TransactionDao extends TransactionDao {
         accountId: row['accountId'] as int?,
         toAccountId: row['toAccountId'] as int?,
         exchangeRate: row['exchangeRate'] as double?,
+        budgetTransactionId: row['budgetTransactionId'] as int?,
       ),
       arguments: [accountId],
     );
@@ -377,6 +395,10 @@ class _$TransactionDao extends TransactionDao {
         isTemplate: (row['isTemplate'] as int) != 0,
         onlyBudget: (row['onlyBudget'] as int) != 0,
         budgetId: row['budgetId'] as int?,
+        accountId: row['accountId'] as int?,
+        toAccountId: row['toAccountId'] as int?,
+        exchangeRate: row['exchangeRate'] as double?,
+        budgetTransactionId: row['budgetTransactionId'] as int?,
       ),
     );
   }
@@ -612,6 +634,157 @@ class _$AccountDao extends AccountDao {
   }
 }
 
+class _$BudgetTransactionDao extends BudgetTransactionDao {
+  _$BudgetTransactionDao(this.database, this.changeListener)
+    : _queryAdapter = QueryAdapter(database),
+      _budgetTransactionInsertionAdapter = InsertionAdapter(
+        database,
+        'BudgetTransaction',
+        (BudgetTransaction item) => <String, Object?>{
+          'id': item.id,
+          'title': item.title,
+          'amount': item.amount,
+          'date': item.date,
+          'tags': _budgetTagsConverter.encode(item.tags),
+          'type': _budgetTransactionTypeConverter.encode(item.type),
+          'budgetId': item.budgetId,
+        },
+      ),
+      _budgetTransactionUpdateAdapter = UpdateAdapter(
+        database,
+        'BudgetTransaction',
+        ['id'],
+        (BudgetTransaction item) => <String, Object?>{
+          'id': item.id,
+          'title': item.title,
+          'amount': item.amount,
+          'date': item.date,
+          'tags': _budgetTagsConverter.encode(item.tags),
+          'type': _budgetTransactionTypeConverter.encode(item.type),
+          'budgetId': item.budgetId,
+        },
+      ),
+      _budgetTransactionDeletionAdapter = DeletionAdapter(
+        database,
+        'BudgetTransaction',
+        ['id'],
+        (BudgetTransaction item) => <String, Object?>{
+          'id': item.id,
+          'title': item.title,
+          'amount': item.amount,
+          'date': item.date,
+          'tags': _budgetTagsConverter.encode(item.tags),
+          'type': _budgetTransactionTypeConverter.encode(item.type),
+          'budgetId': item.budgetId,
+        },
+      );
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<BudgetTransaction> _budgetTransactionInsertionAdapter;
+
+  final UpdateAdapter<BudgetTransaction> _budgetTransactionUpdateAdapter;
+
+  final DeletionAdapter<BudgetTransaction> _budgetTransactionDeletionAdapter;
+
+  @override
+  Future<List<BudgetTransaction>> findAllBudgetTransactions() async {
+    return _queryAdapter.queryList(
+      'SELECT * FROM BudgetTransaction',
+      mapper: (Map<String, Object?> row) => BudgetTransaction(
+        id: row['id'] as int?,
+        title: row['title'] as String,
+        amount: row['amount'] as double,
+        date: row['date'] as int,
+        tags: _budgetTagsConverter.decode(row['tags'] as String),
+        type: _budgetTransactionTypeConverter.decode(row['type'] as String),
+        budgetId: row['budgetId'] as int,
+      ),
+    );
+  }
+
+  @override
+  Future<BudgetTransaction?> findBudgetTransactionById(int id) async {
+    return _queryAdapter.query(
+      'SELECT * FROM BudgetTransaction WHERE id = ?1',
+      mapper: (Map<String, Object?> row) => BudgetTransaction(
+        id: row['id'] as int?,
+        title: row['title'] as String,
+        amount: row['amount'] as double,
+        date: row['date'] as int,
+        tags: _budgetTagsConverter.decode(row['tags'] as String),
+        type: _budgetTransactionTypeConverter.decode(row['type'] as String),
+        budgetId: row['budgetId'] as int,
+      ),
+      arguments: [id],
+    );
+  }
+
+  @override
+  Future<List<BudgetTransaction>> findBudgetTransactionsByBudgetId(int budgetId) async {
+    return _queryAdapter.queryList(
+      'SELECT * FROM BudgetTransaction WHERE budgetId = ?1',
+      mapper: (Map<String, Object?> row) => BudgetTransaction(
+        id: row['id'] as int?,
+        title: row['title'] as String,
+        amount: row['amount'] as double,
+        date: row['date'] as int,
+        tags: _budgetTagsConverter.decode(row['tags'] as String),
+        type: _budgetTransactionTypeConverter.decode(row['type'] as String),
+        budgetId: row['budgetId'] as int,
+      ),
+      arguments: [budgetId],
+    );
+  }
+
+  @override
+  Future<double?> getTotalIncomeByBudget(int budgetId) async {
+    return _queryAdapter.query(
+      'SELECT SUM(amount) FROM BudgetTransaction WHERE type = \'income\' AND budgetId = ?1',
+      mapper: (Map<String, Object?> row) =>
+          (row.values.first as double?) ?? 0.0,
+      arguments: [budgetId],
+    );
+  }
+
+  @override
+  Future<double?> getTotalExpenseByBudget(int budgetId) async {
+    return _queryAdapter.query(
+      'SELECT SUM(amount) FROM BudgetTransaction WHERE type = \'expense\' AND budgetId = ?1',
+      mapper: (Map<String, Object?> row) =>
+          (row.values.first as double?) ?? 0.0,
+      arguments: [budgetId],
+    );
+  }
+
+  @override
+  Future<void> insertBudgetTransaction(BudgetTransaction transaction) async {
+    await _budgetTransactionInsertionAdapter.insert(
+      transaction,
+      OnConflictStrategy.abort,
+    );
+  }
+
+  @override
+  Future<void> updateBudgetTransaction(BudgetTransaction transaction) async {
+    await _budgetTransactionUpdateAdapter.update(
+      transaction,
+      OnConflictStrategy.abort,
+    );
+  }
+
+  @override
+  Future<void> deleteBudgetTransaction(BudgetTransaction transaction) async {
+    await _budgetTransactionDeletionAdapter.delete(transaction);
+  }
+}
+
 // ignore_for_file: unused_element
 final _tagsConverter = TagsConverter();
 final _transactionTypeConverter = TransactionTypeConverter();
+final _budgetTagsConverter = BudgetTagsConverter();
+final _budgetTransactionTypeConverter = BudgetTransactionTypeConverter();

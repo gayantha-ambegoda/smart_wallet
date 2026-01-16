@@ -8,6 +8,7 @@ import 'providers/transaction_provider.dart';
 import 'providers/budget_provider.dart';
 import 'providers/account_provider.dart';
 import 'providers/locale_provider.dart';
+import 'providers/budget_transaction_provider.dart';
 import 'pages/dashboard_page.dart';
 import '../l10n/app_localizations.dart';
 
@@ -147,6 +148,71 @@ void main() async {
         print('Assigned $count transactions to default account');
       }
     }),
+    // Migration 3 to 4: Create BudgetTransaction table and migrate budget-related transactions
+    Migration(3, 4, (database) async {
+      // Create the new BudgetTransaction table
+      await database.execute('''
+            CREATE TABLE IF NOT EXISTS `BudgetTransaction` (
+              `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+              `title` TEXT NOT NULL,
+              `amount` REAL NOT NULL,
+              `date` INTEGER NOT NULL,
+              `tags` TEXT NOT NULL,
+              `type` TEXT NOT NULL,
+              `budgetId` INTEGER NOT NULL,
+              FOREIGN KEY (`budgetId`) REFERENCES `Budget` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
+            )
+          ''');
+
+      // Add budgetTransactionId column to Transaction table
+      try {
+        await database.execute(
+          'ALTER TABLE `Transaction` ADD COLUMN `budgetTransactionId` INTEGER',
+        );
+      } catch (e) {
+        print('Column budgetTransactionId might already exist: $e');
+      }
+
+      // Migrate existing budget-only transactions to BudgetTransaction table
+      final budgetTransactions = await database.rawQuery(
+        'SELECT * FROM `Transaction` WHERE budgetId IS NOT NULL AND onlyBudget = 1',
+      );
+
+      print('Found ${budgetTransactions.length} budget-only transactions to migrate');
+
+      for (var tx in budgetTransactions) {
+        // Convert TransactionType to BudgetTransactionType
+        final typeStr = tx['type'] as String;
+        String budgetType = 'expense';
+        if (typeStr == 'income') {
+          budgetType = 'income';
+        }
+
+        // Insert into BudgetTransaction
+        await database.execute(
+          '''
+          INSERT INTO `BudgetTransaction` (title, amount, date, tags, type, budgetId)
+          VALUES (?, ?, ?, ?, ?, ?)
+          ''',
+          [
+            tx['title'],
+            tx['amount'],
+            tx['date'],
+            tx['tags'],
+            budgetType,
+            tx['budgetId'],
+          ],
+        );
+
+        // Delete the old transaction from Transaction table
+        await database.execute(
+          'DELETE FROM `Transaction` WHERE id = ?',
+          [tx['id']],
+        );
+      }
+
+      print('Migration to version 4 completed');
+    }),
   ]).build();
 
   runApp(MyApp(database: database));
@@ -167,6 +233,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => BudgetProvider(database)),
         ChangeNotifierProvider(create: (context) => AccountProvider(database)),
         ChangeNotifierProvider(create: (context) => LocaleProvider()),
+        ChangeNotifierProvider(create: (context) => BudgetTransactionProvider(database)),
       ],
       child: Consumer<LocaleProvider>(
         builder: (context, localeProvider, child) {
