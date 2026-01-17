@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/transaction_provider.dart';
 import '../providers/budget_transaction_provider.dart';
+import 'tag_transactions_page.dart';
 
 class TagsListPage extends StatefulWidget {
   const TagsListPage({super.key});
@@ -27,9 +28,10 @@ class _TagsListPageState extends State<TagsListPage> {
 
     // Get all transactions
     final transactions = transactionProvider.transactions;
-    
+
     // Get all budget transactions
-    final budgetTransactions = await budgetTransactionProvider.getAllTransactions();
+    final budgetTransactions = await budgetTransactionProvider
+        .getAllTransactions();
 
     // Collect all tags
     final Set<String> uniqueTags = {};
@@ -65,8 +67,12 @@ class _TagsListPageState extends State<TagsListPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkMode ? Theme.of(context).colorScheme.surface : Colors.white;
-    final cardColor = isDarkMode ? Theme.of(context).colorScheme.surfaceContainer : Colors.white;
+    final backgroundColor = isDarkMode
+        ? Theme.of(context).colorScheme.surface
+        : Colors.white;
+    final cardColor = isDarkMode
+        ? Theme.of(context).colorScheme.surfaceContainer
+        : Colors.white;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -122,17 +128,26 @@ class _TagsListPageState extends State<TagsListPage> {
                   color: cardColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(
-                      color: Colors.grey.shade300,
-                      width: 1,
-                    ),
+                    side: BorderSide(color: Colors.grey.shade300, width: 1),
                   ),
                   child: ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TagTransactionsPage(tag: tag),
+                        ),
+                      );
+                    },
                     leading: CircleAvatar(
-                      backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
+                      backgroundColor: isDarkMode
+                          ? Colors.grey.shade800
+                          : Colors.grey.shade200,
                       child: Icon(
                         Icons.label,
-                        color: isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700,
+                        color: isDarkMode
+                            ? Colors.grey.shade300
+                            : Colors.grey.shade700,
                       ),
                     ),
                     title: Text(
@@ -148,7 +163,9 @@ class _TagsListPageState extends State<TagsListPage> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
+                        color: isDarkMode
+                            ? Colors.grey.shade800
+                            : Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -156,7 +173,9 @@ class _TagsListPageState extends State<TagsListPage> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700,
+                          color: isDarkMode
+                              ? Colors.grey.shade300
+                              : Colors.grey.shade700,
                         ),
                       ),
                     ),

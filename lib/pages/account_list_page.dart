@@ -33,6 +33,18 @@ class _AccountListPageState extends State<AccountListPage> {
         ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.grey[800],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: 'Add account',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AddAccountPage()),
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -62,10 +74,7 @@ class _AccountListPageState extends State<AccountListPage> {
                     const SizedBox(height: 8),
                     Text(
                       'Add an account to get started',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[500],
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey[500]),
                     ),
                   ],
                 ),
@@ -139,6 +148,13 @@ class _AccountListPageState extends State<AccountListPage> {
                   ),
                   child: Card(
                     margin: const EdgeInsets.only(bottom: 8),
+                    elevation: 0,
+                    shadowColor: Colors.transparent,
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(color: Colors.grey.shade300),
+                    ),
                     child: ListTile(
                       leading: CircleAvatar(
                         backgroundColor: account.isPrimary
@@ -151,7 +167,10 @@ class _AccountListPageState extends State<AccountListPage> {
                       ),
                       title: Row(
                         children: [
-                          Text(StringUtils.truncateAccountName(account.name)),
+                          Text(
+                            StringUtils.truncateAccountName(account.name),
+                            style: const TextStyle(fontWeight: FontWeight.w700),
+                          ),
                           if (account.isPrimary) ...[
                             const SizedBox(width: 8),
                             Container(
@@ -175,7 +194,7 @@ class _AccountListPageState extends State<AccountListPage> {
                           ],
                         ],
                       ),
-                      subtitle: Text('${account.bankName} • ${currency.code}'),
+                      subtitle: Text(account.bankName),
                       trailing: FutureBuilder<double>(
                         future: accountProvider.getAccountBalance(account.id!),
                         builder: (context, snapshot) {
@@ -206,15 +225,6 @@ class _AccountListPageState extends State<AccountListPage> {
             );
           },
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AddAccountPage()),
-          );
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }

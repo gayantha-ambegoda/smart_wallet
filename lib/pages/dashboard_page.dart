@@ -8,7 +8,6 @@ import '../database/entity/transaction.dart';
 import '../database/entity/currency.dart';
 import '../services/settings_service.dart';
 import '../widgets/transaction_details_dialog.dart';
-import '../widgets/stat_card.dart';
 import '../widgets/modern_transaction_card.dart';
 import '../widgets/date_filter_card.dart';
 import '../widgets/expandable_fab.dart';
@@ -33,6 +32,96 @@ class _DashboardPageState extends State<DashboardPage>
   String _currencySymbol = '\$';
   DateTime? _fromDate;
   DateTime? _toDate;
+
+  Widget _buildSummaryRow({
+    required double income,
+    required double expense,
+    required double total,
+  }) {
+    final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final totalColor = total > 0
+        ? Colors.green
+        : total < 0
+        ? Colors.red
+        : isDark
+        ? Colors.grey.shade300
+        : Colors.grey.shade700;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.income,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '$_currencySymbol${income.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.expense,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '$_currencySymbol${expense.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  l10n.totalBalance,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '$_currencySymbol${total.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    color: totalColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -361,8 +450,7 @@ class _DashboardPageState extends State<DashboardPage>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkMode ? Theme.of(context).colorScheme.surfaceContainerLow : Colors.white;
+    final backgroundColor = Theme.of(context).colorScheme.surface;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -595,77 +683,10 @@ class _DashboardPageState extends State<DashboardPage>
                     final expense = snapshot.data?['expense'] ?? 0.0;
                     final l10n = AppLocalizations.of(context)!;
 
-                    return Column(
-                      children: [
-                        // Available Balance - Large display
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                l10n.availableBalance,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimaryContainer,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                '$_currencySymbol${balance.toStringAsFixed(2)}',
-                                style: TextStyle(
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimaryContainer,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        // Income and Expense cards
-                        Row(
-                          children: [
-                            Expanded(
-                              child: StatCard(
-                                icon: Icons.arrow_downward,
-                                label: l10n.totalIncome,
-                                value:
-                                    '$_currencySymbol${income.toStringAsFixed(2)}',
-                                color: Theme.of(context).colorScheme.tertiary,
-                                backgroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.surfaceContainer,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: StatCard(
-                                icon: Icons.arrow_upward,
-                                label: l10n.totalExpense,
-                                value:
-                                    '$_currencySymbol${expense.toStringAsFixed(2)}',
-                                color: Theme.of(context).colorScheme.error,
-                                backgroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.surfaceContainer,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                    return _buildSummaryRow(
+                      income: income,
+                      expense: expense,
+                      total: income - expense,
                     );
                   },
                 );

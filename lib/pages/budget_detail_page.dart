@@ -63,6 +63,18 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
     return total;
   }
 
+  double _sumIncome() {
+    return _transactions
+        .where((t) => t.type == BudgetTransactionType.income)
+        .fold(0.0, (sum, t) => sum + t.amount);
+  }
+
+  double _sumExpense() {
+    return _transactions
+        .where((t) => t.type == BudgetTransactionType.expense)
+        .fold(0.0, (sum, t) => sum + t.amount);
+  }
+
   String _formatCurrency(double amount) {
     return '$_currencySymbol${amount.toStringAsFixed(2)}';
   }
@@ -75,7 +87,7 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
   void _showTransactionDetails(BudgetTransaction transaction) {
     final l10n = AppLocalizations.of(context)!;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -86,7 +98,9 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
           children: [
             Text('${l10n.amount}: ${_formatCurrency(transaction.amount)}'),
             const SizedBox(height: 8),
-            Text('${l10n.type}: ${transaction.type == BudgetTransactionType.income ? l10n.income : l10n.expense}'),
+            Text(
+              '${l10n.type}: ${transaction.type == BudgetTransactionType.income ? l10n.income : l10n.expense}',
+            ),
             const SizedBox(height: 8),
             Text('Date: ${_formatDate(transaction.date)}'),
             if (transaction.tags.isNotEmpty) ...[
@@ -118,7 +132,9 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
-              await context.read<BudgetTransactionProvider>().removeTransaction(transaction);
+              await context.read<BudgetTransactionProvider>().removeTransaction(
+                transaction,
+              );
               _loadTransactions();
             },
             style: TextButton.styleFrom(
@@ -133,11 +149,17 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final total = _calculateTotal();
+    final income = _sumIncome();
+    final expense = _sumExpense();
+    final total = income - expense;
     final l10n = AppLocalizations.of(context)!;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkMode ? Theme.of(context).colorScheme.surface : Colors.white;
-    final cardColor = isDarkMode ? Theme.of(context).colorScheme.surfaceContainer : Colors.white;
+    final backgroundColor = isDarkMode
+        ? Theme.of(context).colorScheme.surface
+        : Colors.white;
+    final cardColor = isDarkMode
+        ? Theme.of(context).colorScheme.surfaceContainer
+        : Colors.white;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -168,90 +190,85 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
       ),
       body: Column(
         children: [
-          // Budget Summary Card - Remove elevation and make background transparent/white
+          // Budget Summary - matches tag transactions summary
           Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
             margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: backgroundColor,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outlineVariant,
+              ),
             ),
-            child: Column(
+            child: Row(
               children: [
-                Text(
-                  l10n.totalBalance,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: isDarkMode ? Colors.grey.shade300 : Colors.grey[700],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.income,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _formatCurrency(income),
+                        style: const TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  _formatCurrency(total),
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : Colors.black,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.expense,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _formatCurrency(expense),
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Column(
-                      children: [
-                        Icon(Icons.arrow_upward, color: isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700),
-                        const SizedBox(height: 4),
-                        Text(
-                          _formatCurrency(
-                            _transactions
-                                .where(
-                                  (t) => t.type == BudgetTransactionType.income,
-                                )
-                                .fold(0.0, (sum, t) => sum + t.amount),
-                          ),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: isDarkMode ? Colors.white : Colors.black,
-                          ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        l10n.totalBalance,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _formatCurrency(total),
+                        style: TextStyle(
+                          color: total > 0
+                              ? Colors.green
+                              : total < 0
+                              ? Colors.red
+                              : isDarkMode
+                              ? Colors.grey.shade300
+                              : Colors.grey.shade700,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
-                        Text(
-                          l10n.income,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: isDarkMode ? Colors.grey.shade400 : Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Icon(Icons.arrow_downward, color: isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700),
-                        const SizedBox(height: 4),
-                        Text(
-                          _formatCurrency(
-                            _transactions
-                                .where(
-                                  (t) => t.type == BudgetTransactionType.expense,
-                                )
-                                .fold(0.0, (sum, t) => sum + t.amount),
-                          ),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: isDarkMode ? Colors.white : Colors.black,
-                          ),
-                        ),
-                        Text(
-                          l10n.expense,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: isDarkMode ? Colors.grey.shade400 : Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -286,12 +303,16 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                           child: ListTile(
                             onTap: () => _showTransactionDetails(transaction),
                             leading: CircleAvatar(
-                              backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
+                              backgroundColor: isDarkMode
+                                  ? Colors.grey.shade800
+                                  : Colors.grey.shade200,
                               child: Icon(
                                 isIncome
                                     ? Icons.arrow_upward
                                     : Icons.arrow_downward,
-                                color: isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700,
+                                color: isDarkMode
+                                    ? Colors.grey.shade300
+                                    : Colors.grey.shade700,
                               ),
                             ),
                             title: Text(transaction.title),
@@ -312,13 +333,16 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                                             ),
                                             decoration: BoxDecoration(
                                               color: Colors.grey.shade200,
-                                              borderRadius: BorderRadius.circular(4),
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
                                             ),
                                             child: Text(
                                               tag,
                                               style: TextStyle(
                                                 fontSize: 10,
-                                                color: isDarkMode ? Colors.grey.shade800 : Colors.black,
+                                                color: isDarkMode
+                                                    ? Colors.grey.shade800
+                                                    : Colors.black,
                                               ),
                                             ),
                                           ),

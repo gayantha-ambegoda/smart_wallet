@@ -17,7 +17,7 @@ class BudgetListPage extends StatefulWidget {
 class _BudgetListPageState extends State<BudgetListPage> {
   final SettingsService _settingsService = SettingsService();
   String _currencySymbol = '\$';
-  
+
   static const Map<String, double> _defaultStats = {
     'totalSaved': 0.0,
     'totalIncome': 0.0,
@@ -45,13 +45,101 @@ class _BudgetListPageState extends State<BudgetListPage> {
     return '$_currencySymbol${amount.toStringAsFixed(2)}';
   }
 
+  Widget _buildSummaryRow({required double income, required double expense}) {
+    final l10n = AppLocalizations.of(context)!;
+    final total = income - expense;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final totalColor = total > 0
+        ? Colors.green
+        : total < 0
+        ? Colors.red
+        : isDark
+        ? Colors.grey.shade300
+        : Colors.grey.shade700;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.income,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _formatCurrency(income),
+                  style: const TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.expense,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _formatCurrency(expense),
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  l10n.totalBalance,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _formatCurrency(total),
+                  style: TextStyle(
+                    color: totalColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkMode ? Theme.of(context).colorScheme.surface : Colors.white;
-    final cardColor = isDarkMode ? Theme.of(context).colorScheme.surfaceContainer : Colors.white;
-    
+    final backgroundColor = isDarkMode
+        ? Theme.of(context).colorScheme.surface
+        : Colors.white;
+    final cardColor = isDarkMode
+        ? Theme.of(context).colorScheme.surfaceContainer
+        : Colors.white;
+
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -96,14 +184,18 @@ class _BudgetListPageState extends State<BudgetListPage> {
                     final totalIncome = stats['totalIncome']!;
                     final totalExpense = stats['totalExpense']!;
 
+                    final spentRatio = totalIncome == 0
+                        ? 0.0
+                        : (totalExpense / totalIncome).clamp(0.0, 1.0);
+
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
                       elevation: 0,
                       color: cardColor,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(14),
                         side: BorderSide(
-                          color: Colors.grey.shade300,
+                          color: Theme.of(context).colorScheme.outlineVariant,
                           width: 1,
                         ),
                       ),
@@ -116,168 +208,118 @@ class _BudgetListPageState extends State<BudgetListPage> {
                             ),
                           );
                         },
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(14),
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Budget title
+                              // Header
                               Row(
                                 children: [
                                   CircleAvatar(
-                                    backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
+                                    radius: 22,
+                                    backgroundColor: Theme.of(
+                                      context,
+                                    ).colorScheme.primaryContainer,
                                     child: Icon(
                                       Icons.account_balance_wallet,
-                                      color: isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimaryContainer,
                                     ),
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
-                                    child: Text(
-                                      budget.title,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          budget.title,
+                                          style: const TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '${l10n.totalBalance}: ${_formatCurrency(totalSaved)}',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurfaceVariant,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  Icon(
-                                    Icons.chevron_right,
-                                    color: Colors.grey[400],
-                                  ),
+                                  const Icon(Icons.chevron_right),
                                 ],
                               ),
-                              const SizedBox(height: 16),
-                              // Total saved amount
+                              const SizedBox(height: 14),
+
+                              // Progress (expense vs income)
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: isDarkMode ? Colors.transparent : Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
+                                  color: Theme.of(context).colorScheme.surface,
+                                  borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
-                                    color: Colors.grey.shade400,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.outlineVariant,
                                   ),
                                 ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      l10n.totalBalance,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: isDarkMode ? Colors.grey.shade300 : Colors.grey[700],
-                                      ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          l10n.expense,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        Text(
+                                          '${(spentRatio * 100).toStringAsFixed(0)}%',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurfaceVariant,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      _formatCurrency(totalSaved),
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: isDarkMode ? Colors.white : Colors.black,
+                                    const SizedBox(height: 8),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(6),
+                                      child: LinearProgressIndicator(
+                                        value: spentRatio,
+                                        minHeight: 10,
+                                        backgroundColor: Theme.of(
+                                          context,
+                                        ).colorScheme.surfaceContainerHighest,
+                                        valueColor: AlwaysStoppedAnimation(
+                                          Theme.of(context).colorScheme.error,
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
+
                               const SizedBox(height: 12),
-                              // Income and Expense row
-                              Row(
-                                children: [
-                                  // Income
-                                  Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color: isDarkMode ? Colors.transparent : Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: Colors.grey.shade400,
-                                        ),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Icon(
-                                                Icons.arrow_upward,
-                                                color: isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700,
-                                                size: 16,
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                l10n.income,
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: isDarkMode ? Colors.grey.shade400 : Colors.grey[600],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            _formatCurrency(totalIncome),
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: isDarkMode ? Colors.white : Colors.black,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  // Expense
-                                  Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color: isDarkMode ? Colors.transparent : Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: Colors.grey.shade400,
-                                        ),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Icon(
-                                                Icons.arrow_downward,
-                                                color: isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700,
-                                                size: 16,
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                l10n.expense,
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: isDarkMode ? Colors.grey.shade400 : Colors.grey[600],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            _formatCurrency(totalExpense),
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: isDarkMode ? Colors.white : Colors.black,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
+
+                              // Income / Expense / Total row
+                              _buildSummaryRow(
+                                income: totalIncome,
+                                expense: totalExpense,
                               ),
                             ],
                           ),

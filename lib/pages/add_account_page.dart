@@ -48,6 +48,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
   Widget build(BuildContext context) {
     final isEditing = widget.accountToEdit != null;
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -56,8 +57,8 @@ class _AddAccountPageState extends State<AddAccountPage> {
           isEditing ? l10n.editAccount : l10n.addAccount,
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.grey[800],
+        backgroundColor: theme.colorScheme.surface,
+        foregroundColor: theme.colorScheme.onSurface,
         actions: isEditing
             ? [
                 IconButton(
@@ -68,6 +69,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
               ]
             : null,
       ),
+      backgroundColor: theme.colorScheme.surface,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -76,10 +78,10 @@ class _AddAccountPageState extends State<AddAccountPage> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: l10n.accountName,
-                  border: const OutlineInputBorder(),
-                  helperText: l10n.exampleCheckingAccount,
+                decoration: _inputDecoration(
+                  label: l10n.accountName,
+                  helper: l10n.exampleCheckingAccount,
+                  prefixIcon: Icons.credit_card,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -88,13 +90,13 @@ class _AddAccountPageState extends State<AddAccountPage> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               TextFormField(
                 controller: _bankNameController,
-                decoration: InputDecoration(
-                  labelText: l10n.bankName,
-                  border: const OutlineInputBorder(),
-                  helperText: l10n.exampleBankName,
+                decoration: _inputDecoration(
+                  label: l10n.bankName,
+                  helper: l10n.exampleBankName,
+                  prefixIcon: Icons.account_balance,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -105,17 +107,15 @@ class _AddAccountPageState extends State<AddAccountPage> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                initialValue: _selectedCurrencyCode,
-                decoration: InputDecoration(
-                  labelText: l10n.currency,
-                  border: const OutlineInputBorder(),
+                value: _selectedCurrencyCode,
+                decoration: _inputDecoration(
+                  label: '',
+                  prefixIcon: Icons.monetization_on_outlined,
                 ),
                 items: CurrencyList.currencies.map((currency) {
                   return DropdownMenuItem(
                     value: currency.code,
-                    child: Text(
-                      '${currency.symbol} ${currency.code} - ${currency.name}',
-                    ),
+                    child: Text('${currency.code} - ${currency.name}'),
                   );
                 }).toList(),
                 onChanged: (value) {
@@ -127,13 +127,13 @@ class _AddAccountPageState extends State<AddAccountPage> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _initialBalanceController,
-                decoration: InputDecoration(
-                  labelText: l10n.initialBalance,
-                  border: const OutlineInputBorder(),
+                decoration: _inputDecoration(
+                  label: l10n.initialBalance,
+                  helper: l10n.currentBalanceDescription,
                   prefixText: CurrencyList.getByCode(
                     _selectedCurrencyCode,
                   ).symbol,
-                  helperText: l10n.currentBalanceDescription,
+                  prefixIcon: Icons.savings_outlined,
                 ),
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
@@ -149,28 +149,117 @@ class _AddAccountPageState extends State<AddAccountPage> {
                 },
               ),
               const SizedBox(height: 16),
-              SwitchListTile(
-                title: Text(l10n.setAsPrimaryAccount),
-                subtitle: Text(l10n.primaryAccountDescription),
-                value: _isPrimary,
-                onChanged: (value) {
-                  setState(() {
-                    _isPrimary = value;
-                  });
-                },
+              _buildSection(
+                title: l10n.primary,
+                children: [
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(l10n.setAsPrimaryAccount),
+                    subtitle: Text(l10n.primaryAccountDescription),
+                    value: _isPrimary,
+                    activeColor: Colors.black,
+                    activeTrackColor: Colors.black.withOpacity(0.4),
+                    onChanged: (value) {
+                      setState(() {
+                        _isPrimary = value;
+                      });
+                    },
+                  ),
+                ],
               ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _saveAccount,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(16),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _saveAccount,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: theme.brightness == Brightness.light
+                        ? Colors.black
+                        : theme.colorScheme.primary,
+                    foregroundColor: theme.brightness == Brightness.light
+                        ? Colors.white
+                        : theme.colorScheme.onPrimary,
+                    elevation: 1,
+                    shadowColor: theme.colorScheme.primary.withOpacity(0.25),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(isEditing ? Icons.check_circle : Icons.save_alt),
+                      const SizedBox(width: 8),
+                      Text(
+                        isEditing ? l10n.updateAccount : l10n.saveAccount,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Text(isEditing ? l10n.updateAccount : l10n.saveAccount),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSection({
+    required String title,
+    required List<Widget> children,
+  }) {
+    final theme = Theme.of(context);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 12),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration({
+    required String label,
+    String? helper,
+    IconData? prefixIcon,
+    String? prefixText,
+  }) {
+    final theme = Theme.of(context);
+    return InputDecoration(
+      labelText: label.isEmpty ? null : label,
+      helperText: helper,
+      prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
+      prefixText: prefixText,
+      filled: true,
+      fillColor: Colors.grey.shade200,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
     );
   }
 
