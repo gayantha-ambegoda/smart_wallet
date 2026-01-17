@@ -56,33 +56,33 @@ class _AccountDetailPageState extends State<AccountDetailPage>
     });
   }
 
-  double _calculateBalance() {
-    double balance = widget.account.initialBalance;
-    for (var transaction in _transactions) {
-      // Skip budget-only transactions and templates
-      if (transaction.onlyBudget || transaction.isTemplate) continue;
+  // double _calculateBalance() {
+  //   double balance = widget.account.initialBalance;
+  //   for (var transaction in _transactions) {
+  //     // Skip budget-only transactions and templates
+  //     if (transaction.onlyBudget || transaction.isTemplate) continue;
 
-      if (transaction.type == TransactionType.income) {
-        balance += transaction.amount;
-      } else if (transaction.type == TransactionType.expense) {
-        balance -= transaction.amount;
-      } else if (transaction.type == TransactionType.transfer) {
-        // For transfers, check if this is the source or destination account
-        if (transaction.accountId == widget.account.id) {
-          // Money going out (deduct from source account)
-          balance -= transaction.amount;
-        } else if (transaction.toAccountId == widget.account.id) {
-          // Money coming in (add to destination account with exchange rate)
-          double amountToAdd = transaction.amount;
-          if (transaction.exchangeRate != null) {
-            amountToAdd = transaction.amount * transaction.exchangeRate!;
-          }
-          balance += amountToAdd;
-        }
-      }
-    }
-    return balance;
-  }
+  //     if (transaction.type == TransactionType.income) {
+  //       balance += transaction.amount;
+  //     } else if (transaction.type == TransactionType.expense) {
+  //       balance -= transaction.amount;
+  //     } else if (transaction.type == TransactionType.transfer) {
+  //       // For transfers, check if this is the source or destination account
+  //       if (transaction.accountId == widget.account.id) {
+  //         // Money going out (deduct from source account)
+  //         balance -= transaction.amount;
+  //       } else if (transaction.toAccountId == widget.account.id) {
+  //         // Money coming in (add to destination account with exchange rate)
+  //         double amountToAdd = transaction.amount;
+  //         if (transaction.exchangeRate != null) {
+  //           amountToAdd = transaction.amount * transaction.exchangeRate!;
+  //         }
+  //         balance += amountToAdd;
+  //       }
+  //     }
+  //   }
+  //   return balance;
+  // }
 
   double _calculateTotalIncome() {
     double total = 0;
@@ -257,7 +257,7 @@ class _AccountDetailPageState extends State<AccountDetailPage>
 
   @override
   Widget build(BuildContext context) {
-    final balance = _calculateBalance();
+    // final balance = _calculateBalance();
     final totalIncome = _calculateTotalIncome();
     final totalExpense = _calculateTotalExpense();
     final l10n = AppLocalizations.of(context)!;

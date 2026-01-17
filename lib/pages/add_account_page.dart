@@ -239,7 +239,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
     IconData? prefixIcon,
     String? prefixText,
   }) {
-    final theme = Theme.of(context);
+    // final theme = Theme.of(context);
     return InputDecoration(
       labelText: label.isEmpty ? null : label,
       helperText: helper,

@@ -15,7 +15,8 @@ class AddBudgetTransactionPage extends StatefulWidget {
   });
 
   @override
-  State<AddBudgetTransactionPage> createState() => _AddBudgetTransactionPageState();
+  State<AddBudgetTransactionPage> createState() =>
+      _AddBudgetTransactionPageState();
 }
 
 class _AddBudgetTransactionPageState extends State<AddBudgetTransactionPage> {
@@ -51,8 +52,12 @@ class _AddBudgetTransactionPageState extends State<AddBudgetTransactionPage> {
     final isEditing = widget.transactionToEdit != null;
     final l10n = AppLocalizations.of(context)!;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkMode ? Theme.of(context).colorScheme.surface : Colors.white;
-    final inputFillColor = isDarkMode ? Theme.of(context).colorScheme.surfaceContainerHighest : Colors.grey.shade100;
+    final backgroundColor = isDarkMode
+        ? Theme.of(context).colorScheme.surface
+        : Colors.white;
+    final inputFillColor = isDarkMode
+        ? Theme.of(context).colorScheme.surfaceContainerHighest
+        : Colors.grey.shade100;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -78,7 +83,10 @@ class _AddBudgetTransactionPageState extends State<AddBudgetTransactionPage> {
                   border: InputBorder.none,
                   filled: true,
                   fillColor: inputFillColor,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
@@ -89,11 +97,15 @@ class _AddBudgetTransactionPageState extends State<AddBudgetTransactionPage> {
                   ),
                   errorBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
                   focusedErrorBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
                 ),
                 validator: (value) {
@@ -111,7 +123,10 @@ class _AddBudgetTransactionPageState extends State<AddBudgetTransactionPage> {
                   border: InputBorder.none,
                   filled: true,
                   fillColor: inputFillColor,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
@@ -122,11 +137,15 @@ class _AddBudgetTransactionPageState extends State<AddBudgetTransactionPage> {
                   ),
                   errorBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
                   focusedErrorBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
                 ),
                 keyboardType: TextInputType.number,
@@ -148,7 +167,10 @@ class _AddBudgetTransactionPageState extends State<AddBudgetTransactionPage> {
                   border: InputBorder.none,
                   filled: true,
                   fillColor: inputFillColor,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
@@ -184,7 +206,10 @@ class _AddBudgetTransactionPageState extends State<AddBudgetTransactionPage> {
                   border: InputBorder.none,
                   filled: true,
                   fillColor: inputFillColor,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
@@ -200,8 +225,8 @@ class _AddBudgetTransactionPageState extends State<AddBudgetTransactionPage> {
                 onPressed: _saveTransaction,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(16),
-                  backgroundColor: isDarkMode ? Theme.of(context).colorScheme.primary : Colors.black,
-                  foregroundColor: Colors.white,
+                  backgroundColor: isDarkMode ? Colors.white : Colors.black,
+                  foregroundColor: isDarkMode ? Colors.black : Colors.white,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -230,16 +255,22 @@ class _AddBudgetTransactionPageState extends State<AddBudgetTransactionPage> {
         id: widget.transactionToEdit?.id,
         title: _titleController.text,
         amount: double.parse(_amountController.text),
-        date: widget.transactionToEdit?.date ?? DateTime.now().millisecondsSinceEpoch,
+        date:
+            widget.transactionToEdit?.date ??
+            DateTime.now().millisecondsSinceEpoch,
         tags: tags,
         type: _selectedType,
         budgetId: widget.budgetId,
       );
 
       if (widget.transactionToEdit != null) {
-        await context.read<BudgetTransactionProvider>().updateTransaction(transaction);
+        await context.read<BudgetTransactionProvider>().updateTransaction(
+          transaction,
+        );
       } else {
-        await context.read<BudgetTransactionProvider>().addTransaction(transaction);
+        await context.read<BudgetTransactionProvider>().addTransaction(
+          transaction,
+        );
       }
 
       if (mounted) {

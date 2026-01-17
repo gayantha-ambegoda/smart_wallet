@@ -10,7 +10,6 @@ import '../services/settings_service.dart';
 import '../widgets/transaction_details_dialog.dart';
 import '../widgets/modern_transaction_card.dart';
 import '../widgets/date_filter_card.dart';
-import '../widgets/expandable_fab.dart';
 import '../utils/constants.dart';
 import 'add_transaction_page.dart';
 import 'budget_list_page.dart';
@@ -678,10 +677,10 @@ class _DashboardPageState extends State<DashboardPage>
                           },
                         ),
                   builder: (context, snapshot) {
-                    final balance = snapshot.data?['balance'] ?? 0.0;
+                    // final balance = snapshot.data?['balance'] ?? 0.0;
                     final income = snapshot.data?['income'] ?? 0.0;
                     final expense = snapshot.data?['expense'] ?? 0.0;
-                    final l10n = AppLocalizations.of(context)!;
+                    // final l10n = AppLocalizations.of(context)!;
 
                     return _buildSummaryRow(
                       income: income,
@@ -729,34 +728,6 @@ class _DashboardPageState extends State<DashboardPage>
             ),
           ),
         ],
-      ),
-      floatingActionButton: ExpandableFab(
-        onTransactionPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AddTransactionPage()),
-          );
-          // Refresh transactions after returning from add page
-          if (mounted) {
-            // ignore: use_build_context_synchronously
-            context.read<TransactionProvider>().loadTransactions();
-          }
-        },
-        onTransferPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AddTransactionPage(
-                preselectedType: TransactionType.transfer,
-              ),
-            ),
-          );
-          // Refresh transactions after returning from add page
-          if (mounted) {
-            // ignore: use_build_context_synchronously
-            context.read<TransactionProvider>().loadTransactions();
-          }
-        },
       ),
     );
   }

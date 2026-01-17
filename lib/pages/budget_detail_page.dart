@@ -51,17 +51,17 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
     });
   }
 
-  double _calculateTotal() {
-    double total = 0;
-    for (var transaction in _transactions) {
-      if (transaction.type == BudgetTransactionType.income) {
-        total += transaction.amount;
-      } else {
-        total -= transaction.amount;
-      }
-    }
-    return total;
-  }
+  // double _calculateTotal() {
+  //   double total = 0;
+  //   for (var transaction in _transactions) {
+  //     if (transaction.type == BudgetTransactionType.income) {
+  //       total += transaction.amount;
+  //     } else {
+  //       total -= transaction.amount;
+  //     }
+  //   }
+  //   return total;
+  // }
 
   double _sumIncome() {
     return _transactions
@@ -86,7 +86,7 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
 
   void _showTransactionDetails(BudgetTransaction transaction) {
     final l10n = AppLocalizations.of(context)!;
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    // final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     showDialog(
       context: context,

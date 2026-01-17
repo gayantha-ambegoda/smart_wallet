@@ -4,7 +4,6 @@ import '../l10n/app_localizations.dart';
 import '../database/entity/transaction.dart';
 import '../database/entity/currency.dart';
 import '../providers/transaction_provider.dart';
-import '../providers/budget_provider.dart';
 import '../services/settings_service.dart';
 import '../pages/add_transaction_page.dart';
 

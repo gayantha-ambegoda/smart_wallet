@@ -1,5 +1,4 @@
 import 'package:floor/floor.dart';
-import 'budget.dart';
 import 'account.dart';
 import 'budget_transaction.dart';
 
@@ -43,18 +42,30 @@ class Transaction {
   final bool isTemplate;
   final bool onlyBudget;
 
-  @ForeignKey(childColumns: ['accountId'], parentColumns: ['id'], entity: Account)
+  @ForeignKey(
+    childColumns: ['accountId'],
+    parentColumns: ['id'],
+    entity: Account,
+  )
   final int? accountId;
 
   // For transfers: the destination account
-  @ForeignKey(childColumns: ['toAccountId'], parentColumns: ['id'], entity: Account)
+  @ForeignKey(
+    childColumns: ['toAccountId'],
+    parentColumns: ['id'],
+    entity: Account,
+  )
   final int? toAccountId;
 
   // Exchange rate used for transfer (if different currencies)
   final double? exchangeRate;
 
   // Link to budget transaction (new field for separate budget transactions)
-  @ForeignKey(childColumns: ['budgetTransactionId'], parentColumns: ['id'], entity: BudgetTransaction)
+  @ForeignKey(
+    childColumns: ['budgetTransactionId'],
+    parentColumns: ['id'],
+    entity: BudgetTransaction,
+  )
   final int? budgetTransactionId;
 
   Transaction({

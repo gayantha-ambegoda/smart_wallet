@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../database/app_database.dart';
 import '../database/entity/budget.dart';
-import '../database/entity/budget_transaction.dart';
 
 class BudgetProvider extends ChangeNotifier {
   final AppDatabase database;
@@ -33,8 +32,12 @@ class BudgetProvider extends ChangeNotifier {
 
   // Get statistics for a specific budget using the new BudgetTransaction table
   Future<Map<String, double>> getBudgetStatistics(int budgetId) async {
-    final totalIncome = await database.budgetTransactionDao.getTotalIncomeByBudget(budgetId) ?? 0.0;
-    final totalExpense = await database.budgetTransactionDao.getTotalExpenseByBudget(budgetId) ?? 0.0;
+    final totalIncome =
+        await database.budgetTransactionDao.getTotalIncomeByBudget(budgetId) ??
+        0.0;
+    final totalExpense =
+        await database.budgetTransactionDao.getTotalExpenseByBudget(budgetId) ??
+        0.0;
     final totalSaved = totalIncome - totalExpense;
 
     return {
