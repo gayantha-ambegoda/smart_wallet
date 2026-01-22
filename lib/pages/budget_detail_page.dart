@@ -7,6 +7,7 @@ import '../database/entity/currency.dart';
 import '../providers/budget_transaction_provider.dart';
 import '../services/settings_service.dart';
 import 'add_budget_transaction_page.dart';
+import 'add_transaction_page.dart';
 
 class BudgetDetailPage extends StatefulWidget {
   final Budget budget;
@@ -93,6 +94,33 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
               const SizedBox(height: 8),
               Text('Tags: ${transaction.tags.join(", ")}'),
             ],
+            const SizedBox(height: 16),
+            // Create Transaction button
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddTransactionPage(
+                        fromBudgetTransaction: transaction,
+                      ),
+                    ),
+                  );
+                },
+                style: TextButton.styleFrom(
+                  backgroundColor: isDarkMode ? Colors.white : Colors.black,
+                  foregroundColor: isDarkMode ? Colors.black : Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(l10n.createTransaction),
+              ),
+            ),
           ],
         ),
         actions: [

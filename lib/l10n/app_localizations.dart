@@ -700,6 +700,11 @@ abstract class AppLocalizations {
   /// **'Selected'**
   String get selected;
 
+  /// Button text to create a transaction from budget transaction
+  ///
+  /// In en, this message translates to:
+  /// **'Create Transaction'**
+  String get createTransaction;
   /// Title for budget actions dialog
   ///
   /// In en, this message translates to:

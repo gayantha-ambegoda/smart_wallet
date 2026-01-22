@@ -323,6 +323,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get selected => 'Sélectionné';
 
   @override
+  String get createTransaction => 'Créer une transaction';
   String get budgetActions => 'Actions du budget';
 
   @override
