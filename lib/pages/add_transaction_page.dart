@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import '../database/entity/transaction.dart';
+import '../database/entity/budget_transaction.dart';
 import '../providers/transaction_provider.dart';
 import '../providers/account_provider.dart';
 import '../database/entity/currency.dart';
@@ -11,6 +12,7 @@ class AddTransactionPage extends StatefulWidget {
   final Transaction? transactionToEdit;
   final TransactionType? preselectedType;
   final Transaction? templateToUse;
+  final BudgetTransaction? fromBudgetTransaction;
 
   const AddTransactionPage({
     super.key,
@@ -18,6 +20,7 @@ class AddTransactionPage extends StatefulWidget {
     this.transactionToEdit,
     this.preselectedType,
     this.templateToUse,
+    this.fromBudgetTransaction,
   });
 
   @override
@@ -73,6 +76,18 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       if (transaction.exchangeRate != null) {
         _exchangeRateController.text = transaction.exchangeRate.toString();
       }
+    }
+    // If creating from a budget transaction, pre-fill the form
+    else if (widget.fromBudgetTransaction != null) {
+      final budgetTransaction = widget.fromBudgetTransaction!;
+      _titleController.text = budgetTransaction.title;
+      _amountController.text = budgetTransaction.amount.toString();
+      _tagsController.text = budgetTransaction.tags.join(', ');
+      _selectedType = switch (budgetTransaction.type) {
+        BudgetTransactionType.income => TransactionType.income,
+        BudgetTransactionType.expense => TransactionType.expense,
+      };
+      _isTemplate = false;
     }
   }
 
@@ -532,6 +547,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
             ? _toAccountId
             : null,
         exchangeRate: exchangeRate,
+        budgetTransactionId: widget.fromBudgetTransaction?.id,
       );
 
       if (widget.transactionToEdit != null) {

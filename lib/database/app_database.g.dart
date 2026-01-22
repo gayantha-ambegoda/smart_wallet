@@ -412,6 +412,15 @@ class _$TransactionDao extends TransactionDao {
   Future<void> deleteTransaction(Transaction transaction) async {
     await _transactionDeletionAdapter.delete(transaction);
   }
+
+  @override
+  Future<int?> countTransactionsByBudgetTransactionId(int budgetTransactionId) async {
+    return _queryAdapter.query(
+      'SELECT COUNT(*) FROM `Transaction` WHERE budgetTransactionId = ?1',
+      mapper: (Map<String, Object?> row) => row.values.first as int,
+      arguments: [budgetTransactionId],
+    );
+  }
 }
 
 class _$BudgetDao extends BudgetDao {

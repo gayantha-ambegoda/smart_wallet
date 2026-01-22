@@ -4,6 +4,7 @@ import '../l10n/app_localizations.dart';
 import '../providers/budget_provider.dart';
 import '../services/settings_service.dart';
 import '../database/entity/currency.dart';
+import '../database/entity/budget.dart';
 import 'add_budget_page.dart';
 import 'budget_detail_page.dart';
 
@@ -43,6 +44,200 @@ class _BudgetListPageState extends State<BudgetListPage> {
 
   String _formatCurrency(double amount) {
     return '$_currencySymbol${amount.toStringAsFixed(2)}';
+  }
+
+  void _showBudgetActionsDialog(Budget budget) {
+    final l10n = AppLocalizations.of(context)!;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l10n.budgetActions,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                budget.title,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: isDarkMode
+                      ? Colors.grey.shade400
+                      : Colors.grey.shade600,
+                ),
+              ),
+              const SizedBox(height: 24),
+              // Edit Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _editBudget(budget);
+                  },
+                  icon: const Icon(Icons.edit),
+                  label: Text(l10n.editBudget),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: isDarkMode
+                        ? Theme.of(context).colorScheme.primary
+                        : Colors.black,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              // Duplicate Button
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _duplicateBudget(budget);
+                  },
+                  icon: const Icon(Icons.content_copy),
+                  label: Text(l10n.duplicateBudget),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    foregroundColor: isDarkMode ? Colors.white : Colors.black,
+                    side: BorderSide(
+                      color: isDarkMode
+                          ? Colors.grey.shade600
+                          : Colors.grey.shade400,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              // Delete Button
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _showDeleteConfirmation(budget);
+                  },
+                  icon: const Icon(Icons.delete),
+                  label: Text(l10n.deleteBudget),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    foregroundColor: Theme.of(context).colorScheme.error,
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              // Cancel Button
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  l10n.cancel,
+                  style: TextStyle(
+                    color: isDarkMode
+                        ? Colors.grey.shade400
+                        : Colors.grey.shade600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _editBudget(Budget budget) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AddBudgetPage(budgetToEdit: budget),
+      ),
+    );
+  }
+
+  Future<void> _duplicateBudget(Budget budget) async {
+    final l10n = AppLocalizations.of(context)!;
+    final newTitle = l10n.duplicateOf(budget.title);
+
+    await context.read<BudgetProvider>().duplicateBudget(budget, newTitle);
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.budgetDuplicatedSuccessfully)),
+      );
+    }
+  }
+
+  void _showDeleteConfirmation(Budget budget) {
+    final l10n = AppLocalizations.of(context)!;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.confirmDelete),
+        content: Text(l10n.deleteBudgetConfirmation(budget.title)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _deleteBudget(budget);
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deleteBudget(Budget budget) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    final success = await context
+        .read<BudgetProvider>()
+        .deleteBudgetWithTransactions(budget);
+
+    if (mounted) {
+      if (success) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.budgetDeletedSuccessfully)));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.cannotDeleteBudgetWithTransactions),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
   }
 
   Widget _buildSummaryRow({required double income, required double expense}) {
@@ -207,6 +402,9 @@ class _BudgetListPageState extends State<BudgetListPage> {
                                   BudgetDetailPage(budget: budget),
                             ),
                           );
+                        },
+                        onLongPress: () {
+                          _showBudgetActionsDialog(budget);
                         },
                         borderRadius: BorderRadius.circular(14),
                         child: Padding(

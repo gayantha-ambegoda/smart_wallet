@@ -516,5 +516,75 @@
   "selected": "Sélectionné",
   "@selected": {
     "description": "Label for selected item"
+  },
+  
+  "createTransaction": "Créer une transaction",
+  "@createTransaction": {
+    "description": "Button text to create a transaction from budget transaction"
+  "budgetActions": "Actions du budget",
+  "@budgetActions": {
+    "description": "Title for budget actions dialog"
+  },
+  
+  "editBudget": "Modifier le budget",
+  "@editBudget": {
+    "description": "Button text to edit budget"
+  },
+  
+  "deleteBudget": "Supprimer le budget",
+  "@deleteBudget": {
+    "description": "Button text to delete budget"
+  },
+  
+  "duplicateBudget": "Dupliquer le budget",
+  "@duplicateBudget": {
+    "description": "Button text to duplicate budget"
+  },
+  
+  "deleteBudgetConfirmation": "Êtes-vous sûr de vouloir supprimer \"{title}\" ? Cela supprimera également toutes les transactions du budget. Cette action ne peut pas être annulée.",
+  "@deleteBudgetConfirmation": {
+    "description": "Confirmation message for budget deletion",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Monthly Budget"
+      }
+    }
+  },
+  
+  "budgetDeletedSuccessfully": "Budget supprimé avec succès",
+  "@budgetDeletedSuccessfully": {
+    "description": "Success message for budget deletion"
+  },
+  
+  "budgetUpdatedSuccessfully": "Budget mis à jour avec succès",
+  "@budgetUpdatedSuccessfully": {
+    "description": "Success message for budget update"
+  },
+  
+  "budgetDuplicatedSuccessfully": "Budget dupliqué avec succès",
+  "@budgetDuplicatedSuccessfully": {
+    "description": "Success message for budget duplication"
+  },
+  
+  "cannotDeleteBudgetWithTransactions": "Impossible de supprimer le budget. Il y a des transactions liées aux éléments de ce budget. Veuillez d'abord supprimer ces transactions.",
+  "@cannotDeleteBudgetWithTransactions": {
+    "description": "Error message when trying to delete budget with linked transactions"
+  },
+  
+  "duplicateOf": "Copie de {title}",
+  "@duplicateOf": {
+    "description": "Title for duplicated budget",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Monthly Budget"
+      }
+    }
+  },
+  
+  "saveBudget": "Enregistrer le budget",
+  "@saveBudget": {
+    "description": "Button text to save budget changes"
   }
 }
