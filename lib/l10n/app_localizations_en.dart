@@ -320,4 +320,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selected => 'Selected';
+
+  @override
+  String get createTransaction => 'Create Transaction';
 }

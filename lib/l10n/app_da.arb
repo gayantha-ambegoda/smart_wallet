@@ -516,5 +516,10 @@
   "selected": "Valgt",
   "@selected": {
     "description": "Label for selected item"
+  },
+  
+  "createTransaction": "Opret transaktion",
+  "@createTransaction": {
+    "description": "Button text to create a transaction from budget transaction"
   }
 }

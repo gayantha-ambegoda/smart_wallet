@@ -321,4 +321,7 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get selected => 'Valgt';
+
+  @override
+  String get createTransaction => 'Opret transaktion';
 }

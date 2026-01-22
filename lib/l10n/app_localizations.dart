@@ -699,6 +699,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Selected'**
   String get selected;
+
+  /// Button text to create a transaction from budget transaction
+  ///
+  /// In en, this message translates to:
+  /// **'Create Transaction'**
+  String get createTransaction;
 }
 
 class _AppLocalizationsDelegate

@@ -516,5 +516,10 @@
   "selected": "Sélectionné",
   "@selected": {
     "description": "Label for selected item"
+  },
+  
+  "createTransaction": "Créer une transaction",
+  "@createTransaction": {
+    "description": "Button text to create a transaction from budget transaction"
   }
 }
