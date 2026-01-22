@@ -81,11 +81,14 @@ class BudgetProvider extends ChangeNotifier {
     await database.budgetDao.insertBudget(newBudget);
     
     // Get the newly created budget to get its ID
+    // We reload all budgets and find the one with the highest ID that matches the title
     await loadBudgets();
-    final createdBudget = _budgets.firstWhere(
-      (b) => b.title == newTitle,
-      orElse: () => newBudget,
-    );
+    final matchingBudgets = _budgets.where((b) => b.title == newTitle).toList();
+    if (matchingBudgets.isEmpty) return;
+    
+    // Get the budget with the highest ID (most recently inserted)
+    matchingBudgets.sort((a, b) => (b.id ?? 0).compareTo(a.id ?? 0));
+    final createdBudget = matchingBudgets.first;
     
     if (createdBudget.id == null) return;
     
@@ -99,7 +102,7 @@ class BudgetProvider extends ChangeNotifier {
         title: transaction.title,
         amount: transaction.amount,
         date: transaction.date,
-        tags: List<String>.from(transaction.tags),
+        tags: transaction.tags,
         type: transaction.type,
         budgetId: createdBudget.id!,
       );
