@@ -320,4 +320,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selected => 'Selected';
+
+  @override
+  String get budgetActions => 'Budget Actions';
+
+  @override
+  String get editBudget => 'Edit Budget';
+
+  @override
+  String get deleteBudget => 'Delete Budget';
+
+  @override
+  String get duplicateBudget => 'Duplicate Budget';
+
+  @override
+  String deleteBudgetConfirmation(String title) {
+    return 'Are you sure you want to delete \"$title\"? This will also delete all budget transactions. This action cannot be undone.';
+  }
+
+  @override
+  String get budgetDeletedSuccessfully => 'Budget deleted successfully';
+
+  @override
+  String get budgetUpdatedSuccessfully => 'Budget updated successfully';
+
+  @override
+  String get budgetDuplicatedSuccessfully => 'Budget duplicated successfully';
+
+  @override
+  String get cannotDeleteBudgetWithTransactions =>
+      'Cannot delete budget. There are transactions linked to this budget\'s items. Please remove those transactions first.';
+
+  @override
+  String duplicateOf(String title) {
+    return 'Duplicate of $title';
+  }
+
+  @override
+  String get saveBudget => 'Save Budget';
 }

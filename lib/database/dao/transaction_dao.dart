@@ -67,4 +67,9 @@ abstract class TransactionDao {
 
   @delete
   Future<void> deleteTransaction(Transaction transaction);
+
+  @Query(
+    'SELECT COUNT(*) FROM `Transaction` WHERE budgetTransactionId = :budgetTransactionId',
+  )
+  Future<int?> countTransactionsByBudgetTransactionId(int budgetTransactionId);
 }

@@ -516,5 +516,72 @@
   "selected": "Selected",
   "@selected": {
     "description": "Label for selected item"
+  },
+  
+  "budgetActions": "Budget Actions",
+  "@budgetActions": {
+    "description": "Title for budget actions dialog"
+  },
+  
+  "editBudget": "Edit Budget",
+  "@editBudget": {
+    "description": "Button text to edit budget"
+  },
+  
+  "deleteBudget": "Delete Budget",
+  "@deleteBudget": {
+    "description": "Button text to delete budget"
+  },
+  
+  "duplicateBudget": "Duplicate Budget",
+  "@duplicateBudget": {
+    "description": "Button text to duplicate budget"
+  },
+  
+  "deleteBudgetConfirmation": "Are you sure you want to delete \"{title}\"? This will also delete all budget transactions. This action cannot be undone.",
+  "@deleteBudgetConfirmation": {
+    "description": "Confirmation message for budget deletion",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Monthly Budget"
+      }
+    }
+  },
+  
+  "budgetDeletedSuccessfully": "Budget deleted successfully",
+  "@budgetDeletedSuccessfully": {
+    "description": "Success message for budget deletion"
+  },
+  
+  "budgetUpdatedSuccessfully": "Budget updated successfully",
+  "@budgetUpdatedSuccessfully": {
+    "description": "Success message for budget update"
+  },
+  
+  "budgetDuplicatedSuccessfully": "Budget duplicated successfully",
+  "@budgetDuplicatedSuccessfully": {
+    "description": "Success message for budget duplication"
+  },
+  
+  "cannotDeleteBudgetWithTransactions": "Cannot delete budget. There are transactions linked to this budget's items. Please remove those transactions first.",
+  "@cannotDeleteBudgetWithTransactions": {
+    "description": "Error message when trying to delete budget with linked transactions"
+  },
+  
+  "duplicateOf": "Duplicate of {title}",
+  "@duplicateOf": {
+    "description": "Title for duplicated budget",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Monthly Budget"
+      }
+    }
+  },
+  
+  "saveBudget": "Save Budget",
+  "@saveBudget": {
+    "description": "Button text to save budget changes"
   }
 }

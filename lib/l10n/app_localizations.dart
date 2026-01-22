@@ -699,6 +699,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Selected'**
   String get selected;
+
+  /// Title for budget actions dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Actions'**
+  String get budgetActions;
+
+  /// Button text to edit budget
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Budget'**
+  String get editBudget;
+
+  /// Button text to delete budget
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Budget'**
+  String get deleteBudget;
+
+  /// Button text to duplicate budget
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate Budget'**
+  String get duplicateBudget;
+
+  /// Confirmation message for budget deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete "{title}"? This will also delete all budget transactions. This action cannot be undone.'**
+  String deleteBudgetConfirmation(String title);
+
+  /// Success message for budget deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Budget deleted successfully'**
+  String get budgetDeletedSuccessfully;
+
+  /// Success message for budget update
+  ///
+  /// In en, this message translates to:
+  /// **'Budget updated successfully'**
+  String get budgetUpdatedSuccessfully;
+
+  /// Success message for budget duplication
+  ///
+  /// In en, this message translates to:
+  /// **'Budget duplicated successfully'**
+  String get budgetDuplicatedSuccessfully;
+
+  /// Error message when trying to delete budget with linked transactions
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot delete budget. There are transactions linked to this budget\'s items. Please remove those transactions first.'**
+  String get cannotDeleteBudgetWithTransactions;
+
+  /// Title for duplicated budget
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate of {title}'**
+  String duplicateOf(String title);
+
+  /// Button text to save budget changes
+  ///
+  /// In en, this message translates to:
+  /// **'Save Budget'**
+  String get saveBudget;
 }
 
 class _AppLocalizationsDelegate
