@@ -83,9 +83,10 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       _titleController.text = budgetTransaction.title;
       _amountController.text = budgetTransaction.amount.toString();
       _tagsController.text = budgetTransaction.tags.join(', ');
-      _selectedType = budgetTransaction.type == BudgetTransactionType.income
-          ? TransactionType.income
-          : TransactionType.expense;
+      _selectedType = switch (budgetTransaction.type) {
+        BudgetTransactionType.income => TransactionType.income,
+        BudgetTransactionType.expense => TransactionType.expense,
+      };
       _isTemplate = false;
     }
   }
