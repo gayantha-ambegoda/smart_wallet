@@ -324,4 +324,40 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get createTransaction => 'Opret transaktion';
+  String get budgetActions => 'Budgethandlinger';
+
+  @override
+  String get editBudget => 'Rediger budget';
+
+  @override
+  String get deleteBudget => 'Slet budget';
+
+  @override
+  String get duplicateBudget => 'Dupliker budget';
+
+  @override
+  String deleteBudgetConfirmation(String title) {
+    return 'Er du sikker på, at du vil slette \"$title\"? Dette vil også slette alle budgettransaktioner. Denne handling kan ikke fortrydes.';
+  }
+
+  @override
+  String get budgetDeletedSuccessfully => 'Budget slettet';
+
+  @override
+  String get budgetUpdatedSuccessfully => 'Budget opdateret';
+
+  @override
+  String get budgetDuplicatedSuccessfully => 'Budget duplikeret';
+
+  @override
+  String get cannotDeleteBudgetWithTransactions =>
+      'Kan ikke slette budget. Der er transaktioner knyttet til dette budgets elementer. Fjern venligst disse transaktioner først.';
+
+  @override
+  String duplicateOf(String title) {
+    return 'Kopi af $title';
+  }
+
+  @override
+  String get saveBudget => 'Gem budget';
 }

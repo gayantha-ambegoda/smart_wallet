@@ -324,4 +324,40 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get createTransaction => 'Créer une transaction';
+  String get budgetActions => 'Actions du budget';
+
+  @override
+  String get editBudget => 'Modifier le budget';
+
+  @override
+  String get deleteBudget => 'Supprimer le budget';
+
+  @override
+  String get duplicateBudget => 'Dupliquer le budget';
+
+  @override
+  String deleteBudgetConfirmation(String title) {
+    return 'Êtes-vous sûr de vouloir supprimer \"$title\" ? Cela supprimera également toutes les transactions du budget. Cette action ne peut pas être annulée.';
+  }
+
+  @override
+  String get budgetDeletedSuccessfully => 'Budget supprimé avec succès';
+
+  @override
+  String get budgetUpdatedSuccessfully => 'Budget mis à jour avec succès';
+
+  @override
+  String get budgetDuplicatedSuccessfully => 'Budget dupliqué avec succès';
+
+  @override
+  String get cannotDeleteBudgetWithTransactions =>
+      'Impossible de supprimer le budget. Il y a des transactions liées aux éléments de ce budget. Veuillez d\'abord supprimer ces transactions.';
+
+  @override
+  String duplicateOf(String title) {
+    return 'Copie de $title';
+  }
+
+  @override
+  String get saveBudget => 'Enregistrer le budget';
 }

@@ -521,5 +521,70 @@
   "createTransaction": "Opret transaktion",
   "@createTransaction": {
     "description": "Button text to create a transaction from budget transaction"
+  "budgetActions": "Budgethandlinger",
+  "@budgetActions": {
+    "description": "Title for budget actions dialog"
+  },
+  
+  "editBudget": "Rediger budget",
+  "@editBudget": {
+    "description": "Button text to edit budget"
+  },
+  
+  "deleteBudget": "Slet budget",
+  "@deleteBudget": {
+    "description": "Button text to delete budget"
+  },
+  
+  "duplicateBudget": "Dupliker budget",
+  "@duplicateBudget": {
+    "description": "Button text to duplicate budget"
+  },
+  
+  "deleteBudgetConfirmation": "Er du sikker på, at du vil slette \"{title}\"? Dette vil også slette alle budgettransaktioner. Denne handling kan ikke fortrydes.",
+  "@deleteBudgetConfirmation": {
+    "description": "Confirmation message for budget deletion",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Monthly Budget"
+      }
+    }
+  },
+  
+  "budgetDeletedSuccessfully": "Budget slettet",
+  "@budgetDeletedSuccessfully": {
+    "description": "Success message for budget deletion"
+  },
+  
+  "budgetUpdatedSuccessfully": "Budget opdateret",
+  "@budgetUpdatedSuccessfully": {
+    "description": "Success message for budget update"
+  },
+  
+  "budgetDuplicatedSuccessfully": "Budget duplikeret",
+  "@budgetDuplicatedSuccessfully": {
+    "description": "Success message for budget duplication"
+  },
+  
+  "cannotDeleteBudgetWithTransactions": "Kan ikke slette budget. Der er transaktioner knyttet til dette budgets elementer. Fjern venligst disse transaktioner først.",
+  "@cannotDeleteBudgetWithTransactions": {
+    "description": "Error message when trying to delete budget with linked transactions"
+  },
+  
+  "duplicateOf": "Kopi af {title}",
+  "@duplicateOf": {
+    "description": "Title for duplicated budget",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Monthly Budget"
+      }
+    }
+  },
+  
+  "saveBudget": "Gem budget",
+  "@saveBudget": {
+    "description": "Button text to save budget changes"
   }
 }
