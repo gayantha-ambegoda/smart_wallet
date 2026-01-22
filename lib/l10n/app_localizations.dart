@@ -705,6 +705,7 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create Transaction'**
   String get createTransaction;
+
   /// Title for budget actions dialog
   ///
   /// In en, this message translates to:
@@ -732,7 +733,7 @@ abstract class AppLocalizations {
   /// Confirmation message for budget deletion
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to delete "{title}"? This will also delete all budget transactions. This action cannot be undone.'**
+  /// **'Are you sure you want to delete \"{title}\"? This will also delete all budget transactions. This action cannot be undone.'**
   String deleteBudgetConfirmation(String title);
 
   /// Success message for budget deletion

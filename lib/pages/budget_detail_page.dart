@@ -125,8 +125,8 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                   );
                 },
                 style: TextButton.styleFrom(
-                  backgroundColor: isDarkMode ? Colors.white : Colors.black,
-                  foregroundColor: isDarkMode ? Colors.black : Colors.white,
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),

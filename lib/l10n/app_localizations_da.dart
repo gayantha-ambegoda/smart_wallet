@@ -324,6 +324,8 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get createTransaction => 'Opret transaktion';
+
+  @override
   String get budgetActions => 'Budgethandlinger';
 
   @override

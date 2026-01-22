@@ -521,6 +521,8 @@
   "createTransaction": "Créer une transaction",
   "@createTransaction": {
     "description": "Button text to create a transaction from budget transaction"
+  },
+  
   "budgetActions": "Actions du budget",
   "@budgetActions": {
     "description": "Title for budget actions dialog"

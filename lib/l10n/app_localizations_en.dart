@@ -323,6 +323,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get createTransaction => 'Create Transaction';
+
+  @override
   String get budgetActions => 'Budget Actions';
 
   @override
