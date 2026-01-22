@@ -5,7 +5,9 @@ import '../providers/budget_provider.dart';
 import '../l10n/app_localizations.dart';
 
 class AddBudgetPage extends StatefulWidget {
-  const AddBudgetPage({super.key});
+  final Budget? budgetToEdit;
+  
+  const AddBudgetPage({super.key, this.budgetToEdit});
 
   @override
   State<AddBudgetPage> createState() => _AddBudgetPageState();
@@ -14,6 +16,16 @@ class AddBudgetPage extends StatefulWidget {
 class _AddBudgetPageState extends State<AddBudgetPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
+  
+  bool get _isEditing => widget.budgetToEdit != null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_isEditing) {
+      _titleController.text = widget.budgetToEdit!.title;
+    }
+  }
 
   @override
   void dispose() {
@@ -23,19 +35,33 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
 
   Future<void> _saveBudget() async {
     if (_formKey.currentState!.validate()) {
-      final budget = Budget(title: _titleController.text.trim());
-
-      await context.read<BudgetProvider>().addBudget(budget);
-
-      if (mounted) {
-        Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.budgetCreatedSuccessfully,
-            ),
-          ),
+      final l10n = AppLocalizations.of(context)!;
+      
+      if (_isEditing) {
+        // Update existing budget
+        final updatedBudget = Budget(
+          id: widget.budgetToEdit!.id,
+          title: _titleController.text.trim(),
         );
+        await context.read<BudgetProvider>().updateBudgetData(updatedBudget);
+        
+        if (mounted) {
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.budgetUpdatedSuccessfully)),
+          );
+        }
+      } else {
+        // Create new budget
+        final budget = Budget(title: _titleController.text.trim());
+        await context.read<BudgetProvider>().addBudget(budget);
+
+        if (mounted) {
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.budgetCreatedSuccessfully)),
+          );
+        }
       }
     }
   }
@@ -52,7 +78,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          l10n.createNewBudget,
+          _isEditing ? l10n.editBudget : l10n.createNewBudget,
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         backgroundColor: backgroundColor,
@@ -113,7 +139,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                   ),
                 ),
                 child: Text(
-                  l10n.createBudget,
+                  _isEditing ? l10n.saveBudget : l10n.createBudget,
                   style: const TextStyle(fontSize: 16),
                 ),
               ),
