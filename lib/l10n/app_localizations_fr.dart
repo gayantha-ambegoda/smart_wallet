@@ -103,6 +103,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get expense => 'Dépense';
 
   @override
+  String get spentLabel => 'Progression';
+
+  @override
+  String get transactions => 'Transactions';
+
+  @override
   String get date => 'Date';
 
   @override

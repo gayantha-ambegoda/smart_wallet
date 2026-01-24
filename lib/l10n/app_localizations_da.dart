@@ -104,6 +104,12 @@ class AppLocalizationsDa extends AppLocalizations {
   String get expense => 'Udgift';
 
   @override
+  String get spentLabel => 'Fremskridt';
+
+  @override
+  String get transactions => 'Transaktioner';
+
+  @override
   String get date => 'Dato';
 
   @override

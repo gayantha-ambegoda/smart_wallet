@@ -72,4 +72,11 @@ abstract class TransactionDao {
     'SELECT COUNT(*) FROM `Transaction` WHERE budgetTransactionId = :budgetTransactionId',
   )
   Future<int?> countTransactionsByBudgetTransactionId(int budgetTransactionId);
+
+  @Query(
+    'SELECT * FROM `Transaction` WHERE budgetTransactionId = :budgetTransactionId AND isTemplate = 0 AND onlyBudget = 0 ORDER BY date DESC',
+  )
+  Future<List<Transaction>> findTransactionsByBudgetTransactionId(
+    int budgetTransactionId,
+  );
 }

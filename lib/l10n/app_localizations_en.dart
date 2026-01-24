@@ -102,6 +102,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expense => 'Expense';
 
   @override
+  String get spentLabel => 'Progress';
+
+  @override
+  String get transactions => 'Transactions';
+
+  @override
   String get date => 'Date';
 
   @override
