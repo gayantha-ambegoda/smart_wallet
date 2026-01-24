@@ -287,9 +287,6 @@ abstract class AppLocalizations {
   String get expense;
   String get spentLabel;
   String get transactions;
-  String get spentLabel;
-  String get spentLabel;
-  String get spentLabel;
 
   /// Label for date
   ///
