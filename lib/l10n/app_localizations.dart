@@ -285,6 +285,8 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Expense'**
   String get expense;
+  String get spentLabel;
+  String get transactions;
 
   /// Label for date
   ///

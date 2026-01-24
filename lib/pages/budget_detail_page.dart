@@ -5,9 +5,11 @@ import '../database/entity/budget.dart';
 import '../database/entity/budget_transaction.dart';
 import '../database/entity/currency.dart';
 import '../providers/budget_transaction_provider.dart';
+import '../providers/transaction_provider.dart';
 import '../services/settings_service.dart';
 import 'add_budget_transaction_page.dart';
 import 'add_transaction_page.dart';
+import 'budget_transaction_activity_page.dart';
 
 class BudgetDetailPage extends StatefulWidget {
   final Budget budget;
@@ -328,9 +330,18 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                               width: 1,
                             ),
                           ),
-                          child: ListTile(
-                            onTap: () => _showTransactionDetails(transaction),
-                            leading: CircleAvatar(
+                           child: ListTile(
+                             onLongPress: () => _showTransactionDetails(transaction),
+                             onTap: () {
+                               Navigator.of(context).push(
+                                 MaterialPageRoute(
+                                   builder: (context) => BudgetTransactionActivityPage(
+                                     budgetTransaction: transaction,
+                                   ),
+                                 ),
+                               );
+                             },
+                             leading: CircleAvatar(
                               backgroundColor: isDarkMode
                                   ? Colors.grey.shade800
                                   : Colors.grey.shade200,
@@ -344,14 +355,51 @@ class _BudgetDetailPageState extends State<BudgetDetailPage> {
                               ),
                             ),
                             title: Text(transaction.title),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(_formatDate(transaction.date)),
-                                if (transaction.tags.isNotEmpty)
-                                  Wrap(
-                                    spacing: 4,
-                                    runSpacing: 4,
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(_formatDate(transaction.date)),
+                                  FutureBuilder<int>(
+                                    future: transaction.id == null
+                                        ? Future.value(0)
+                                        : context
+                                            .read<TransactionProvider>()
+                                            .countTransactionsByBudgetTransactionId(
+                                              transaction.id!,
+                                            ),
+                                    builder: (context, snapshot) {
+                                      final count = snapshot.data ?? 0;
+                                      if (count == 0) return const SizedBox.shrink();
+                                      return Padding(
+                                        padding: const EdgeInsets.only(top: 4.0),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primaryContainer,
+                                            borderRadius: BorderRadius.circular(6),
+                                          ),
+                                          child: Text(
+                                            '$count ${l10n.transactions}',
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onPrimaryContainer,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  if (transaction.tags.isNotEmpty)
+                                    Wrap(
+                                      spacing: 4,
+                                      runSpacing: 4,
                                     children: transaction.tags
                                         .map(
                                           (tag) => Container(

@@ -69,4 +69,17 @@ class TransactionProvider extends ChangeNotifier {
     await database.transactionDao.deleteTransaction(transaction);
     await loadTransactions();
   }
+
+  Future<int> countTransactionsByBudgetTransactionId(int budgetTransactionId) async {
+    return await database.transactionDao
+            .countTransactionsByBudgetTransactionId(budgetTransactionId) ??
+        0;
+  }
+
+  Future<List<Transaction>> getTransactionsByBudgetTransactionId(
+    int budgetTransactionId,
+  ) {
+    return database.transactionDao
+        .findTransactionsByBudgetTransactionId(budgetTransactionId);
+  }
 }
